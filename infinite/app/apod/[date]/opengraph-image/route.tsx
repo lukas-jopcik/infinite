@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server"
 import { ImageResponse } from "next/og"
+// Ensure JSX is allowed by using .tsx extension in filename
 
 export const runtime = "edge"
 
