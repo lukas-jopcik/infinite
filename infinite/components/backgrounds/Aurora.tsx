@@ -1,6 +1,6 @@
 "use client"
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 
 import './Aurora.css'
 
@@ -126,10 +126,39 @@ export default function Aurora(props: AuroraProps) {
   propsRef.current = props
 
   const ctnDom = useRef<HTMLDivElement | null>(null)
+  const [isVisible, setIsVisible] = useState(false)
+  const [isReducedMotion, setIsReducedMotion] = useState(false)
 
+  // Check for reduced motion preference
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setIsReducedMotion(mediaQuery.matches)
+    
+    const handleChange = (e: MediaQueryListEvent) => setIsReducedMotion(e.matches)
+    mediaQuery.addEventListener('change', handleChange)
+    
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
+
+  // Intersection Observer for performance
   useEffect(() => {
     const ctn = ctnDom.current
     if (!ctn) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting)
+      },
+      { threshold: 0.1 }
+    )
+    
+    observer.observe(ctn)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const ctn = ctnDom.current
+    if (!ctn || !isVisible || isReducedMotion) return
 
     const renderer = new Renderer({ alpha: true, premultipliedAlpha: true, antialias: true })
     const gl = renderer.gl
@@ -177,8 +206,20 @@ export default function Aurora(props: AuroraProps) {
     ctn.appendChild(gl.canvas)
 
     let animateId = 0
+    let lastTime = 0
     const update = (t: number) => {
+      if (!isVisible || isReducedMotion) {
+        animateId = requestAnimationFrame(update)
+        return
+      }
+      
       animateId = requestAnimationFrame(update)
+      const deltaTime = t - lastTime
+      lastTime = t
+      
+      // Throttle updates to 60fps max
+      if (deltaTime < 16.67) return
+      
       const { time = t * 0.01, speed = 1.0 } = propsRef.current
       ;(program!.uniforms.uTime as any).value = time * speed * 0.1
       ;(program!.uniforms.uAmplitude as any).value = propsRef.current.amplitude ?? 1.0
@@ -203,7 +244,7 @@ export default function Aurora(props: AuroraProps) {
       gl.getExtension('WEBGL_lose_context')?.loseContext()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [amplitude])
+  }, [amplitude, isVisible, isReducedMotion])
 
   return <div ref={ctnDom} className="aurora-container" />
 }

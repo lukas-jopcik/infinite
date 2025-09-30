@@ -2,9 +2,14 @@ import { getAllAvailableFromApi } from "@/lib/content-api"
 import { getDateRange, subtractDays } from "@/lib/date"
 import { ApodHero } from "@/components/ApodHero"
 import dynamic from "next/dynamic"
-const Aurora = dynamic(() => import("@/components/backgrounds/Aurora"), { ssr: false, loading: () => null })
 import { ApodCard } from "@/components/ApodCard"
 import { Pagination } from "@/components/Pagination"
+
+// Lazy load Aurora with better loading state
+const Aurora = dynamic(() => import("@/components/backgrounds/Aurora"), { 
+  ssr: false, 
+  loading: () => <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-900/20 to-purple-900/20" />
+})
 
 interface HomePageProps {
   searchParams: {
@@ -16,7 +21,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const page = Number.parseInt(searchParams.page || "1")
   const pageSize = 9
 
-  const apods = await getAllAvailableFromApi().catch(() => [])
+  // Optimize API call with error handling and caching
+  const apods = await getAllAvailableFromApi().catch((error) => {
+    console.error('Failed to fetch APOD data:', error)
+    return []
+  })
+  
   const latestApod = apods.length > 0 ? apods[0] : undefined
   const rest = apods.length > 1 ? apods.slice(1) : []
   const startIdx = (page - 1) * pageSize

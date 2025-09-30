@@ -1,10 +1,10 @@
 "use client"
-import Image from "next/image"
 import Link from "next/link"
 import type { Apod } from "@/lib/nasa"
 import { formatDate } from "@/lib/date"
 import { getReadingTime } from "@/lib/mock-content"
 import { trackEvent } from "@/lib/analytics"
+import { OptimizedImage } from "@/components/OptimizedImage"
 
 interface ApodCardProps {
   apod: Apod
@@ -14,21 +14,19 @@ export function ApodCard({ apod }: ApodCardProps) {
   const readingTime = getReadingTime(apod.title, apod.explanation)
 
   return (
-    <article>
+    <article className="h-full">
       <Link 
         href={`/apod/${apod.date}`} 
-        className="apod-card block focus-visible" 
+        className="apod-card block focus-visible h-full flex flex-col" 
         onClick={() => trackEvent('card_open_detail', { category: 'navigation', label: apod.date })}
         aria-label={`Prečítať článok: ${apod.title} z ${formatDate(apod.date)}`}
       >
         <div className="aspect-video relative mb-4 overflow-hidden">
           {apod.media_type === "image" ? (
-            <Image
+            <OptimizedImage
               src={apod.url || "/placeholder.svg"}
               alt={apod.title}
-              fill
-              className="object-cover transition-transform duration-300 hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               loading="lazy"
             />
           ) : (
@@ -46,9 +44,9 @@ export function ApodCard({ apod }: ApodCardProps) {
             </div>
           )}
         </div>
-        <div className="p-4">
-          <h3 className="font-semibold mb-2 text-balance line-clamp-2 leading-tight">{apod.title}</h3>
-          <div className="flex items-center justify-between text-sm text-gray-400">
+        <div className="p-4 flex-1 flex flex-col min-h-[120px]">
+          <h3 className="font-semibold mb-2 text-balance line-clamp-2 leading-tight flex-1 min-h-[2.5rem]">{apod.title}</h3>
+          <div className="flex items-center justify-between text-sm text-gray-400 mt-auto">
             <time dateTime={apod.date}>{formatDate(apod.date)}</time>
             <span aria-label={`Čas čítania: ${readingTime} minút`}>{readingTime} min</span>
           </div>

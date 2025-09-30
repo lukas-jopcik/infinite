@@ -1,16 +1,29 @@
-import type { MetadataRoute } from 'next'
+import { MetadataRoute } from 'next'
 import { getAllAvailableFromApi } from '@/lib/content-api'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || 'https://infinite.example'
-  const items: MetadataRoute.Sitemap = [
-    { url: base, changeFrequency: 'daily', priority: 1 },
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://infinite.example'
+  
+  // Get all APOD dates for sitemap
+  const apods = await getAllAvailableFromApi().catch(() => [])
+  
+  // Static pages
+  const staticPages: MetadataRoute.Sitemap = [
+    {
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 1,
+    },
   ]
-  try {
-    const apods = await getAllAvailableFromApi()
-    for (const a of apods.slice(0, 100)) {
-      items.push({ url: `${base}/apod/${a.date}`, changeFrequency: 'weekly', priority: 0.8 })
-    }
-  } catch {}
-  return items
+  
+  // Dynamic APOD pages
+  const apodPages: MetadataRoute.Sitemap = apods.map((apod) => ({
+    url: `${baseUrl}/apod/${apod.date}`,
+    lastModified: new Date(apod.date),
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }))
+  
+  return [...staticPages, ...apodPages]
 }

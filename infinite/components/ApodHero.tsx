@@ -1,10 +1,10 @@
 "use client"
-import Image from "next/image"
 import Link from "next/link"
 import type { Apod } from "@/lib/nasa"
 import { formatDate } from "@/lib/date"
 import { enhanceApodContent, getReadingTime, getTags } from "@/lib/mock-content"
 import { trackEvent } from "@/lib/analytics"
+import { OptimizedImage } from "@/components/OptimizedImage"
 import React from "react"
 
 interface ApodHeroProps {
@@ -75,14 +75,11 @@ export function ApodHero({ apod }: ApodHeroProps) {
           <div className="order-1 lg:order-2">
             {apod.media_type === "image" ? (
               <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl shadow-black/70 ring-1 ring-black/50">
-                <Image
+                <OptimizedImage
                   src={apod.hdurl || apod.url}
                   alt={apod.title}
-                  fill
-                  className="object-cover"
-                  priority
-                  fetchPriority="high"
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="w-full h-full object-cover"
+                  priority={true}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" aria-hidden="true" />
               </div>

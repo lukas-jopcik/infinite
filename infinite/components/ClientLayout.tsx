@@ -10,7 +10,6 @@ export function ClientLayout({
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <a href="#main-content" className="skip-link">Preskočiť na hlavný obsah</a>
       <header role="banner" style={{ position: "sticky", top: 0, zIndex: 50, padding: "1rem 0", backgroundColor: "rgba(0,0,0,0.9)", backdropFilter: "saturate(120%) blur(6px)", borderBottom: "1px solid #111" }}>
         <div className="container" style={{ margin: "0 auto", padding: "0 1rem", maxWidth: "1200px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>

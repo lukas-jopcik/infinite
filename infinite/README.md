@@ -1,101 +1,190 @@
-# Infinite - Nekonečné objavy, každý deň
+# Infinite - NASA Fotka dňa v slovenčine
 
-Moderný web pre NASA Astronomy Picture of the Day (APOD) s minimalistickým dark dizajnom.
+Moderná webová aplikácia pre zobrazovanie NASA Astronomy Picture of the Day (APOD) v slovenčine s optimalizovaným výkonom.
 
-## Funkcie
+## 🚀 Funkcie
 
-- 🌌 Denné zobrazenie NASA APOD s hero sekciou
-- 📱 Plne responzívny dizajn (mobile-first)
-- 🎨 Minimalistický dark theme
-- 🔍 SEO optimalizované s OpenGraph meta tagmi
-- 📄 Automaticky generovaný sitemap a RSS feed
-- ⚡ Next.js 14 s App Router a ISR (Incremental Static Regeneration)
-- 🖼️ Optimalizované obrázky s Next/Image
-- 🎥 Podpora pre video obsah (YouTube/Vimeo)
+- **Optimalizovaný výkon** - Rýchle načítanie stránok s lazy loading a optimalizáciou obrázkov
+- **Responsive dizajn** - Funguje na všetkých zariadeniach
+- **SEO optimalizácia** - Plná podpora pre vyhľadávače
+- **Accessibility** - Podporuje screen readery a klávesnicovú navigáciu
+- **PWA ready** - Pripravené pre Progressive Web App
+- **RSS feed** - Automaticky generovaný RSS feed
+- **Sitemap** - Automaticky generovaný sitemap.xml
 
-## Technológie
+## 🛠️ Technológie
 
-- **Framework:** Next.js 14 (App Router)
-- **Jazyk:** TypeScript
-- **Styling:** Tailwind CSS
-- **Font:** Inter (Google Fonts)
-- **API:** NASA APOD API
-- **Deploy:** Vercel
+- **Next.js 14** - React framework s App Router
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Utility-first CSS framework
+- **WebGL** - Pre Aurora pozadie efekt
+- **Vercel Analytics** - Web analytics
+- **Playwright** - E2E testovanie
 
-## Lokálne spustenie
+## 📦 Inštalácia
 
-1. Klonujte repozitár:
-\`\`\`bash
+```bash
+# Klonovanie repozitára
 git clone <repository-url>
-cd infinite-nasa-apod
-\`\`\`
+cd infinite
 
-2. Nainštalujte závislosti:
-\`\`\`bash
+# Inštalácia závislostí
 npm install
-\`\`\`
 
-3. Vytvorte `.env.local` súbor:
-\`\`\`bash
+# Nastavenie environment premenných
 cp .env.example .env.local
-\`\`\`
+# Upravte .env.local podľa potreby
 
-4. Nastavte environment variables v `.env.local`:
-\`\`\`
-NASA_API_KEY=your_nasa_api_key_here
-SITE_URL=http://localhost:3000
-\`\`\`
-
-5. Spustite development server:
-\`\`\`bash
+# Spustenie development servera
 npm run dev
-\`\`\`
+```
 
-6. Otvorte [http://localhost:3000](http://localhost:3000) v prehliadači.
+## 🔧 Skripty
 
-## Environment Variables
+```bash
+# Development
+npm run dev          # Spustí development server
+npm run build        # Vytvorí production build
+npm run start        # Spustí production server
 
-- `NASA_API_KEY` - Váš NASA API kľúč (získajte na https://api.nasa.gov/)
-- `SITE_URL` - URL vašej stránky (pre SEO a RSS feed)
+# Linting a TypeScript
+npm run lint         # Spustí ESLint
+npm run lint:fix     # Opraví ESLint chyby
+npm run type-check   # Kontrola TypeScript typov
 
-## Deploy na Vercel
+# Testovanie
+npm run test:e2e     # Spustí E2E testy
+npm run test:e2e:ui  # Spustí E2E testy s UI
+npm run test:e2e:headed # Spustí E2E testy s browserom
 
-1. Push kód na GitHub
-2. Importujte projekt do Vercel
-3. Nastavte environment variables v Vercel dashboard
-4. Deploy!
+# Analýza
+npm run analyze      # Analýza bundle veľkosti
+```
 
-## Štruktúra projektu
+## ⚡ Optimalizácie výkonu
 
-\`\`\`
-/app
-  /apod/[date]/page.tsx    # Detail stránky APOD
-  /rss.xml/route.ts        # RSS feed
-  /globals.css             # Globálne štýly
-  /layout.tsx              # Root layout
-  /page.tsx                # Homepage
-  /sitemap.ts              # Sitemap generátor
-  /not-found.tsx           # 404 stránka
-/components
-  ApodCard.tsx             # Karta pre APOD v listingu
-  ApodHero.tsx             # Hero sekcia s najnovším APOD
-  Pagination.tsx           # Paginácia
-  Prose.tsx                # Typografia pre dlhý text
-/lib
-  nasa.ts                  # NASA API helper funkcie
-  date.ts                  # Date utility funkcie
-  seo.ts                   # SEO helper funkcie
-/public
-  robots.txt               # Robots.txt pre SEO
-\`\`\`
+### Obrázky
+- **Next.js Image komponent** - Automatická optimalizácia
+- **WebP/AVIF formáty** - Moderné formáty obrázkov
+- **Lazy loading** - Načítanie obrázkov len keď sú potrebné
+- **Blur placeholder** - Placeholder počas načítavania
 
-## API Endpointy
+### CSS
+- **Tailwind CSS** - Utility-first prístup
+- **CSS-in-JS optimalizácia** - Automatická optimalizácia
+- **Critical CSS** - Inline kritické štýly
 
-- `/` - Homepage s hero a listingom
-- `/apod/[date]` - Detail stránka pre konkrétny dátum (YYYY-MM-DD)
-- `/sitemap.xml` - XML sitemap
-- `/rss.xml` - RSS feed
+### JavaScript
+- **Code splitting** - Automatické rozdelenie kódu
+- **Tree shaking** - Odstránenie nepoužívaného kódu
+- **Bundle analýza** - Monitoring veľkosti bundle
 
-## Licencia
+### API
+- **Caching** - Redis cache pre API volania
+- **Error handling** - Graceful error handling
+- **Retry logic** - Automatické opakovanie neúspešných volaní
 
-MIT License
+## 🎨 Komponenty
+
+### Hlavné komponenty
+- `ApodHero` - Hlavný banner s najnovším APOD
+- `ApodCard` - Karta pre zobrazenie APOD
+- `Aurora` - WebGL pozadie efekt
+- `Analytics` - Google Analytics integrácia
+- `ConsentBanner` - GDPR súhlas banner
+
+### Utility komponenty
+- `Skeleton` - Loading skeleton komponenty
+- `Pagination` - Stránkovanie
+- `DetailNav` - Navigácia medzi článkami
+
+## 📱 Responsive dizajn
+
+- **Mobile First** - Dizajn začínajúci od mobilných zariadení
+- **Breakpoints** - 768px (tablet), 1024px (desktop)
+- **Touch friendly** - Optimalizované pre dotykové zariadenia
+
+## ♿ Accessibility
+
+- **ARIA labels** - Správne označenie pre screen readery
+- **Keyboard navigation** - Plná podpora klávesnicovej navigácie
+- **Focus management** - Správne spravovanie focusu
+- **Color contrast** - Dodržanie kontrastných pomerov
+
+## 🔍 SEO
+
+- **Meta tags** - Kompletné meta tagy
+- **Open Graph** - Social media sharing
+- **Twitter Cards** - Twitter sharing
+- **Structured data** - JSON-LD schema
+- **Sitemap** - Automaticky generovaný sitemap
+- **RSS feed** - RSS feed pre obsah
+
+## 📊 Analytics
+
+- **Google Analytics 4** - Web analytics
+- **Consent management** - GDPR súhlas
+- **Event tracking** - Tracking používateľských akcií
+- **Performance monitoring** - Monitoring výkonu
+
+## 🚀 Deployment
+
+### Vercel (odporúčané)
+```bash
+# Inštalácia Vercel CLI
+npm i -g vercel
+
+# Deployment
+vercel
+
+# Production deployment
+vercel --prod
+```
+
+### Docker
+```bash
+# Build Docker image
+docker build -t infinite .
+
+# Run container
+docker run -p 3000:3000 infinite
+```
+
+## 🧪 Testovanie
+
+```bash
+# E2E testy
+npm run test:e2e
+
+# E2E testy s UI
+npm run test:e2e:ui
+
+# E2E testy s browserom
+npm run test:e2e:headed
+```
+
+## 📈 Monitoring
+
+- **Vercel Analytics** - Web vitals a performance
+- **Google Analytics** - User behavior
+- **Error tracking** - Error monitoring
+- **Performance monitoring** - Core Web Vitals
+
+## 🤝 Contribúcia
+
+1. Fork repozitára
+2. Vytvorte feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit zmeny (`git commit -m 'Add amazing feature'`)
+4. Push do branch (`git push origin feature/amazing-feature`)
+5. Otvorte Pull Request
+
+## 📄 Licencia
+
+Tento projekt je licencovaný pod MIT licenciou - pozrite si [LICENSE](LICENSE) súbor pre detaily.
+
+## 🙏 Podakovanie
+
+- [NASA](https://nasa.gov) - Za APOD API
+- [Next.js](https://nextjs.org) - Za úžasný framework
+- [Vercel](https://vercel.com) - Za hosting a analytics
+- [Tailwind CSS](https://tailwindcss.com) - Za CSS framework

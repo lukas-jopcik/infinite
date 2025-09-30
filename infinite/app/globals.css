@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* Liquid Ether background (inspired by reactbits.dev) */
+/* Liquid Ether background (inspired by reactbits.dev) - Optimized for performance */
 .liquid-ether {
   position: fixed;
   inset: 0;
@@ -9,6 +9,7 @@
   overflow: hidden;
   filter: blur(60px);
   opacity: 0.35;
+  will-change: transform;
 }
 .liquid-ether span {
   position: absolute;
@@ -18,6 +19,7 @@
   border-radius: 50%;
   animation: ether 18s linear infinite;
   mix-blend-mode: screen;
+  will-change: transform;
 }
 .liquid-ether span:nth-child(2) { background: radial-gradient(closest-side, #06b6d4 0%, transparent 70%); animation-duration: 22s; }
 .liquid-ether span:nth-child(3) { background: radial-gradient(closest-side, #22c55e 0%, transparent 70%); animation-duration: 26s; }
@@ -28,11 +30,11 @@
 .liquid-ether span:nth-child(8) { background: radial-gradient(closest-side, #10b981 0%, transparent 70%); animation-duration: 32s; }
 
 @keyframes ether {
-  0% { transform: translate(-10%, -10%) scale(1); }
-  25% { transform: translate(60%, -20%) scale(1.1); }
-  50% { transform: translate(20%, 40%) scale(0.95); }
-  75% { transform: translate(-30%, 10%) scale(1.05); }
-  100% { transform: translate(-10%, -10%) scale(1); }
+  0% { transform: translate3d(-10%, -10%, 0) scale(1); }
+  25% { transform: translate3d(60%, -20%, 0) scale(1.1); }
+  50% { transform: translate3d(20%, 40%, 0) scale(0.95); }
+  75% { transform: translate3d(-30%, 10%, 0) scale(1.05); }
+  100% { transform: translate3d(-10%, -10%, 0) scale(1); }
 }
 
 :root {
@@ -225,7 +227,7 @@ body {
   color: oklch(0.439 0 0);
 }
 
-/* Card hover effects */
+/* Card hover effects - Optimized for performance */
 .apod-card {
   border: 1px solid oklch(0.922 0 0);
   border-radius: 0.625rem;
@@ -235,12 +237,29 @@ body {
   display: block;
   text-decoration: none;
   color: inherit;
+  will-change: transform, background-color, box-shadow;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .apod-card:hover {
   background-color: rgba(0, 0, 0, 0.4);
   transform: scale(1.02);
   box-shadow: 0 10px 25px rgba(255, 255, 255, 0.05);
+}
+
+/* Card content area with fixed height */
+.apod-card .p-4 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+}
+
+.apod-card h3 {
+  flex: 1;
+  min-height: 2.5rem; /* Ensure space for 2 lines */
 }
 
 /* Enhanced focus states for accessibility */
@@ -273,10 +292,12 @@ body {
   text-decoration: none;
   border-radius: 4px;
   z-index: 1000;
+  display: none;
 }
 
 .skip-link:focus {
   top: 6px;
+  display: block;
 }
 
 /* Improved focus states for interactive elements */
@@ -318,7 +339,7 @@ select:focus-visible {
   overflow: hidden;
 }
 
-/* Enhanced button hover states */
+/* Enhanced button hover states - Optimized for performance */
 .btn-primary {
   background-color: white;
   color: black;
@@ -331,6 +352,7 @@ select:focus-visible {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
+  will-change: transform, background-color;
 }
 
 .btn-primary:hover {

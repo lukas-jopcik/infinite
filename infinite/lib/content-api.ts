@@ -43,7 +43,13 @@ export async function getLatestApodsFromApi(limit = 12): Promise<Apod[]> {
   const base = process.env.NEXT_PUBLIC_API_BASE || "https://l9lm0zrzyl.execute-api.eu-central-1.amazonaws.com/prod"
   const url = `${base}/api/latest?limit=${encodeURIComponent(String(limit))}`
 
-  const res = await fetch(url, { next: { revalidate: 300 } })
+  const res = await fetch(url, { 
+    next: { revalidate: 300 },
+    headers: {
+      'Accept': 'application/json',
+      'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
+    },
+  })
   if (!res.ok) {
     throw new Error(`Content API error: ${res.status}`)
   }
@@ -60,7 +66,13 @@ export async function getByDateFromApi(date: string): Promise<Apod | null> {
   const base = process.env.NEXT_PUBLIC_API_BASE || "https://l9lm0zrzyl.execute-api.eu-central-1.amazonaws.com/prod"
   const url = `${base}/api/latest?date=${encodeURIComponent(date)}&limit=1`
 
-  const res = await fetch(url, { next: { revalidate: 300 } })
+  const res = await fetch(url, { 
+    next: { revalidate: 300 },
+    headers: {
+      'Accept': 'application/json',
+      'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
+    },
+  })
   if (!res.ok) return null
   const json = (await res.json()) as ApiLatestResponse
   const item = Array.isArray(json.items) && json.items.length > 0 ? json.items[0] : undefined

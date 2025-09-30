@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { formatDate } from "@/lib/date"
@@ -9,6 +8,7 @@ import { getByDateFromApi, getPreviousFromApi, getNeighborsFromApi } from "@/lib
 import { ApodCard } from "@/components/ApodCard"
 import SourceLink from "@/components/SourceLink"
 import DetailNav from "@/components/DetailNav"
+import { OptimizedImage } from "@/components/OptimizedImage"
 import { trackEvent } from "@/lib/analytics"
 
 interface ApodDetailPageProps {
@@ -63,13 +63,11 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
         <div className="mb-8">
           {apod.media_type === "image" ? (
             <figure className="relative aspect-video rounded-lg overflow-hidden">
-              <Image
+              <OptimizedImage
                 src={apod.hdurl || apod.url}
                 alt={apod.title}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 768px) 100vw, 80vw"
+                className="w-full h-full object-cover"
+                priority={true}
               />
               <figcaption className="sr-only">{apod.title}</figcaption>
             </figure>
