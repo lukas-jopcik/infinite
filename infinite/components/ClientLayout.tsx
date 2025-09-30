@@ -10,10 +10,11 @@ export function ClientLayout({
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <header style={{ position: "sticky", top: 0, zIndex: 50, padding: "1rem 0", backgroundColor: "rgba(0,0,0,0.9)", backdropFilter: "saturate(120%) blur(6px)", borderBottom: "1px solid #111" }}>
+      <a href="#main-content" className="skip-link">Preskočiť na hlavný obsah</a>
+      <header role="banner" style={{ position: "sticky", top: 0, zIndex: 50, padding: "1rem 0", backgroundColor: "rgba(0,0,0,0.9)", backdropFilter: "saturate(120%) blur(6px)", borderBottom: "1px solid #111" }}>
         <div className="container" style={{ margin: "0 auto", padding: "0 1rem", maxWidth: "1200px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
+            <Link href="/" style={{ textDecoration: "none", color: "inherit" }} aria-label="Infinite - Domovská stránka">
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <h1
                   style={{
@@ -32,7 +33,7 @@ export function ClientLayout({
               </div>
             </Link>
 
-            <nav>
+            <nav role="navigation" aria-label="Hlavná navigácia">
               <ul style={{ display: "flex", listStyle: "none", margin: 0, padding: 0, gap: "2rem" }}>
                 <li>
                   <Link
@@ -56,6 +57,7 @@ export function ClientLayout({
                       e.currentTarget.style.backgroundColor = "transparent"
                       e.currentTarget.style.borderColor = "#222"
                     }}
+                    aria-current="page"
                   >
                     NASA fotka dňa
                   </Link>
@@ -66,9 +68,9 @@ export function ClientLayout({
         </div>
       </header>
 
-      <main style={{ flex: 1 }}>{children}</main>
+      <main id="main-content" role="main" style={{ flex: 1 }}>{children}</main>
 
-      <footer style={{ borderTop: "1px solid #1f1f1f", padding: "2rem 0", marginTop: "4rem" }}>
+      <footer role="contentinfo" style={{ borderTop: "1px solid #1f1f1f", padding: "2rem 0", marginTop: "4rem" }}>
         <div
           className="container"
           style={{
@@ -91,6 +93,7 @@ export function ClientLayout({
                   onClick={() => (window as any)?.openConsent?.()}
                   className="btn-secondary"
                   style={{ padding: "0.4rem 0.75rem", fontSize: "0.8rem" }}
+                  aria-label="Zmeniť nastavenia súhlasu pre cookies a analýzu"
                 >
                   Zmeniť nastavenia súhlasu
                 </button>

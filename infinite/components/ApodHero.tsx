@@ -24,7 +24,7 @@ export function ApodHero({ apod }: ApodHeroProps) {
   const tags = getTags(apod.title, apod.explanation)
 
   return (
-    <section className="py-12 lg:py-20">
+    <section className="py-12 lg:py-20" aria-labelledby="hero-heading">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div className="order-2 lg:order-1 space-y-6">
@@ -32,24 +32,25 @@ export function ApodHero({ apod }: ApodHeroProps) {
               <span className="inline-block bg-black/40 border border-white/5 text-white/90 text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-md mb-3 backdrop-blur-sm">
                 Dnes objavujeme
               </span>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance leading-tight">
+              <h1 id="hero-heading" className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-balance leading-tight">
                 {apod.title}
               </h1>
               <div className="flex items-center gap-3 mb-4">
-                <span className="inline-flex items-center bg-black/30 border border-white/5 text-gray-200/90 text-xs px-3 py-1 rounded-md backdrop-blur-sm">
+                <time dateTime={apod.date} className="inline-flex items-center bg-black/30 border border-white/5 text-gray-200/90 text-xs px-3 py-1 rounded-md backdrop-blur-sm">
                   {formatDate(apod.date)}
-                </span>
-                <span className="inline-flex items-center bg-black/30 border border-white/5 text-gray-200/90 text-xs px-3 py-1 rounded-md backdrop-blur-sm">
+                </time>
+                <span className="inline-flex items-center bg-black/30 border border-white/5 text-gray-200/90 text-xs px-3 py-1 rounded-md backdrop-blur-sm" aria-label={`Čas čítania: ${readingTime} minút`}>
                   {readingTime} min čítania
                 </span>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-4" role="list" aria-label="Témy článku">
               {tags.map((tag) => (
                 <span
                   key={tag}
                   className="px-3 py-1 text-xs bg-gray-800 text-gray-300 rounded-full border border-gray-700"
+                  role="listitem"
                 >
                   {tag}
                 </span>
@@ -62,9 +63,10 @@ export function ApodHero({ apod }: ApodHeroProps) {
               href={`/apod/${apod.date}`}
               className="btn-primary inline-flex items-center px-8 py-4 text-lg focus-visible"
               onClick={() => trackEvent('cta_read_more', { category: 'cta', label: apod.date })}
+              aria-label={`Prečítať celý článok: ${apod.title}`}
             >
               Čítať ďalej
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
@@ -82,7 +84,7 @@ export function ApodHero({ apod }: ApodHeroProps) {
                   fetchPriority="high"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" aria-hidden="true" />
               </div>
             ) : (
               <div className="aspect-video rounded-xl overflow-hidden shadow-2xl shadow-black/50">
@@ -91,6 +93,7 @@ export function ApodHero({ apod }: ApodHeroProps) {
                   title={apod.title}
                   className="w-full h-full"
                   allowFullScreen
+                  aria-label={`Video: ${apod.title}`}
                 />
               </div>
             )}

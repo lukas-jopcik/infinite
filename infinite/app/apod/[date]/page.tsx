@@ -37,17 +37,19 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
   return (
     <article className="py-12">
       <div className="container mx-auto px-4 max-w-4xl">
-        <Link href="/" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-8">
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Späť na hlavnú stránku
-        </Link>
+        <nav aria-label="Breadcrumb">
+          <Link href="/" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-8" aria-label="Späť na hlavnú stránku">
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Späť na hlavnú stránku
+          </Link>
+        </nav>
 
         <header className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 text-balance">{apod.title}</h1>
           <div className="flex items-center gap-3 text-gray-400 mb-4">
-            <p className="text-lg">{formatDate(apod.date)}</p>
+            <time dateTime={apod.date} className="text-lg">{formatDate(apod.date)}</time>
             <span
               className="inline-flex items-center bg-black/30 border border-white/5 text-gray-200/90 text-xs px-2.5 py-0.5 rounded-md"
               aria-label="Článok generovaný AI"
@@ -60,7 +62,7 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
 
         <div className="mb-8">
           {apod.media_type === "image" ? (
-            <div className="relative aspect-video rounded-lg overflow-hidden">
+            <figure className="relative aspect-video rounded-lg overflow-hidden">
               <Image
                 src={apod.hdurl || apod.url}
                 alt={apod.title}
@@ -69,7 +71,8 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
                 priority
                 sizes="(max-width: 768px) 100vw, 80vw"
               />
-            </div>
+              <figcaption className="sr-only">{apod.title}</figcaption>
+            </figure>
           ) : (
             <div className="aspect-video rounded-lg overflow-hidden">
               <iframe
@@ -77,12 +80,15 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
                 title={apod.title}
                 className="w-full h-full"
                 allowFullScreen
+                aria-label={`Video: ${apod.title}`}
               />
             </div>
           )}
         </div>
 
-        <ArticleContent className="mb-8" content={apod.explanation} />
+        <div className="mb-8">
+          <ArticleContent content={apod.explanation} />
+        </div>
 
         {/* JSON-LD Article schema */}
         <script
@@ -103,28 +109,32 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
           }}
         />
 
-        <div className="border-t border-[#1f1f1f] pt-6">
+        <footer className="border-t border-[#1f1f1f] pt-6">
           <p className="text-sm text-gray-400">
             Zdroj:{" "}
             <SourceLink href={`https://apod.nasa.gov/apod/ap${apod.date.replace(/-/g, "").slice(2)}.html`} />
           </p>
-        </div>
+        </footer>
 
         {previous.length > 0 && (
-          <section className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">Predchádzajúce články</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <section className="mt-12" aria-labelledby="related-heading">
+            <h2 id="related-heading" className="text-2xl font-bold mb-6">Predchádzajúce články</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
               {previous.map((p) => (
-                <ApodCard key={p.date} apod={p} />
+                <div key={p.date} role="listitem">
+                  <ApodCard apod={p} />
+                </div>
               ))}
             </div>
           </section>
         )}
 
-        <DetailNav
-          newerHref={newer ? `/apod/${newer.date}` : undefined}
-          olderHref={older ? `/apod/${older.date}` : undefined}
-        />
+        <nav aria-label="Navigácia medzi článkami">
+          <DetailNav
+            newerHref={newer ? `/apod/${newer.date}` : undefined}
+            olderHref={older ? `/apod/${older.date}` : undefined}
+          />
+        </nav>
       </div>
     </article>
   )

@@ -34,7 +34,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         <ApodHero apod={latestApod} />
       ) : (
         page === 1 && (
-          <section className="py-12 lg:py-20 relative z-10">
+          <section className="py-12 lg:py-20 relative z-10" role="alert" aria-live="polite">
             <div className="container mx-auto px-4">
               <div className="bg-black/60 border border-white/10 rounded-lg p-6 text-center">
                 <h1 className="text-2xl font-bold mb-2">Dáta sa nepodarilo načítať</h1>
@@ -45,14 +45,16 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         )
       )}
 
-      <section className="py-12">
+      <section className="py-12" aria-labelledby="articles-heading">
         <div className="container mx-auto px-4">
-          {page === 1 && <h2 className="text-2xl font-bold mb-8 text-center">Predchádzajúce objavy</h2>}
+          {page === 1 && <h2 id="articles-heading" className="text-2xl font-bold mb-8 text-center">Predchádzajúce objavy</h2>}
 
           {listingApods.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list" aria-label="Zoznam článkov">
               {listingApods.map((apod) => (
-                <ApodCard key={apod.date} apod={apod} />
+                <div key={apod.date} role="listitem">
+                  <ApodCard apod={apod} />
+                </div>
               ))}
             </div>
           ) : (
@@ -61,7 +63,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
           )}
 
-          <Pagination currentPage={page} hasNextPage={hasNextPage} hasPrevPage={hasPrevPage} />
+          <nav aria-label="Stránkovanie">
+            <Pagination currentPage={page} hasNextPage={hasNextPage} hasPrevPage={hasPrevPage} />
+          </nav>
         </div>
       </section>
     </div>

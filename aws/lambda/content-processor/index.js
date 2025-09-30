@@ -21,6 +21,7 @@ const s3 = new AWS.S3();
 const DYNAMODB_TABLE_NAME = process.env.DYNAMODB_TABLE_NAME || 'infinite-nasa-apod-content';
 const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME || 'infinite-nasa-apod-images';
 const REGION = process.env.REGION || 'eu-central-1';
+const CLOUDFRONT_DOMAIN = process.env.CLOUDFRONT_DOMAIN || 'd2ydyf9w4v170.cloudfront.net';
 const OPENAI_SECRET_NAME = process.env.OPENAI_SECRET_NAME || process.env.OPENAI_SECRET_ID;
 const OPENAI_ORG = process.env.OPENAI_ORG || process.env.OPENAI_ORGANIZATION;
 const OPENAI_PROJECT = process.env.OPENAI_PROJECT || process.env.OPENAI_PROJECT_ID;
@@ -579,7 +580,7 @@ function buildCacheInfo(bucket, key, contentType, originalUrl) {
     return {
         bucket,
         key,
-        url: `https://${bucket}.s3.amazonaws.com/${key}`,
+        url: `https://${CLOUDFRONT_DOMAIN}/${key}`,
         contentType,
         originalUrl
     };
