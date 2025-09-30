@@ -1,0 +1,82 @@
+# Infinite NASA APOD - Production Environment Configuration
+# Project: infinite-nasa-apod-slk
+# Region: Europe (Frankfurt) - eu-central-1
+# Optimized for: Slovakia users
+
+project:
+  name: "infinite-nasa-apod-slk"
+  environment: "production"
+  region: "eu-central-1"
+  description: "NASA APOD Slovak Enhancement - Production Environment"
+
+aws:
+  region: "eu-central-1"
+  profile: "infinite-nasa-apod-prod"
+  
+  # Services configuration
+  services:
+    lambda:
+      runtime: "nodejs18.x"
+      timeout: 60
+      memory: 1024
+      environment: "production"
+    
+    dynamodb:
+      billing_mode: "PROVISIONED"
+      read_capacity: 5
+      write_capacity: 5
+      point_in_time_recovery: true
+      environment: "production"
+    
+    s3:
+      bucket_prefix: "infinite-nasa-apod-prod"
+      versioning: true
+      environment: "production"
+    
+    cloudfront:
+      enabled: true
+      environment: "production"
+
+  # IAM Configuration
+  iam:
+    user_name: "infinite-nasa-apod-prod-user"
+    role_prefix: "infinite-nasa-apod-prod"
+    
+  # Billing and Monitoring
+  billing:
+    alerts_enabled: true
+    budget_limit: 200  # USD per month for production
+    alert_thresholds: [50, 75, 90, 100]  # Percentage of budget
+    
+  # Security
+  security:
+    encryption_at_rest: true
+    encryption_in_transit: true
+    gdpr_compliance: true  # EU region compliance
+
+# External APIs
+external_apis:
+  nasa_apod:
+    base_url: "https://api.nasa.gov/planetary/apod"
+    api_key: "${NASA_API_KEY}"
+    rss_feed: "https://apod.com/feed.rss"
+  
+  ai_service:
+    provider: "openai"
+    model: "gpt-4"
+    api_key: "${OPENAI_API_KEY}"
+
+# Content Configuration
+content:
+  language: "sk"  # Slovak
+  default_article_length: 1000  # words
+  seo_keywords_count: 15
+  image_optimization: true
+  caching_ttl: 3600  # 1 hour in seconds for production
+
+# Performance
+performance:
+  cdn_enabled: true
+  image_compression: true
+  lazy_loading: true
+  cache_strategy: "balanced"

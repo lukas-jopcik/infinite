@@ -1,0 +1,80 @@
+# Infinite NASA APOD - Development Environment Configuration
+# Project: infinite-nasa-apod-slk
+# Region: Europe (Frankfurt) - eu-central-1
+# Optimized for: Slovakia users
+
+project:
+  name: "infinite-nasa-apod-slk"
+  environment: "development"
+  region: "eu-central-1"
+  description: "NASA APOD Slovak Enhancement - Development Environment"
+
+aws:
+  region: "eu-central-1"
+  profile: "infinite-nasa-apod-dev"
+  
+  # Services configuration
+  services:
+    lambda:
+      runtime: "nodejs18.x"
+      timeout: 30
+      memory: 512
+      environment: "development"
+    
+    dynamodb:
+      billing_mode: "PAY_PER_REQUEST"
+      point_in_time_recovery: true
+      environment: "development"
+    
+    s3:
+      bucket_prefix: "infinite-nasa-apod-dev"
+      versioning: true
+      environment: "development"
+    
+    cloudfront:
+      enabled: false  # Will be enabled in production
+      environment: "development"
+
+  # IAM Configuration
+  iam:
+    user_name: "infinite-nasa-apod-dev-user"
+    role_prefix: "infinite-nasa-apod-dev"
+    
+  # Billing and Monitoring
+  billing:
+    alerts_enabled: true
+    budget_limit: 50  # USD per month for development
+    alert_thresholds: [25, 50, 75, 90]  # Percentage of budget
+    
+  # Security
+  security:
+    encryption_at_rest: true
+    encryption_in_transit: true
+    gdpr_compliance: true  # EU region compliance
+
+# External APIs
+external_apis:
+  nasa_apod:
+    base_url: "https://api.nasa.gov/planetary/apod"
+    api_key: "${NASA_API_KEY}"
+    rss_feed: "https://apod.com/feed.rss"
+  
+  ai_service:
+    provider: "openai"
+    model: "gpt-4"
+    api_key: "${OPENAI_API_KEY}"
+
+# Content Configuration
+content:
+  language: "sk"  # Slovak
+  default_article_length: 800  # words
+  seo_keywords_count: 10
+  image_optimization: true
+  caching_ttl: 86400  # 24 hours in seconds
+
+# Performance
+performance:
+  cdn_enabled: false  # Will be enabled in production
+  image_compression: true
+  lazy_loading: true
+  cache_strategy: "aggressive"
