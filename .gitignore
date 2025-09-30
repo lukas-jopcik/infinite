@@ -1,0 +1,22 @@
+# General
+.DS_Store
+.env
+.env.*
+*.log
+coverage/
+dist/
+
+# Next.js
+.next/
+out/
+
+# Node
+node_modules/
+**/node_modules/
+
+# Lambda build artifacts
+aws/lambda/*/*.zip
+aws/lambda/*/node_modules/
+
+# OS
+Thumbs.db
