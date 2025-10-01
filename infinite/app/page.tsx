@@ -84,7 +84,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
 export async function generateMetadata() {
   const title = "Infinite / Nekonečné objavy"
-  const description = "Denné objavy vesmíru – preklady APOD, dlhšie články v slovenčine a obrázky v kvalite."
+  const description = "Objavujte nové veci každý deň."
   const base = process.env.NEXT_PUBLIC_SITE_URL || "https://infinite.example"
   const ogImage = `${base}/og.png`
   return {
