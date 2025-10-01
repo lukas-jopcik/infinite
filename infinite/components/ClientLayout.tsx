@@ -58,7 +58,7 @@ export function ClientLayout({
                     }}
                     aria-current="page"
                   >
-                    NASA fotka dňa
+                    Objav dňa
                   </Link>
                 </li>
               </ul>

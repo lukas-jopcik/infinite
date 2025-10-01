@@ -8,12 +8,12 @@ type ApiLatestResponse = {
 type ApiItem = {
   date: string
   titleSk?: string
-  originalTitle?: string
   slovakArticle?: string
-  originalExplanation?: string
   imageUrl?: string
   hdImageUrl?: string
   mediaType?: string
+  seoKeywords?: string[]
+  contentQuality?: number
   cachedImage?: {
     url?: string
     bucket?: string
@@ -24,8 +24,8 @@ type ApiItem = {
 }
 
 function mapApiItemToApod(item: ApiItem): Apod {
-  const title = item.titleSk?.trim() || item.originalTitle?.trim() || ""
-  const explanation = item.slovakArticle?.trim() || item.originalExplanation?.trim() || ""
+  const title = item.titleSk?.trim() || ""
+  const explanation = item.slovakArticle?.trim() || ""
   const url = item.cachedImage?.url || item.hdImageUrl || item.imageUrl || ""
   const media_type = (item.mediaType as Apod["media_type"]) || "image"
 

@@ -83,7 +83,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 }
 
 export async function generateMetadata() {
-  const title = "Infinite | NASA Fotka dňa v slovenčine"
+  const title = "Infinite / Nekonečné objavy"
   const description = "Denné objavy vesmíru – preklady APOD, dlhšie články v slovenčine a obrázky v kvalite."
   const base = process.env.NEXT_PUBLIC_SITE_URL || "https://infinite.example"
   const ogImage = `${base}/og.png`
