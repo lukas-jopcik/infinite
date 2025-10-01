@@ -80,6 +80,8 @@ export function ApodHero({ apod }: ApodHeroProps) {
                   alt={apod.title}
                   className="w-full h-full object-cover"
                   priority={true}
+                  fill={true}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" aria-hidden="true" />
               </div>

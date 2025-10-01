@@ -28,6 +28,8 @@ export function ApodCard({ apod }: ApodCardProps) {
               alt={apod.title}
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               loading="lazy"
+              fill={true}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">

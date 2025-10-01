@@ -6,7 +6,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    unoptimized: true,
+    unoptimized: false,
     remotePatterns: [
       {
         protocol: 'https',
@@ -35,6 +35,18 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'infinite-nasa-apod-dev-images-349660737637.s3.eu-central-1.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'infinite-nasa-apod-dev-images-349660737637.s3.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'd2ydyf9w4v170.cloudfront.net',
         port: '',
         pathname: '/**',
       },

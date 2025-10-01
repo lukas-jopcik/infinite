@@ -5,6 +5,7 @@ import dynamic from "next/dynamic"
 import { ApodCard } from "@/components/ApodCard"
 import { Pagination } from "@/components/Pagination"
 import { AdSenseBanner } from "@/components/AdSense"
+import Head from "next/head"
 
 // Lazy load Aurora with better loading state
 const Aurora = dynamic(() => import("@/components/backgrounds/Aurora"), { 
@@ -38,6 +39,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <div className="relative">
+      {latestApod && latestApod.url && (
+        <Head>
+          <link rel="preload" as="image" href={latestApod.hdurl || latestApod.url} />
+        </Head>
+      )}
       <div className="fixed inset-0 -z-10">
         <Aurora colorStops={["#3A29FF", "#3A29FF", "#3A29FF"]} amplitude={0.2} blend={1} />
       </div>
