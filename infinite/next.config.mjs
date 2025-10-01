@@ -38,6 +38,18 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'pagead2.googlesyndication.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'googleads.g.doubleclick.net',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   experimental: {

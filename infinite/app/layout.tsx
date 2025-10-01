@@ -47,6 +47,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="sk" className={inter.variable}>
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7836061933361865"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body>
         <ClientLayout>{children}</ClientLayout>
         <Suspense fallback={null}>

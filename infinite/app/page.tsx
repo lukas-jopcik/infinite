@@ -4,6 +4,7 @@ import { ApodHero } from "@/components/ApodHero"
 import dynamic from "next/dynamic"
 import { ApodCard } from "@/components/ApodCard"
 import { Pagination } from "@/components/Pagination"
+import { AdSenseBanner } from "@/components/AdSense"
 
 // Lazy load Aurora with better loading state
 const Aurora = dynamic(() => import("@/components/backgrounds/Aurora"), { 
@@ -57,6 +58,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
       <section className="py-12" aria-labelledby="articles-heading">
         <div className="container mx-auto px-4">
+          {/* AdSense Banner - Above heading for better visibility */}
+          {page === 1 && (
+            <div className="mb-8 border border-white/20 rounded-lg p-4 bg-black/20">
+              <AdSenseBanner />
+            </div>
+          )}
+          
           {page === 1 && <h2 id="articles-heading" className="text-2xl font-bold mb-8 text-center">Predchádzajúce objavy</h2>}
 
           {listingApods.length > 0 ? (
