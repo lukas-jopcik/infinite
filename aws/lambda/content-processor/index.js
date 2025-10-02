@@ -165,6 +165,238 @@ async function generateSlovakTitle(englishTitle, englishExplanation) {
 	});
 }
 
+/**
+ * Validate headline against quality requirements
+ * @param {string} headline - Headline to validate
+ * @param {string} language - 'en' or 'sk'
+ * @returns {object} - {valid: boolean, reason?: string, issues: string[]}
+ */
+function validateHeadline(headline, language = 'sk') {
+	const issues = [];
+	
+	// Banned superlatives - comprehensive list with case-insensitive matching
+	const bannedWords = {
+		en: /\b(amazing|stunning|unbelievable|incredible|breathtaking|spectacular|phenomenal|extraordinary|astonishing|astounding|remarkable|fabulous|magnificent|marvelous|sensational|mind-blowing|jaw-dropping)\b/gi,
+		// Slovak - match root + any ending (no \b as it doesn't work with accented chars)
+		sk: /([úÚ]žasn|[oO]hromuj|[nN]euveriteľn|[nN]eskutočn|[fF]antastick|[vV]eľkolep|[sS]enzačn|[pP]ôsobiv|[dD]ych\s*berc|[oO]húruj|[oO]bdivuhodn|[vV]ýnimoč|[mM]imoriadn)\w*/g
+	};
+	
+	// Check for banned words
+	const bannedPattern = bannedWords[language] || bannedWords.sk;
+	const matches = headline.match(bannedPattern);
+	if (matches && matches.length > 0) {
+		issues.push(`Contains banned superlatives: ${matches.join(', ')}`);
+	}
+	
+	// Word count validation (5-9 words for flexibility)
+	const words = headline.trim().split(/\s+/).filter(Boolean);
+	const wordCount = words.length;
+	if (wordCount < 5) {
+		issues.push(`Too short: ${wordCount} words (minimum 5)`);
+	} else if (wordCount > 9) {
+		issues.push(`Too long: ${wordCount} words (maximum 9)`);
+	}
+	
+	// Check for repetitive words (same word used twice)
+	const wordLower = words.map(w => w.toLowerCase().replace(/[?!.,]/g, ''));
+	const duplicates = wordLower.filter((word, idx) => wordLower.indexOf(word) !== idx && word.length > 3);
+	if (duplicates.length > 0) {
+		issues.push(`Repetitive words: ${duplicates.join(', ')}`);
+	}
+	
+	// Check minimum length
+	if (headline.trim().length < 10) {
+		issues.push('Headline too short (less than 10 characters)');
+	}
+	
+	return {
+		valid: issues.length === 0,
+		issues: issues,
+		wordCount: wordCount
+	};
+}
+
+/**
+ * Generate curiosity-driven headline for APOD article
+ * @param {string} slovakTitle - Slovak title
+ * @param {string} slovakArticle - Slovak article content
+ * @param {number} maxRetries - Maximum retry attempts
+ * @returns {Promise<object>} - {slovak: string, english: string, attempts: number}
+ */
+async function generateCuriosityHeadline(slovakTitle, slovakArticle, maxRetries = 3) {
+	const apiKey = await getOpenAIKey();
+	if (!apiKey) throw new Error('OPENAI_API_KEY not set');
+	
+	// Truncate article for prompt (first 800 chars to save tokens)
+	const articleExcerpt = slovakArticle ? slovakArticle.substring(0, 800) : '';
+	
+	const prompt = `Your task is to create a headline for an article describing a NASA photo.
+First, carefully read the provided article text and identify its main idea or unique feature. Then generate 1 original headline.
+
+Headline requirements:
+- Length: 5–9 words (ideal: 6-7 words)
+- Language: simple and clear, understandable even for readers without astronomy knowledge
+- Style: engaging and naturally click-worthy, but not tabloid-like
+- Tone: curiosity-driven - spark questions and interest
+- Uniqueness: highlight the most interesting angle
+
+Do NOT use these words (STRICTLY FORBIDDEN):
+- English: amazing, stunning, unbelievable, incredible, breathtaking, spectacular, phenomenal, extraordinary, astonishing, astounding, remarkable, fabulous, magnificent, marvelous, sensational, mind-blowing, jaw-dropping
+- Slovak: úžasný, ohromujúci, neuveriteľný, neskutočný, fantastický, veľkolepý, senzačný, pôsobivý, dych berúci, ohúrujúci, obdivuhodný, výnimočný, mimoriadny
+
+Do NOT use:
+- Repetitive words within the same headline
+- Overly technical or complex terms
+
+Goal: the headline should spark curiosity, encourage clicking, and directly relate to the article and photo.
+
+Output format (IMPORTANT - exactly 2 lines):
+Line 1: English headline
+Line 2: Slovak translation
+
+Article text:
+${articleExcerpt}
+
+Generate the headline now:`;
+
+	for (let attempt = 1; attempt <= maxRetries; attempt++) {
+		try {
+			const payload = JSON.stringify({
+				model: 'gpt-4o-mini',
+				messages: [
+					{ 
+						role: 'system', 
+						content: 'You are a headline writer specializing in science communication. Create concise, curiosity-driven headlines that make readers want to learn more. Never use superlatives.' 
+					},
+					{ role: 'user', content: prompt }
+				],
+				temperature: 0.7,
+				max_tokens: 100
+			});
+			
+			const options = {
+				hostname: 'api.openai.com',
+				path: '/v1/chat/completions',
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${apiKey}`
+				}
+			};
+			
+			const result = await new Promise((resolve, reject) => {
+				const req = https.request(options, (res) => {
+					let data = '';
+					res.on('data', (d) => (data += d));
+					res.on('end', () => {
+						if (res.statusCode >= 200 && res.statusCode < 300) {
+							try {
+								const json = JSON.parse(data);
+								const content = json.choices?.[0]?.message?.content || '';
+								resolve(content);
+							} catch (e) {
+								reject(e);
+							}
+						} else {
+							reject(new Error(`OpenAI HTTP ${res.statusCode}: ${data}`));
+						}
+					});
+				});
+				req.on('error', reject);
+				req.write(payload);
+				req.end();
+			});
+			
+			// Parse result (expecting 2 lines: English, Slovak)
+			const lines = result.trim().split('\n').filter(l => l.trim());
+			if (lines.length < 2) {
+				console.warn(`Attempt ${attempt}: Invalid format (expected 2 lines, got ${lines.length})`);
+				if (attempt < maxRetries) continue;
+				// Fallback to title
+				return {
+					slovak: slovakTitle,
+					english: slovakTitle,
+					attempts: attempt,
+					fallback: true
+				};
+			}
+			
+			const english = lines[0].trim().replace(/^["']|["']$/g, '');
+			const slovak = lines[1].trim().replace(/^["']|["']$/g, '');
+			
+			// Validate both headlines
+			const validationEN = validateHeadline(english, 'en');
+			const validationSK = validateHeadline(slovak, 'sk');
+			
+			if (validationEN.valid && validationSK.valid) {
+				console.log(`✅ Headline generated successfully (attempt ${attempt})`);
+				console.log(`   EN: ${english}`);
+				console.log(`   SK: ${slovak}`);
+				return {
+					slovak: slovak,
+					english: english,
+					attempts: attempt,
+					validation: { en: validationEN, sk: validationSK }
+				};
+			} else {
+				// Log validation issues
+				console.warn(`Attempt ${attempt}: Validation failed`);
+				if (!validationEN.valid) {
+					console.warn(`   EN issues: ${validationEN.issues.join(', ')}`);
+				}
+				if (!validationSK.valid) {
+					console.warn(`   SK issues: ${validationSK.issues.join(', ')}`);
+				}
+				
+				// If last attempt, return best effort or fallback
+				if (attempt === maxRetries) {
+					// Use the one with fewer issues
+					if (validationSK.issues.length <= validationEN.issues.length) {
+						console.warn('Using Slovak headline despite validation issues');
+						return {
+							slovak: slovak,
+							english: english,
+							attempts: attempt,
+							validation: { en: validationEN, sk: validationSK },
+							hasIssues: true
+						};
+					} else {
+						console.warn('Falling back to original title');
+						return {
+							slovak: slovakTitle,
+							english: slovakTitle,
+							attempts: attempt,
+							fallback: true
+						};
+					}
+				}
+				// Retry
+				console.log(`   Retrying... (${attempt}/${maxRetries})`);
+			}
+		} catch (err) {
+			console.error(`Attempt ${attempt} error:`, err.message);
+			if (attempt === maxRetries) {
+				console.warn('All attempts failed, using fallback');
+				return {
+					slovak: slovakTitle,
+					english: slovakTitle,
+					attempts: attempt,
+					fallback: true,
+					error: err.message
+				};
+			}
+		}
+	}
+	
+	// Fallback (should not reach here)
+	return {
+		slovak: slovakTitle,
+		english: slovakTitle,
+		attempts: maxRetries,
+		fallback: true
+	};
+}
+
 async function generateSeoKeywords(slovakTitle, slovakArticle) {
 	const apiKey = await getOpenAIKey();
 	if (!apiKey) throw new Error('OPENAI_API_KEY not set');
@@ -425,6 +657,26 @@ async function processAPODContent(date, nasaData) {
     }
     if (quality < 0) quality = 0;
 
+    // Generate curiosity-driven headline
+    let headline = slovakTitle;
+    let headlineEN = nasaData.title;
+    try {
+        console.log('🎯 Generating curiosity-driven headline...');
+        const headlineResult = await generateCuriosityHeadline(slovakTitle, slovakArticle, 3);
+        headline = headlineResult.slovak;
+        headlineEN = headlineResult.english;
+        
+        if (headlineResult.fallback) {
+            console.warn('⚠️  Using fallback headline (generation failed)');
+        } else if (headlineResult.hasIssues) {
+            console.warn(`⚠️  Headline has validation issues but was used (attempts: ${headlineResult.attempts})`);
+        } else {
+            console.log(`✅ Headline generated successfully (attempts: ${headlineResult.attempts})`);
+        }
+    } catch (err) {
+        console.warn('Headline generation error, using fallback:', err.message);
+    }
+
     const processedContent = {
         pk: 'LATEST',
         date: date,
@@ -436,6 +688,8 @@ async function processAPODContent(date, nasaData) {
         copyright: nasaData.copyright || 'NASA',
         slovakTitle: slovakTitle,
         slovakArticle: slovakArticle,
+        headline: headline,           // New single curiosity-driven headline
+        headlineEN: headlineEN,       // English version for reference
         seoKeywords: seoKeywords,
         contentQuality: quality,
         qualityIssues: issues,

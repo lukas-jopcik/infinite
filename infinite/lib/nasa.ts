@@ -6,6 +6,7 @@ export type Apod = {
   hdurl?: string
   media_type: "image" | "video"
   copyright?: string
+  headlineEN?: string // English version of the curiosity-driven headline
 }
 
 const NASA_API_KEY = process.env.NASA_API_KEY || "DEMO_KEY"

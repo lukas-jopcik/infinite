@@ -96,6 +96,8 @@ function marshalItem(it) {
   return {
     date: it.date?.S,
     titleSk: it.slovakTitle?.S,
+    headline: it.headline?.S,           // New curiosity-driven Slovak headline
+    headlineEN: it.headlineEN?.S,       // New curiosity-driven English headline
     imageUrl: it.imageUrl?.S,
     hdImageUrl: it.hdImageUrl?.S,
     cachedImage: it.cachedImage?.M ? {

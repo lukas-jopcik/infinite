@@ -1,25 +1,38 @@
 # Infinite - NASA Fotka dňa v slovenčine
 
-Moderná webová aplikácia pre zobrazovanie NASA Astronomy Picture of the Day (APOD) v slovenčine s optimalizovaným výkonom.
+Moderná webová aplikácia pre zobrazovanie NASA Astronomy Picture of the Day (APOD) v slovenčine s AI-generovaným obsahom a optimalizovaným výkonom.
 
 ## 🚀 Funkcie
 
-- **Optimalizovaný výkon** - Rýchle načítanie stránok s lazy loading a optimalizáciou obrázkov
+- **AI-generovaný slovenský obsah** - Rozšírené články (700-900 slov) z NASA opisov pomocou OpenAI GPT-4
+- **Automatické denné aktualizácie** - Automatický fetch z NASA API každý deň
+- **Optimalizovaný výkon** - Rýchle načítanie stránok s lazy loading, ISR a CDN
+- **SEO optimalizácia s AI** - AI-generované slovenské kľúčové slová a meta tagy
+- **Image caching** - S3 + CloudFront CDN pre optimálny výkon
+- **Quality validation** - Automatická kontrola gramatiky a vedeckej presnosti
 - **Responsive dizajn** - Funguje na všetkých zariadeniach
-- **SEO optimalizácia** - Plná podpora pre vyhľadávače
 - **Accessibility** - Podporuje screen readery a klávesnicovú navigáciu
-- **PWA ready** - Pripravené pre Progressive Web App
 - **RSS feed** - Automaticky generovaný RSS feed
 - **Sitemap** - Automaticky generovaný sitemap.xml
 
 ## 🛠️ Technológie
 
+### Frontend
 - **Next.js 14** - React framework s App Router
 - **TypeScript** - Type safety
-- **Tailwind CSS** - Utility-first CSS framework
+- **Tailwind CSS 4** - Utility-first CSS framework
+- **Radix UI** - Accessible component library
 - **WebGL** - Pre Aurora pozadie efekt
-- **Vercel Analytics** - Web analytics
 - **Playwright** - E2E testovanie
+
+### Backend (AWS)
+- **AWS Lambda** - Serverless compute (Node.js 18.x)
+- **DynamoDB** - NoSQL databáza pre content
+- **S3 + CloudFront** - Image caching a CDN
+- **API Gateway** - REST API endpoints
+- **EventBridge** - Scheduled daily fetches
+- **OpenAI GPT-4o-mini** - AI content generation
+- **CloudWatch** - Monitoring a logging
 
 ## 📦 Inštalácia
 
@@ -129,25 +142,44 @@ npm run analyze      # Analýza bundle veľkosti
 
 ## 🚀 Deployment
 
-### Vercel (odporúčané)
+### AWS Amplify (Production)
+Frontend je automaticky deploynutý cez AWS Amplify pri push do main branchu.
+
 ```bash
-# Inštalácia Vercel CLI
-npm i -g vercel
-
-# Deployment
-vercel
-
-# Production deployment
-vercel --prod
+# Amplify deployment sa spustí automaticky pri:
+git push origin main
 ```
 
-### Docker
-```bash
-# Build Docker image
-docker build -t infinite .
+### AWS Backend Services
+Lambda funkcie sa deployujú manuálne:
 
-# Run container
-docker run -p 3000:3000 infinite
+```bash
+# Deploy nasa-fetcher
+cd aws/lambda/nasa-fetcher
+zip -r nasa-fetcher.zip . -x "*.git*" "*.zip"
+aws lambda update-function-code \
+  --function-name infinite-nasa-apod-dev-nasa-fetcher \
+  --zip-file fileb://nasa-fetcher.zip \
+  --profile infinite-nasa-apod-dev \
+  --region eu-central-1
+
+# Deploy content-processor
+cd aws/lambda/content-processor
+zip -r content-processor.zip . -x "*.git*" "*.zip"
+aws lambda update-function-code \
+  --function-name infinite-nasa-apod-dev-content-processor \
+  --zip-file fileb://content-processor.zip \
+  --profile infinite-nasa-apod-dev \
+  --region eu-central-1
+```
+
+### Manual Content Fetch
+```bash
+# Fetch latest APOD
+./scripts/fetch-apod.sh
+
+# Fetch specific date
+./scripts/fetch-apod.sh 2025-10-01
 ```
 
 ## 🧪 Testovanie
@@ -165,10 +197,23 @@ npm run test:e2e:headed
 
 ## 📈 Monitoring
 
-- **Vercel Analytics** - Web vitals a performance
-- **Google Analytics** - User behavior
-- **Error tracking** - Error monitoring
-- **Performance monitoring** - Core Web Vitals
+### Frontend
+- **Google Analytics 4** - User behavior a engagement
+- **Core Web Vitals** - Performance monitoring
+- **Error tracking** - Client-side error monitoring
+
+### Backend (AWS)
+- **CloudWatch Logs** - Lambda function logs
+- **CloudWatch Metrics** - Performance metrics
+- **EventBridge** - Scheduled task monitoring
+- **DynamoDB Metrics** - Database performance
+- **CloudFront Metrics** - CDN cache performance
+
+```bash
+# View Lambda logs
+aws logs tail /aws/lambda/infinite-nasa-apod-dev-content-processor \
+  --profile infinite-nasa-apod-dev --region eu-central-1 --follow
+```
 
 ## 🤝 Contribúcia
 
@@ -182,9 +227,39 @@ npm run test:e2e:headed
 
 Tento projekt je licencovaný pod MIT licenciou - pozrite si [LICENSE](LICENSE) súbor pre detaily.
 
+## 🏗️ Architektúra
+
+### Data Flow
+```
+NASA API → nasa-fetcher Lambda → content-processor Lambda (OpenAI GPT-4) 
+  → DynamoDB + S3 → API Gateway → Next.js Frontend → User
+```
+
+### AWS Resources
+- **Region:** eu-central-1 (Frankfurt)
+- **Lambda Functions:** 5 (nasa-fetcher, content-processor, api-latest, api-reprocess, s3-test)
+- **DynamoDB Table:** infinite-nasa-apod-dev-content (56 entries)
+- **S3 Bucket:** infinite-nasa-apod-dev-images-349660737637
+- **CloudFront:** d2ydyf9w4v170.cloudfront.net
+- **API Gateway:** l9lm0zrzyl.execute-api.eu-central-1.amazonaws.com
+
+### Daily Automation
+- **04:05 UTC** - První automatický fetch
+- **06:00 UTC** - Druhý automatický fetch (backup)
+- NASA obvykle publikuje nový APOD okolo 05:05 UTC
+
+## 📚 Dokumentácia
+
+- **PROJECT_STATUS.md** - Aktuálny stav projektu a infraštruktúry
+- **DATA_FETCH_TROUBLESHOOTING.md** - Troubleshooting guide pre data fetch
+- **docs/architecture.md** - Detailná architektúra
+- **docs/aws-setup.md** - AWS setup guide
+- **docs/stories/** - 21 user stories pre implementáciu
+
 ## 🙏 Podakovanie
 
 - [NASA](https://nasa.gov) - Za APOD API
+- [OpenAI](https://openai.com) - Za GPT-4 content generation
 - [Next.js](https://nextjs.org) - Za úžasný framework
-- [Vercel](https://vercel.com) - Za hosting a analytics
+- [AWS](https://aws.amazon.com) - Za serverless infrastructure
 - [Tailwind CSS](https://tailwindcss.com) - Za CSS framework

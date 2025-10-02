@@ -8,6 +8,8 @@ type ApiLatestResponse = {
 type ApiItem = {
   date: string
   titleSk?: string
+  headline?: string           // New curiosity-driven Slovak headline
+  headlineEN?: string         // New curiosity-driven English headline
   slovakArticle?: string
   imageUrl?: string
   hdImageUrl?: string
@@ -24,7 +26,8 @@ type ApiItem = {
 }
 
 function mapApiItemToApod(item: ApiItem): Apod {
-  const title = item.titleSk?.trim() || ""
+  // Prefer new curiosity-driven headline, fallback to old title
+  const title = item.headline?.trim() || item.titleSk?.trim() || ""
   const explanation = item.slovakArticle?.trim() || ""
   const url = item.cachedImage?.url || item.hdImageUrl || item.imageUrl || ""
   const media_type = (item.mediaType as Apod["media_type"]) || "image"
@@ -36,6 +39,8 @@ function mapApiItemToApod(item: ApiItem): Apod {
     url,
     hdurl: item.hdImageUrl,
     media_type,
+    // Store both headlines for potential future use
+    headlineEN: item.headlineEN?.trim(),
   }
 }
 
@@ -44,7 +49,7 @@ export async function getLatestApodsFromApi(limit = 12): Promise<Apod[]> {
   const url = `${base}/api/latest?limit=${encodeURIComponent(String(limit))}`
 
   const res = await fetch(url, { 
-    next: { revalidate: 300 },
+    next: { revalidate: 300 }, // Restore normal 5-minute cache
     headers: {
       'Accept': 'application/json',
       'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
@@ -67,7 +72,7 @@ export async function getByDateFromApi(date: string): Promise<Apod | null> {
   const url = `${base}/api/latest?date=${encodeURIComponent(date)}&limit=1`
 
   const res = await fetch(url, { 
-    next: { revalidate: 300 },
+    next: { revalidate: 300 }, // Restore normal 5-minute cache
     headers: {
       'Accept': 'application/json',
       'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
