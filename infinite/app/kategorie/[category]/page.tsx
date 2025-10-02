@@ -105,7 +105,7 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
   }
 
   const apods = await getAllAvailableFromApi().catch(() => [])
-  const categoryApods = filterApodsByCategory(apods, params.category)
+  const categoryApods = filterApodsByCategory(apods, config)
 
   return (
     <div className="py-12">
