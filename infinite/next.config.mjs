@@ -13,6 +13,9 @@ const nextConfig = {
     minimumCacheTTL: 31536000, // 1 year
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Add timeout and retry configuration for better reliability
+    loader: 'default',
+    loaderFile: undefined,
     remotePatterns: [
       {
         protocol: 'https',

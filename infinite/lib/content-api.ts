@@ -30,8 +30,10 @@ function mapApiItemToApod(item: ApiItem): Apod {
   const title = item.headline?.trim() || item.titleSk?.trim() || ""
   const explanation = item.slovakArticle?.trim() || ""
   
-  // TEMPORARY FIX: Bypass cached image for 2025-10-01 (Veil Nebula image mismatch)
+  // Prioritize cached images, but fallback to NASA URLs if cached images fail
   let url = item.cachedImage?.url || item.hdImageUrl || item.imageUrl || ""
+  
+  // TEMPORARY FIX: Bypass cached image for 2025-10-01 (Veil Nebula image mismatch)
   if (item.date === "2025-10-01") {
     // Use original NASA URL instead of cached image for this specific date
     url = item.hdImageUrl || item.imageUrl || ""

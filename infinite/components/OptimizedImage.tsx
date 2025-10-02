@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { isMobileDevice, getMobileImageConfig, getMobileImageUrl } from '@/lib/mobile-optimization'
+import { getBestImageUrl, isImageUrlReliable } from '@/lib/image-loader'
 
 interface OptimizedImageProps {
   src: string
@@ -52,6 +53,7 @@ export function OptimizedImage({
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
+  const [currentSrc, setCurrentSrc] = useState(src)
   const [isMobile, setIsMobile] = useState(false)
   
   useEffect(() => {
@@ -63,14 +65,26 @@ export function OptimizedImage({
   const finalQuality = isMobile ? mobileConfig.quality || 50 : quality
   const finalSizes = isMobile ? mobileConfig.sizes || sizes : sizes
   
+  // Get the best available image URL with fallbacks
+  const bestSrc = getBestImageUrl(currentSrc, hdSrc, src)
+  
   // Get mobile-optimized image URL (no HD on mobile)
-  const finalSrc = isMobile ? getMobileImageUrl(src, hdSrc) : (hdSrc || src)
+  const finalSrc = isMobile ? getMobileImageUrl(bestSrc, hdSrc) : bestSrc
 
   const handleLoad = () => {
     setIsLoading(false)
   }
 
   const handleError = () => {
+    // Try fallback to original src if we're using hdSrc
+    if (currentSrc !== src && src) {
+      console.log(`🔄 Image failed, trying fallback: ${src}`)
+      setCurrentSrc(src)
+      setHasError(false)
+      return
+    }
+    
+    // If all sources failed, show error
     setHasError(true)
     setIsLoading(false)
   }
