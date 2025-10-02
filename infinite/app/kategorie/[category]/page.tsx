@@ -4,9 +4,9 @@ import { ApodCard } from "@/components/ApodCard"
 import { notFound } from "next/navigation"
 
 interface CategoryDetailPageProps {
-  params: {
+  params: Promise<{
     category: string
-  }
+  }>
 }
 
 const categoryConfig = {
@@ -61,7 +61,8 @@ const categoryConfig = {
 }
 
 export async function generateMetadata({ params }: CategoryDetailPageProps) {
-  const config = categoryConfig[params.category as keyof typeof categoryConfig]
+  const { category } = await params
+  const config = categoryConfig[category as keyof typeof categoryConfig]
   if (!config) {
     return {
       title: "Kategória nenájdená | Infinite",
@@ -80,8 +81,7 @@ export async function generateMetadata({ params }: CategoryDetailPageProps) {
   }
 }
 
-function filterApodsByCategory(apods: any[], category: string) {
-  const config = categoryConfig[category as keyof typeof categoryConfig]
+function filterApodsByCategory(apods: any[], config: any) {
   if (!config) return []
 
   return apods.filter(apod => {
@@ -90,7 +90,7 @@ function filterApodsByCategory(apods: any[], category: string) {
     const explanation = apod.explanation?.toLowerCase() || ""
 
     return config.keywords.some(keyword => 
-      keywords.some(k => k.toLowerCase().includes(keyword)) ||
+      keywords.some((k: string) => k.toLowerCase().includes(keyword)) ||
       title.includes(keyword) ||
       explanation.includes(keyword)
     )
@@ -98,7 +98,8 @@ function filterApodsByCategory(apods: any[], category: string) {
 }
 
 export default async function CategoryDetailPage({ params }: CategoryDetailPageProps) {
-  const config = categoryConfig[params.category as keyof typeof categoryConfig]
+  const { category } = await params
+  const config = categoryConfig[category as keyof typeof categoryConfig]
   if (!config) {
     notFound()
   }

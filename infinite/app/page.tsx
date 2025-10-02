@@ -9,19 +9,16 @@ import { Suspense } from "react"
 
 // Lazy load Aurora with better loading state and error boundary
 const Aurora = dynamic(() => import("@/components/backgrounds/Aurora"), { 
-  ssr: false, 
   loading: () => <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-900/20 to-purple-900/20" />
 })
 
 // Lazy load AdSense to improve initial page load
 const LazyAdSenseBanner = dynamic(() => import("@/components/AdSense").then(mod => ({ default: mod.AdSenseBanner })), {
-  ssr: false,
   loading: () => <div className="h-24 bg-gray-800/20 rounded-lg animate-pulse" />
 })
 
 // Lazy load Pagination component
 const LazyPagination = dynamic(() => import("@/components/Pagination").then(mod => ({ default: mod.Pagination })), {
-  ssr: false,
   loading: () => <div className="flex justify-center space-x-2 py-8">
     <div className="w-8 h-8 bg-gray-800 rounded animate-pulse"></div>
     <div className="w-8 h-8 bg-gray-800 rounded animate-pulse"></div>
@@ -30,13 +27,14 @@ const LazyPagination = dynamic(() => import("@/components/Pagination").then(mod 
 })
 
 interface HomePageProps {
-  searchParams: {
+  searchParams: Promise<{
     page?: string
-  }
+  }>
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
-  const page = Number.parseInt(searchParams.page || "1")
+  const { page: pageParam } = await searchParams
+  const page = Number.parseInt(pageParam || "1")
   const pageSize = 9
 
   // Optimize API call with error handling and caching

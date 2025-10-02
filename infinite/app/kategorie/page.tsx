@@ -34,34 +34,34 @@ function categorizeApods(apods: any[]) {
     const explanation = apod.explanation?.toLowerCase() || ""
 
     // Categorize based on keywords and content
-    if (keywords.some(k => k.toLowerCase().includes('kométa')) || title.includes('kométa')) {
+    if (keywords.some((k: string) => k.toLowerCase().includes('kométa')) || title.includes('kométa')) {
       categories.komety.items.push(apod)
     }
-    if (keywords.some(k => k.toLowerCase().includes('planéta') || k.toLowerCase().includes('saturn') || k.toLowerCase().includes('mars') || k.toLowerCase().includes('jupiter')) || 
+    if (keywords.some((k: string) => k.toLowerCase().includes('planéta') || k.toLowerCase().includes('saturn') || k.toLowerCase().includes('mars') || k.toLowerCase().includes('jupiter')) || 
         title.includes('planéta') || title.includes('saturn') || title.includes('mars')) {
       categories.planety.items.push(apod)
     }
-    if (keywords.some(k => k.toLowerCase().includes('galaxia') || k.toLowerCase().includes('galaxy')) || 
+    if (keywords.some((k: string) => k.toLowerCase().includes('galaxia') || k.toLowerCase().includes('galaxy')) || 
         title.includes('galaxia') || explanation.includes('galaxia')) {
       categories.galaxie.items.push(apod)
     }
-    if (keywords.some(k => k.toLowerCase().includes('hviezda') || k.toLowerCase().includes('star')) || 
+    if (keywords.some((k: string) => k.toLowerCase().includes('hviezda') || k.toLowerCase().includes('star')) || 
         title.includes('hviezda') || explanation.includes('hviezda')) {
       categories.hviezdy.items.push(apod)
     }
-    if (keywords.some(k => k.toLowerCase().includes('hmlovina') || k.toLowerCase().includes('nebula')) || 
+    if (keywords.some((k: string) => k.toLowerCase().includes('hmlovina') || k.toLowerCase().includes('nebula')) || 
         title.includes('hmlovina') || explanation.includes('hmlovina')) {
       categories.hmloviny.items.push(apod)
     }
-    if (keywords.some(k => k.toLowerCase().includes('čierna diera') || k.toLowerCase().includes('black hole')) || 
+    if (keywords.some((k: string) => k.toLowerCase().includes('čierna diera') || k.toLowerCase().includes('black hole')) || 
         title.includes('čierna diera') || explanation.includes('čierna diera')) {
       categories.cierne_diery.items.push(apod)
     }
-    if (keywords.some(k => k.toLowerCase().includes('slnečná sústava') || k.toLowerCase().includes('slnko')) || 
+    if (keywords.some((k: string) => k.toLowerCase().includes('slnečná sústava') || k.toLowerCase().includes('slnko')) || 
         title.includes('slnečná sústava') || title.includes('slnko')) {
       categories.slnečna_sustava.items.push(apod)
     }
-    if (keywords.some(k => k.toLowerCase().includes('pozorovanie') || k.toLowerCase().includes('teleskop')) || 
+    if (keywords.some((k: string) => k.toLowerCase().includes('pozorovanie') || k.toLowerCase().includes('teleskop')) || 
         title.includes('pozorovanie') || explanation.includes('pozorovanie')) {
       categories.pozorovanie.items.push(apod)
     }
@@ -109,7 +109,7 @@ export default async function CategoryPage({}: CategoryPageProps) {
                 <div className="space-y-2">
                   <h3 className="font-semibold text-sm text-gray-300">Najnovšie články:</h3>
                   <div className="space-y-1">
-                    {category.items.slice(0, 3).map((item) => (
+                    {category.items.slice(0, 3).map((item: any) => (
                       <Link
                         key={item.date}
                         href={`/apod/${item.date}`}

@@ -11,8 +11,8 @@ function apiBase() {
   return process.env.NEXT_PUBLIC_API_BASE || "https://l9lm0zrzyl.execute-api.eu-central-1.amazonaws.com/prod"
 }
 
-export async function GET(req: NextRequest, { params }: { params: { date: string } }) {
-  const date = params?.date
+export async function GET(req: NextRequest, { params }: { params: Promise<{ date: string }> }) {
+  const { date } = await params
   try {
     const res = await fetch(`${apiBase()}/api/latest?date=${encodeURIComponent(date)}`, { cache: "no-store" })
     const json = await res.json().catch(() => ({ items: [] }))

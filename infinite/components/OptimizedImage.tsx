@@ -59,7 +59,7 @@ export function OptimizedImage({
   }, [])
   
   // Get mobile-optimized config
-  const mobileConfig = isMobile ? getMobileImageConfig() : {}
+  const mobileConfig = isMobile ? getMobileImageConfig() : { quality: 70, sizes: sizes }
   const finalQuality = isMobile ? mobileConfig.quality || 50 : quality
   const finalSizes = isMobile ? mobileConfig.sizes || sizes : sizes
   

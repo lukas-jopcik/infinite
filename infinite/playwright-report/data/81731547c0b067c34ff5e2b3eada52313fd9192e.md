@@ -1,0 +1,159 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "Infinite - Domovská stránka" [ref=e6]:
+          - /url: /
+          - generic [ref=e7]:
+            - heading "infinite" [level=1] [ref=e8]
+            - paragraph [ref=e9]: nekonečné objavy, každý deň
+        - button "Otvoriť menu" [ref=e10] [cursor=pointer]:
+          - img [ref=e11] [cursor=pointer]
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - 'region "Veilova hmlovina: Aké tajomstvá skrýva?" [ref=e16]':
+          - generic [ref=e18]:
+            - generic [ref=e19]:
+              - generic [ref=e20]:
+                - generic [ref=e21]: Dnes objavujeme
+                - 'heading "Veilova hmlovina: Aké tajomstvá skrýva?" [level=1] [ref=e22]'
+                - generic [ref=e23]:
+                  - time [ref=e24]: 1. októbra 2025
+                  - 'generic "Čas čítania: 4 minút" [ref=e25]': 4 min čítania
+              - list "Témy článku" [ref=e26]:
+                - listitem [ref=e27]: hmlovina
+                - listitem [ref=e28]: hviezdy
+                - listitem [ref=e29]: kozmické farby
+              - paragraph [ref=e30]: "Astronomický obrázok dňa: Mysteriózna Veil Nebula Astronómia, ako veda o vesmíre, nám neustále otvára dvere do fascinujúcich svetov, ktoré sú od nás vzdialené ..."
+              - 'link "Prečítať celý článok: Veilova hmlovina: Aké tajomstvá skrýva?" [ref=e31] [cursor=pointer]':
+                - /url: /apod/2025-10-01
+                - text: Čítať ďalej
+                - img [ref=e32] [cursor=pointer]
+            - 'img "Veilova hmlovina: Aké tajomstvá skrýva?" [ref=e36]'
+        - region "Predchádzajúce objavy" [ref=e38]:
+          - generic [ref=e39]:
+            - insertion [ref=e42]:
+              - iframe [ref=e44]:
+                
+            - heading "Predchádzajúce objavy" [level=2] [ref=e45]
+            - list "Zoznam článkov" [ref=e46]:
+              - listitem [ref=e47]:
+                - article [ref=e48]:
+                  - 'link "Prečítať článok: Kométa Lemmon sa jasní na severnej oblohe z 30. septembra 2025" [ref=e49]':
+                    - /url: /apod/2025-09-30
+                    - img "Kométa Lemmon sa jasní na severnej oblohe" [ref=e51]
+                    - generic [ref=e52]:
+                      - heading "Kométa Lemmon sa jasní na severnej oblohe" [level=3] [ref=e53]
+                      - generic [ref=e54]:
+                        - time [ref=e55]: 30. septembra 2025
+                        - 'generic "Čas čítania: 3 minút" [ref=e56]': 3 min
+              - listitem [ref=e57]:
+                - article [ref=e58]:
+                  - 'link "Prečítať článok: Na oblohe žiaria dve kométy z 29. septembra 2025" [ref=e59]':
+                    - /url: /apod/2025-09-29
+                    - img "Na oblohe žiaria dve kométy" [ref=e61]
+                    - generic [ref=e62]:
+                      - heading "Na oblohe žiaria dve kométy" [level=3] [ref=e63]
+                      - generic [ref=e64]:
+                        - time [ref=e65]: 29. septembra 2025
+                        - 'generic "Čas čítania: 3 minút" [ref=e66]': 3 min
+              - listitem [ref=e67]:
+                - article [ref=e68]:
+                  - 'link "Prečítať článok: Tajomstvo leopardích škvŕn na marsovských skalách z 28. septembra 2025" [ref=e69]':
+                    - /url: /apod/2025-09-28
+                    - img "Tajomstvo leopardích škvŕn na marsovských skalách" [ref=e71]
+                    - generic [ref=e72]:
+                      - heading "Tajomstvo leopardích škvŕn na marsovských skalách" [level=3] [ref=e73]
+                      - generic [ref=e74]:
+                        - time [ref=e75]: 28. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e76]': 4 min
+              - listitem [ref=e77]:
+                - article [ref=e78]:
+                  - 'link "Prečítať článok: Raketa preletela pred slnkom, zachytená naživo z 27. septembra 2025" [ref=e79]':
+                    - /url: /apod/2025-09-27
+                    - img "Raketa preletela pred slnkom, zachytená naživo" [ref=e81]
+                    - generic [ref=e82]:
+                      - heading "Raketa preletela pred slnkom, zachytená naživo" [level=3] [ref=e83]
+                      - generic [ref=e84]:
+                        - time [ref=e85]: 27. septembra 2025
+                        - 'generic "Čas čítania: 5 minút" [ref=e86]': 5 min
+              - listitem [ref=e87]:
+                - article [ref=e88]:
+                  - 'link "Prečítať článok: Nové kométy osvetľujú nočnú oblohu Marsu z 26. septembra 2025" [ref=e89]':
+                    - /url: /apod/2025-09-26
+                    - img "Nové kométy osvetľujú nočnú oblohu Marsu" [ref=e91]
+                    - generic [ref=e92]:
+                      - heading "Nové kométy osvetľujú nočnú oblohu Marsu" [level=3] [ref=e93]
+                      - generic [ref=e94]:
+                        - time [ref=e95]: 26. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e96]': 4 min
+              - listitem [ref=e97]:
+                - article [ref=e98]:
+                  - 'link "Prečítať článok: Opozícia Saturnu: Udalosť na nočnej oblohe odkrytá z 25. septembra 2025" [ref=e99]':
+                    - /url: /apod/2025-09-25
+                    - 'img "Opozícia Saturnu: Udalosť na nočnej oblohe odkrytá" [ref=e101]'
+                    - generic [ref=e102]:
+                      - 'heading "Opozícia Saturnu: Udalosť na nočnej oblohe odkrytá" [level=3] [ref=e103]'
+                      - generic [ref=e104]:
+                        - time [ref=e105]: 25. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e106]': 4 min
+              - listitem [ref=e107]:
+                - article [ref=e108]:
+                  - 'link "Prečítať článok: Zrážka čiernych dier: Čo odhaľuje o vesmíre z 24. septembra 2025" [ref=e109]':
+                    - /url: /apod/2025-09-24
+                    - 'img "Zrážka čiernych dier: Čo odhaľuje o vesmíre" [ref=e111]'
+                    - generic [ref=e112]:
+                      - 'heading "Zrážka čiernych dier: Čo odhaľuje o vesmíre" [level=3] [ref=e113]'
+                      - generic [ref=e114]:
+                        - time [ref=e115]: 24. septembra 2025
+                        - 'generic "Čas čítania: 3 minút" [ref=e116]': 3 min
+              - listitem [ref=e117]:
+                - article [ref=e118]:
+                  - 'link "Prečítať článok: NGC 6357: Kozmická jaslička pre hviezdy z 23. septembra 2025" [ref=e119]':
+                    - /url: /apod/2025-09-23
+                    - 'img "NGC 6357: Kozmická jaslička pre hviezdy" [ref=e121]'
+                    - generic [ref=e122]:
+                      - 'heading "NGC 6357: Kozmická jaslička pre hviezdy" [level=3] [ref=e123]'
+                      - generic [ref=e124]:
+                        - time [ref=e125]: 23. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e126]': 4 min
+              - listitem [ref=e127]:
+                - article [ref=e128]:
+                  - 'link "Prečítať článok: Prstene Saturna: Tanec sezónnych zmien z 22. septembra 2025" [ref=e129]':
+                    - /url: /apod/2025-09-22
+                    - 'img "Prstene Saturna: Tanec sezónnych zmien" [ref=e131]'
+                    - generic [ref=e132]:
+                      - 'heading "Prstene Saturna: Tanec sezónnych zmien" [level=3] [ref=e133]'
+                      - generic [ref=e134]:
+                        - time [ref=e135]: 22. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e136]': 4 min
+            - navigation "Stránkovanie" [ref=e137]:
+              - generic [ref=e138]:
+                - generic [ref=e139]:
+                  - generic [ref=e140]: Stránka
+                  - generic [ref=e141]: "1"
+                - link "Staršie" [ref=e142] [cursor=pointer]:
+                  - /url: /?page=2
+                  - text: Staršie
+                  - img [ref=e143] [cursor=pointer]
+    - contentinfo [ref=e145]:
+      - generic [ref=e146]:
+        - paragraph [ref=e147]: © 2025 Infinite — Nekonečné objavy, každý deň.
+        - paragraph [ref=e148]:
+          - text: "Zdroj dát:"
+          - link "NASA APOD" [ref=e149]:
+            - /url: https://apod.nasa.gov/
+        - button "Zmeniť nastavenia súhlasu pre cookies a analýzu" [ref=e151] [cursor=pointer]: Zmeniť nastavenia súhlasu
+  - alert [ref=e152]
+  - generic [ref=e153]:
+    - paragraph [ref=e154]: Používame súbory cookie na analytiku (Google Analytics). Môžeš zmeniť rozhodnutie kedykoľvek v pätičke.
+    - list [ref=e155]:
+      - listitem [ref=e156]: bez reklamných cookies
+      - listitem [ref=e157]: iba agregované štatistiky návštevnosti
+    - generic [ref=e158]:
+      - button "Odmietnuť" [ref=e159] [cursor=pointer]
+      - button "Povoliť analytiku" [ref=e160] [cursor=pointer]
+```

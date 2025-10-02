@@ -12,13 +12,14 @@ import { OptimizedImage } from "@/components/OptimizedImage"
 import { trackEvent } from "@/lib/analytics"
 
 interface ApodDetailPageProps {
-  params: {
+  params: Promise<{
     date: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: ApodDetailPageProps) {
-  const apod = await getByDateFromApi(params.date)
+  const { date } = await params
+  const apod = await getByDateFromApi(date)
   if (!apod) {
     return {
       title: "APOD nenájdené | Infinite",
@@ -29,7 +30,8 @@ export async function generateMetadata({ params }: ApodDetailPageProps) {
 }
 
 export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
-  const apod = await getByDateFromApi(params.date)
+  const { date } = await params
+  const apod = await getByDateFromApi(date)
   if (!apod) notFound()
   const previous = await getPreviousFromApi(apod.date, 3)
   const { newer, older } = await getNeighborsFromApi(apod.date)

@@ -7,8 +7,8 @@ test.describe('Home Page', () => {
     // Check that the page loads without errors
     await expect(page).toHaveTitle(/Infinite/);
     
-    // Check for main navigation elements
-    await expect(page.locator('nav')).toBeVisible();
+    // Check for main navigation elements (be more specific to avoid multiple nav elements)
+    await expect(page.getByRole('navigation', { name: 'Hlavná navigácia' })).toBeVisible();
     
     // Check for main content area
     await expect(page.locator('main')).toBeVisible();
@@ -36,8 +36,8 @@ test.describe('Home Page', () => {
   test('should have working navigation', async ({ page }) => {
     await page.goto('/');
     
-    // Check for navigation links
-    const navLinks = page.locator('nav a');
+    // Check for navigation links (use main navigation specifically)
+    const navLinks = page.getByRole('navigation', { name: 'Hlavná navigácia' }).locator('a');
     if (await navLinks.count() > 0) {
       // Test that navigation links are clickable
       await expect(navLinks.first()).toBeVisible();
@@ -52,8 +52,8 @@ test.describe('Home Page', () => {
     // Check that the page is still functional on mobile
     await expect(page.locator('main')).toBeVisible();
     
-    // Check that navigation is accessible on mobile
-    const nav = page.locator('nav');
+    // Check that navigation is accessible on mobile (use main navigation specifically)
+    const nav = page.getByRole('navigation', { name: 'Hlavná navigácia' });
     if (await nav.count() > 0) {
       await expect(nav).toBeVisible();
     }
