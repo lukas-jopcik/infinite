@@ -53,10 +53,15 @@ export default function Analytics() {
     }
   }, [GA_ID, pathname, searchParams, isLoaded])
 
-  // Initialize Web Vitals monitoring
+  // Initialize Web Vitals monitoring and resource optimization
   useEffect(() => {
     if (typeof window !== 'undefined') {
       initWebVitals()
+      
+      // Import and initialize resource optimization
+      import('@/lib/resource-optimization').then(({ optimizeResourceLoading }) => {
+        optimizeResourceLoading()
+      })
     }
   }, [])
 

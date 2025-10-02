@@ -45,7 +45,7 @@ export function OptimizedImage({
   height = 600,
   fill = false,
   sizes,
-  quality = 85
+  quality = 70
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)

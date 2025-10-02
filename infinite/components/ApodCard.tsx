@@ -33,7 +33,7 @@ export function ApodCard({ apod, priority = false }: ApodCardProps) {
               priority={priority}
               fill={true}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              quality={priority ? 90 : 75}
+              quality={priority ? 80 : 65}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">

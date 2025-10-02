@@ -1,17 +1,10 @@
 import type React from "react"
-import { Inter } from "next/font/google"
 import { ClientLayout } from "@/components/ClientLayout"
 import Analytics from "@/components/Analytics"
 import { Suspense } from "react"
 import "./globals.css"
 import ConsentBanner from "@/components/ConsentBanner"
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: 'swap',
-  preload: true,
-})
+import { inter } from "@/lib/fonts"
 
 export const metadata = {
   title: "Infinite - Nekonečné objavy, každý deň",

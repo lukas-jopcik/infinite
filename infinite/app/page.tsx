@@ -19,6 +19,16 @@ const LazyAdSenseBanner = dynamic(() => import("@/components/AdSense").then(mod 
   loading: () => <div className="h-24 bg-gray-800/20 rounded-lg animate-pulse" />
 })
 
+// Lazy load Pagination component
+const LazyPagination = dynamic(() => import("@/components/Pagination").then(mod => ({ default: mod.Pagination })), {
+  ssr: false,
+  loading: () => <div className="flex justify-center space-x-2 py-8">
+    <div className="w-8 h-8 bg-gray-800 rounded animate-pulse"></div>
+    <div className="w-8 h-8 bg-gray-800 rounded animate-pulse"></div>
+    <div className="w-8 h-8 bg-gray-800 rounded animate-pulse"></div>
+  </div>
+})
+
 interface HomePageProps {
   searchParams: {
     page?: string
@@ -98,7 +108,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           )}
 
           <nav aria-label="Stránkovanie">
-            <Pagination currentPage={page} hasNextPage={hasNextPage} hasPrevPage={hasPrevPage} />
+            <LazyPagination currentPage={page} hasNextPage={hasNextPage} hasPrevPage={hasPrevPage} />
           </nav>
         </div>
       </section>
