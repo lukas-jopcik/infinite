@@ -17,27 +17,8 @@ export function preloadCriticalResources() {
     document.head.appendChild(link)
   })
 
-  // Preload critical fonts
-  const criticalFonts = [
-    {
-      href: 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2',
-      as: 'font',
-      type: 'font/woff2',
-      crossOrigin: 'anonymous',
-    },
-  ]
-
-  criticalFonts.forEach((font) => {
-    const link = document.createElement('link')
-    link.rel = 'preload'
-    link.href = font.href
-    link.as = font.as
-    link.type = font.type
-    if (font.crossOrigin) {
-      link.crossOrigin = font.crossOrigin
-    }
-    document.head.appendChild(link)
-  })
+  // Font preloading disabled - Next.js handles this automatically
+  // const criticalFonts = []
 }
 
 // Preconnect to external domains
