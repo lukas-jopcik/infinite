@@ -1,10 +1,10 @@
 import { Inter } from 'next/font/google'
 
-// Optimized font loading with display swap and preload
+// Optimized font loading with display swap
 export const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-  preload: true,
+  preload: false, // Let Next.js handle preloading
   fallback: [
     'system-ui',
     '-apple-system',
@@ -20,31 +20,10 @@ export const inter = Inter({
   weight: ['400', '500', '600', '700'],
 })
 
-// Font loading optimization utilities
+// Font loading optimization utilities (disabled to prevent conflicts)
 export function preloadFonts() {
-  if (typeof window === 'undefined') return
-
-  // Preload critical fonts
-  const fontPreloads = [
-    {
-      href: 'https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2',
-      as: 'font',
-      type: 'font/woff2',
-      crossOrigin: 'anonymous',
-    },
-  ]
-
-  fontPreloads.forEach((font) => {
-    const link = document.createElement('link')
-    link.rel = 'preload'
-    link.href = font.href
-    link.as = font.as
-    link.type = font.type
-    if (font.crossOrigin) {
-      link.crossOrigin = font.crossOrigin
-    }
-    document.head.appendChild(link)
-  })
+  // Disabled - Next.js handles font preloading automatically
+  return
 }
 
 // Font display optimization
