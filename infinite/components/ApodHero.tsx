@@ -76,11 +76,12 @@ export function ApodHero({ apod }: ApodHeroProps) {
             {apod.media_type === "image" ? (
               <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl shadow-black/70 ring-1 ring-black/50">
                 <OptimizedImage
-                  src={apod.hdurl || apod.url}
+                  src={apod.url}
                   alt={apod.title}
                   className="w-full h-full object-cover"
                   priority={true}
                   fill={true}
+                  hdSrc={apod.hdurl} // Pass HD source but mobile will ignore it
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" aria-hidden="true" />

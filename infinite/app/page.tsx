@@ -55,9 +55,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <div className="relative">
-      {/* Preload critical images */}
+      {/* Preload critical images - mobile uses standard quality */}
       {latestApod && latestApod.url && (
-        <link rel="preload" as="image" href={latestApod.hdurl || latestApod.url} />
+        <link rel="preload" as="image" href={latestApod.url} />
       )}
       
       {/* Background with Suspense for better performance */}

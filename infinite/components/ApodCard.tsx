@@ -34,7 +34,8 @@ export function ApodCard({ apod, priority = false }: ApodCardProps) {
               priority={priority}
               fill={true}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              quality={priority ? (isMobileDevice() ? 70 : 80) : (isMobileDevice() ? 55 : 65)}
+              quality={priority ? (isMobileDevice() ? 60 : 80) : (isMobileDevice() ? 45 : 65)}
+              hdSrc={apod.hdurl} // Pass HD source but mobile will ignore it
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">

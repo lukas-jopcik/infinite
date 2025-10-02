@@ -11,11 +11,22 @@ export function isMobileDevice(): boolean {
 // Mobile-specific image optimization
 export function getMobileImageConfig() {
   return {
-    quality: 60, // Lower quality for mobile
+    quality: 50, // Much lower quality for mobile
     sizes: '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw',
     priority: false, // Reduce priority on mobile
     loading: 'lazy' as const,
+    useHD: false, // Never use HD images on mobile
   }
+}
+
+// Mobile-specific image URL optimization
+export function getMobileImageUrl(originalUrl: string, hdUrl?: string): string {
+  if (!isMobileDevice()) {
+    return hdUrl || originalUrl
+  }
+  
+  // On mobile, always use original URL (not HD)
+  return originalUrl
 }
 
 // Mobile-specific bundle optimization

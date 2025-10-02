@@ -1,7 +1,7 @@
 "use client"
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { isMobileDevice, getMobileImageConfig } from '@/lib/mobile-optimization'
+import { isMobileDevice, getMobileImageConfig, getMobileImageUrl } from '@/lib/mobile-optimization'
 
 interface OptimizedImageProps {
   src: string
@@ -14,6 +14,7 @@ interface OptimizedImageProps {
   fill?: boolean
   sizes?: string
   quality?: number
+  hdSrc?: string // Optional HD source
 }
 
 // Optimized blur placeholder
@@ -46,7 +47,8 @@ export function OptimizedImage({
   height = 600,
   fill = false,
   sizes,
-  quality = 70
+  quality = 70,
+  hdSrc
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
@@ -58,8 +60,11 @@ export function OptimizedImage({
   
   // Get mobile-optimized config
   const mobileConfig = isMobile ? getMobileImageConfig() : {}
-  const finalQuality = isMobile ? mobileConfig.quality || 60 : quality
+  const finalQuality = isMobile ? mobileConfig.quality || 50 : quality
   const finalSizes = isMobile ? mobileConfig.sizes || sizes : sizes
+  
+  // Get mobile-optimized image URL (no HD on mobile)
+  const finalSrc = isMobile ? getMobileImageUrl(src, hdSrc) : (hdSrc || src)
 
   const handleLoad = () => {
     setIsLoading(false)
@@ -84,7 +89,7 @@ export function OptimizedImage({
   if (fill) {
     return (
       <Image
-        src={src}
+        src={finalSrc}
         alt={alt}
         fill
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
@@ -101,7 +106,7 @@ export function OptimizedImage({
 
   return (
     <Image
-      src={src}
+      src={finalSrc}
       alt={alt}
       width={width}
       height={height}

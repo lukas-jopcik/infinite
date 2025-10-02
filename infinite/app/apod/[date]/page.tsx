@@ -64,10 +64,11 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
           {apod.media_type === "image" ? (
             <figure className="relative aspect-video rounded-lg overflow-hidden">
               <OptimizedImage
-                src={apod.hdurl || apod.url}
+                src={apod.url}
                 alt={`${apod.title} - Astronomická fotografia dňa ${apod.date}${apod.seoKeywords ? ` | ${apod.seoKeywords.slice(0, 3).join(', ')}` : ''}`}
                 className="w-full h-full object-cover"
                 priority={true}
+                hdSrc={apod.hdurl} // Pass HD source but mobile will ignore it
               />
               <figcaption className="sr-only">{apod.title} - Astronomická fotografia dňa {apod.date}</figcaption>
             </figure>
