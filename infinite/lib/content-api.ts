@@ -57,10 +57,13 @@ export async function getLatestApodsFromApi(limit = 12): Promise<Apod[]> {
   const url = `${base}/api/latest?limit=${encodeURIComponent(String(limit))}`
 
   const res = await fetch(url, { 
-    next: { revalidate: 300 }, // Restore normal 5-minute cache
+    next: { 
+      revalidate: 300, // 5-minute cache
+      tags: ['apod-latest']
+    },
     headers: {
       'Accept': 'application/json',
-      'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
+      'Cache-Control': 'public, max-age=300, stale-while-revalidate=600, stale-if-error=86400',
     },
   })
   if (!res.ok) {
@@ -80,10 +83,13 @@ export async function getByDateFromApi(date: string): Promise<Apod | null> {
   const url = `${base}/api/latest?date=${encodeURIComponent(date)}&limit=1`
 
   const res = await fetch(url, { 
-    next: { revalidate: 300 }, // Restore normal 5-minute cache
+    next: { 
+      revalidate: 3600, // 1-hour cache for individual articles
+      tags: [`apod-${date}`]
+    },
     headers: {
       'Accept': 'application/json',
-      'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
+      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=7200, stale-if-error=86400',
     },
   })
   if (!res.ok) return null

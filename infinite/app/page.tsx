@@ -5,12 +5,18 @@ import dynamic from "next/dynamic"
 import { ApodCard } from "@/components/ApodCard"
 import { Pagination } from "@/components/Pagination"
 import { AdSenseBanner } from "@/components/AdSense"
-import Head from "next/head"
+import { Suspense } from "react"
 
-// Lazy load Aurora with better loading state
+// Lazy load Aurora with better loading state and error boundary
 const Aurora = dynamic(() => import("@/components/backgrounds/Aurora"), { 
   ssr: false, 
   loading: () => <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-900/20 to-purple-900/20" />
+})
+
+// Lazy load AdSense to improve initial page load
+const LazyAdSenseBanner = dynamic(() => import("@/components/AdSense").then(mod => ({ default: mod.AdSenseBanner })), {
+  ssr: false,
+  loading: () => <div className="h-24 bg-gray-800/20 rounded-lg animate-pulse" />
 })
 
 interface HomePageProps {
@@ -39,14 +45,18 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   return (
     <div className="relative">
+      {/* Preload critical images */}
       {latestApod && latestApod.url && (
-        <Head>
-          <link rel="preload" as="image" href={latestApod.hdurl || latestApod.url} />
-        </Head>
+        <link rel="preload" as="image" href={latestApod.hdurl || latestApod.url} />
       )}
+      
+      {/* Background with Suspense for better performance */}
       <div className="fixed inset-0 -z-10">
-        <Aurora colorStops={["#3A29FF", "#3A29FF", "#3A29FF"]} amplitude={0.2} blend={1} />
+        <Suspense fallback={<div className="w-full h-full bg-gradient-to-br from-blue-900/20 to-purple-900/20" />}>
+          <Aurora colorStops={["#3A29FF", "#3A29FF", "#3A29FF"]} amplitude={0.2} blend={1} />
+        </Suspense>
       </div>
+      
       {page === 1 && latestApod ? (
         <ApodHero apod={latestApod} />
       ) : (
@@ -64,10 +74,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
       <section className="py-12" aria-labelledby="articles-heading">
         <div className="container mx-auto px-4">
-          {/* AdSense Banner - Above heading for better visibility */}
+          {/* Lazy load AdSense Banner for better performance */}
           {page === 1 && (
             <div className="mb-8 border border-white/20 rounded-lg p-4 bg-black/20">
-              <AdSenseBanner />
+              <LazyAdSenseBanner />
             </div>
           )}
           
@@ -75,9 +85,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
           {listingApods.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list" aria-label="Zoznam článkov">
-              {listingApods.map((apod) => (
+              {listingApods.map((apod, index) => (
                 <div key={apod.date} role="listitem">
-                  <ApodCard apod={apod} />
+                  <ApodCard apod={apod} priority={index < 3} />
                 </div>
               ))}
             </div>

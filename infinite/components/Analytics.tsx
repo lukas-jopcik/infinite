@@ -2,6 +2,7 @@
 import Script from "next/script"
 import { usePathname, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { initWebVitals } from "@/lib/performance"
 
 declare global {
   interface Window {
@@ -51,6 +52,13 @@ export default function Analytics() {
       window.gtag('config', GA_ID, { page_path: path })
     }
   }, [GA_ID, pathname, searchParams, isLoaded])
+
+  // Initialize Web Vitals monitoring
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      initWebVitals()
+    }
+  }, [])
 
   if (!GA_ID || !isLoaded || process.env.NODE_ENV === 'development') return null
   return (

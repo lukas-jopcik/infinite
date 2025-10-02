@@ -8,9 +8,10 @@ import { OptimizedImage } from "@/components/OptimizedImage"
 
 interface ApodCardProps {
   apod: Apod
+  priority?: boolean
 }
 
-export function ApodCard({ apod }: ApodCardProps) {
+export function ApodCard({ apod, priority = false }: ApodCardProps) {
   const readingTime = getReadingTime(apod.title, apod.explanation)
 
   return (
@@ -20,6 +21,7 @@ export function ApodCard({ apod }: ApodCardProps) {
         className="apod-card block focus-visible h-full flex flex-col" 
         onClick={() => trackEvent('card_open_detail', { category: 'navigation', label: apod.date })}
         aria-label={`Prečítať článok: ${apod.title} z ${formatDate(apod.date)}`}
+        prefetch={priority}
       >
         <div className="aspect-video relative mb-4 overflow-hidden">
           {apod.media_type === "image" ? (
@@ -27,9 +29,11 @@ export function ApodCard({ apod }: ApodCardProps) {
               src={apod.url || "/placeholder.svg"}
               alt={apod.title}
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              loading="lazy"
+              loading={priority ? "eager" : "lazy"}
+              priority={priority}
               fill={true}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              quality={priority ? 90 : 75}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
