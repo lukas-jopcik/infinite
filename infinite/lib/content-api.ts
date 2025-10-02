@@ -29,7 +29,15 @@ function mapApiItemToApod(item: ApiItem): Apod {
   // Prefer new curiosity-driven headline, fallback to old title
   const title = item.headline?.trim() || item.titleSk?.trim() || ""
   const explanation = item.slovakArticle?.trim() || ""
-  const url = item.cachedImage?.url || item.hdImageUrl || item.imageUrl || ""
+  
+  // TEMPORARY FIX: Bypass cached image for 2025-10-01 (Veil Nebula image mismatch)
+  let url = item.cachedImage?.url || item.hdImageUrl || item.imageUrl || ""
+  if (item.date === "2025-10-01") {
+    // Use original NASA URL instead of cached image for this specific date
+    url = item.hdImageUrl || item.imageUrl || ""
+    console.log("🔧 Using original NASA URL for 2025-10-01 to fix image mismatch")
+  }
+  
   const media_type = (item.mediaType as Apod["media_type"]) || "image"
 
   return {

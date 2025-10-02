@@ -38,6 +38,25 @@ export const metadata = {
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION,
   },
+  other: {
+    'application/ld+json': JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Infinite',
+      url: 'https://infinite.example',
+      logo: 'https://infinite.example/logo.png',
+      description: 'Objavujte vesmír každý deň s NASA Astronomy Picture of the Day',
+      sameAs: [
+        'https://twitter.com/infinite_apod',
+        'https://facebook.com/infinite.apod'
+      ],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'customer service',
+        email: 'info@infinite.example'
+      }
+    })
+  }
 }
 
 export default function RootLayout({
@@ -45,6 +64,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
   return (
     <html lang="sk" className={inter.variable}>
       <head>

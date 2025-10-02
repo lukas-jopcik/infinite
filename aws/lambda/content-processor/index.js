@@ -742,11 +742,12 @@ async function cacheImageInS3(imageUrl, date) {
         const ext = guessExtension(contentType, imageUrl);
         const key = `images/${date}${ext}`;
 
-        // If already exists, skip upload and return info
+        // TEMPORARY FIX: Force overwrite existing images to fix image mismatches
+        // TODO: Revert this change after fixing the Veil Nebula image issue
         try {
             await s3.headObject({ Bucket: S3_BUCKET_NAME, Key: key }).promise();
-            console.log(`ℹ️ Image already cached: ${key}`);
-            return buildCacheInfo(S3_BUCKET_NAME, key, contentType || 'application/octet-stream', imageUrl);
+            console.log(`🔄 Image already exists, but forcing overwrite: ${key}`);
+            // Continue to upload instead of skipping
         } catch (_) {
             // Not found -> proceed to upload
         }

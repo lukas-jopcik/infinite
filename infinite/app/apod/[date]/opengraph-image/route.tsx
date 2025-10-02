@@ -17,7 +17,7 @@ export async function GET(req: NextRequest, { params }: { params: { date: string
     const res = await fetch(`${apiBase()}/api/latest?date=${encodeURIComponent(date)}`, { cache: "no-store" })
     const json = await res.json().catch(() => ({ items: [] }))
     const item = Array.isArray(json.items) && json.items.length ? json.items[0] : null
-    const title = item?.titleSk || item?.originalTitle || "NASA APOD"
+    const title = item?.headline || item?.titleSk || item?.originalTitle || "NASA APOD"
     const img = item?.cachedImageUrl || item?.hdImageUrl || item?.imageUrl || undefined
 
     return new ImageResponse(
