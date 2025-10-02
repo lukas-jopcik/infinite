@@ -5,6 +5,7 @@ import { formatDate } from "@/lib/date"
 import { getReadingTime } from "@/lib/mock-content"
 import { trackEvent } from "@/lib/analytics"
 import { OptimizedImage } from "@/components/OptimizedImage"
+import { isMobileDevice } from "@/lib/mobile-optimization"
 
 interface ApodCardProps {
   apod: Apod
@@ -33,7 +34,7 @@ export function ApodCard({ apod, priority = false }: ApodCardProps) {
               priority={priority}
               fill={true}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              quality={priority ? 80 : 65}
+              quality={priority ? (isMobileDevice() ? 70 : 80) : (isMobileDevice() ? 55 : 65)}
             />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">

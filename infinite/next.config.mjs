@@ -74,6 +74,8 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
     scrollRestoration: true,
     webVitalsAttribution: ['CLS', 'LCP', 'FCP', 'FID', 'TTFB', 'INP'],
+    // Mobile-specific optimizations
+    optimizeServerReact: true,
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

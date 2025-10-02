@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./mobile.css";
 
 /* Liquid Ether background (inspired by reactbits.dev) - Optimized for performance */
 .liquid-ether {

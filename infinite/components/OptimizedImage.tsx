@@ -1,6 +1,7 @@
 "use client"
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { isMobileDevice, getMobileImageConfig } from '@/lib/mobile-optimization'
 
 interface OptimizedImageProps {
   src: string
@@ -49,6 +50,16 @@ export function OptimizedImage({
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  
+  useEffect(() => {
+    setIsMobile(isMobileDevice())
+  }, [])
+  
+  // Get mobile-optimized config
+  const mobileConfig = isMobile ? getMobileImageConfig() : {}
+  const finalQuality = isMobile ? mobileConfig.quality || 60 : quality
+  const finalSizes = isMobile ? mobileConfig.sizes || sizes : sizes
 
   const handleLoad = () => {
     setIsLoading(false)
@@ -78,8 +89,8 @@ export function OptimizedImage({
         fill
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         priority={priority}
-        sizes={sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
-        quality={quality}
+        sizes={finalSizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
+        quality={finalQuality}
         placeholder="blur"
         blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
         onLoad={handleLoad}
@@ -96,10 +107,10 @@ export function OptimizedImage({
       height={height}
       className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
       priority={priority}
-      quality={quality}
+      quality={finalQuality}
       placeholder="blur"
       blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`}
-      sizes={sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
+      sizes={finalSizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
       onLoad={handleLoad}
       onError={handleError}
     />

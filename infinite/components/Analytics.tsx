@@ -62,6 +62,11 @@ export default function Analytics() {
       import('@/lib/resource-optimization').then(({ optimizeResourceLoading }) => {
         optimizeResourceLoading()
       })
+      
+      // Import and initialize mobile optimizations
+      import('@/lib/mobile-optimization').then(({ initializeMobileOptimizations }) => {
+        initializeMobileOptimizations()
+      })
     }
   }, [])
 
