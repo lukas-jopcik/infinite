@@ -9,6 +9,15 @@ import { inter } from "@/lib/fonts"
 export const metadata = {
   title: "Infinite - Nekonečné objavy, každý deň",
   description: "Objavujte vesmír každý deň s NASA Astronomy Picture of the Day",
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' }
+    ],
+    apple: [
+      { url: '/icon.svg', type: 'image/svg+xml' }
+    ]
+  },
   openGraph: {
     title: "Infinite - Nekonečné objavy, každý deň",
     description: "Objavujte vesmír každý deň s NASA Astronomy Picture of the Day",
