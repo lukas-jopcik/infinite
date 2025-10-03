@@ -490,6 +490,211 @@ async function generateSeoKeywords(slovakTitle, slovakArticle) {
 	});
 }
 
+/**
+ * Generate comprehensive SEO article using the new template
+ * @param {string} topic - Main topic
+ * @param {string} keywords - Main keywords
+ * @param {string} targetAudience - Target audience
+ * @param {string} nasaTitle - Original NASA title
+ * @param {string} nasaExplanation - Original NASA explanation
+ * @returns {Promise<object>} - {metaTitle, metaDescription, article, faq, internalLinks, externalRefs}
+ */
+async function generateSeoArticle(topic, keywords, targetAudience, nasaTitle, nasaExplanation) {
+	const apiKey = await getOpenAIKey();
+	if (!apiKey) throw new Error('OPENAI_API_KEY not set');
+	
+	const prompt = `Si expert SEO copywriter špecializujúci sa na astronómiu a vesmírnu vedu. Tvoja úloha je napísať komplexný, dlhý článok optimalizovaný pre Google vyhľadávanie a Google Discover.
+
+**Téma:** ${topic}
+**Hlavné kľúčové slová:** ${keywords}
+**Jazyk:** Slovenčina (prirodzený, ľudský, konverzačný tón, nie robotický)
+**Cieľová skupina:** ${targetAudience}
+
+**Požiadavky na obsah:**
+- Minimálna dĺžka: 2000 slov (môže byť dlhší ak je potrebný na pokrytie témy)
+- Jasná hierarchia: H1 (nadpis), H2 (hlavné sekcie), H3 (podsekcie)
+- Pútavý úvod, ktorý zaujme čitateľa a vysvetlí, čo sa naučí
+- Komplexný záver s kľúčovými poznatkami a praktickými radami
+- Prirodzená integrácia kľúčových slov bez spamovania (1-2% hustota kľúčových slov)
+- FAQ sekcia s aspoň 6 bežnými otázkami a detailnými odpoveďami
+- Krátke odseky (max 2-3 vety)
+- Zoznamy s odrážkami a číslovanými zoznamami pre ľahké skenovanie
+- Tučné formátovanie pre dôležité frázy a kľúčové termíny
+
+**Štandardy kvality obsahu:**
+- Presnosť: Všetky astronomické fakty musia byť vedecky presné
+- Zapojenie: Používaj príbehy, analógie a relatívne príklady
+- Praktická hodnota: Zahrň praktické tipy a návody krok za krokom
+- Vizuálny príťažlivosť: Navrhni, kde by obrázky, diagramy alebo grafy zvýšili pochopenie
+
+**Kontext z NASA APOD:**
+Nadpis (EN): ${nasaTitle}
+Opis (EN): ${nasaExplanation}
+
+**Výstupný formát (presne v tomto poradí):**
+
+## Meta Title
+[Max 60 znakov, obsahuje primárne kľúčové slovo]
+
+## Meta Description
+[Max 160 znakov, pútavý a opisný]
+
+## Úvod
+[Pútavý úvod, ktorý zaujme čitateľa]
+
+## Hlavný článok
+[Kompletný článok so všetkými sekciami, H2 a H3 nadpismi]
+
+## FAQ
+[6+ otázok a odpovedí]
+
+## Záver
+[Kľúčové poznatky a praktické rady]
+
+## Vnútorné odkazy
+[Zoznam súvisiacich článkov na prepojenie]
+
+## Externé referencie
+[Autoritatívne zdroje pre citácie]
+
+Napíš článok teraz:`;
+
+	const payload = JSON.stringify({
+		model: 'gpt-4o',
+		messages: [
+			{ role: 'system', content: 'Si expert SEO copywriter pre astronómiu v slovenčine. Všetky astronomické fakty musia byť vedecky presné.' },
+			{ role: 'user', content: prompt }
+		],
+		temperature: 0.7,
+		max_tokens: 4000
+	});
+
+	const options = {
+		hostname: 'api.openai.com',
+		path: '/v1/chat/completions',
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${apiKey}`
+		}
+	};
+
+	return new Promise((resolve, reject) => {
+		const req = https.request(options, (res) => {
+			let data = '';
+			res.on('data', (d) => (data += d));
+			res.on('end', () => {
+				if (res.statusCode >= 200 && res.statusCode < 300) {
+					try {
+						const json = JSON.parse(data);
+						const content = json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content ? json.choices[0].message.content.trim() : '';
+						
+						// Parse the structured response
+						const result = parseSeoArticleResponse(content);
+						resolve(result);
+					} catch (e) {
+						reject(e);
+					}
+				} else {
+					reject(new Error(`OpenAI HTTP ${res.statusCode}: ${data}`));
+				}
+			});
+		});
+		req.on('error', reject);
+		req.write(payload);
+		req.end();
+	});
+}
+
+/**
+ * Parse the structured SEO article response
+ * @param {string} content - Raw response content
+ * @returns {object} - Parsed article structure
+ */
+function parseSeoArticleResponse(content) {
+	const sections = {
+		metaTitle: '',
+		metaDescription: '',
+		intro: '',
+		article: '',
+		faq: '',
+		conclusion: '',
+		internalLinks: [],
+		externalRefs: []
+	};
+
+	// Split content by section headers
+	const lines = content.split('\n');
+	let currentSection = '';
+	let currentContent = [];
+
+	for (const line of lines) {
+		const trimmedLine = line.trim();
+		
+		if (trimmedLine.startsWith('## Meta Title')) {
+			currentSection = 'metaTitle';
+			currentContent = [];
+		} else if (trimmedLine.startsWith('## Meta Description')) {
+			currentSection = 'metaDescription';
+			currentContent = [];
+		} else if (trimmedLine.startsWith('## Úvod')) {
+			currentSection = 'intro';
+			currentContent = [];
+		} else if (trimmedLine.startsWith('## Hlavný článok')) {
+			currentSection = 'article';
+			currentContent = [];
+		} else if (trimmedLine.startsWith('## FAQ')) {
+			currentSection = 'faq';
+			currentContent = [];
+		} else if (trimmedLine.startsWith('## Záver')) {
+			currentSection = 'conclusion';
+			currentContent = [];
+		} else if (trimmedLine.startsWith('## Vnútorné odkazy')) {
+			currentSection = 'internalLinks';
+			currentContent = [];
+		} else if (trimmedLine.startsWith('## Externé referencie')) {
+			currentSection = 'externalRefs';
+			currentContent = [];
+		} else if (trimmedLine && !trimmedLine.startsWith('##')) {
+			currentContent.push(line);
+		}
+
+		// Store content when section changes
+		if (currentSection && currentContent.length > 0) {
+			const contentStr = currentContent.join('\n').trim();
+			
+			switch (currentSection) {
+				case 'metaTitle':
+					sections.metaTitle = contentStr;
+					break;
+				case 'metaDescription':
+					sections.metaDescription = contentStr;
+					break;
+				case 'intro':
+					sections.intro = contentStr;
+					break;
+				case 'article':
+					sections.article = contentStr;
+					break;
+				case 'faq':
+					sections.faq = contentStr;
+					break;
+				case 'conclusion':
+					sections.conclusion = contentStr;
+					break;
+				case 'internalLinks':
+					sections.internalLinks = contentStr.split('\n').filter(line => line.trim()).map(line => line.trim().replace(/^[-*]\s*/, ''));
+					break;
+				case 'externalRefs':
+					sections.externalRefs = contentStr.split('\n').filter(line => line.trim()).map(line => line.trim().replace(/^[-*]\s*/, ''));
+					break;
+			}
+		}
+	}
+
+	return sections;
+}
+
 async function ensureCompleteArticle(slovakArticle, slovakTitle) {
 	try {
 		const text = (slovakArticle || '').trim();
@@ -537,7 +742,8 @@ exports.handler = async (event, context) => {
         }
         
         // Process the NASA APOD data
-        const processedContent = await processAPODContent(date, nasaData);
+        const options = event.options || {};
+        const processedContent = await processAPODContent(date, nasaData, options);
 
         // Cache image in S3 if it's an image; enrich content with cached info
         if (nasaData.media_type === 'image') {
@@ -587,12 +793,19 @@ exports.handler = async (event, context) => {
  * @param {Object} nasaData - NASA APOD data
  * @returns {Object} Processed content object
  */
-async function processAPODContent(date, nasaData) {
+async function processAPODContent(date, nasaData, options = {}) {
     console.log(`📝 Processing content for date: ${date}`);
+    
+    // Check if we should generate comprehensive SEO article
+    const generateSeoArticle = options.generateSeoArticle || false;
+    const seoArticleConfig = options.seoArticleConfig || {};
     
 	let slovakTitle = `Slovenský názov: ${nasaData.title}`;
     let slovakArticle;
 	let seoKeywords = ['astronómia', 'vesmír', 'NASA', 'APOD', 'slovensko'];
+    
+    // SEO article data
+    let seoArticleData = null;
 
     // Try AI generation first; fallback to basic expansion if not available
     try {
@@ -623,6 +836,23 @@ async function processAPODContent(date, nasaData) {
 			}
 		} catch (e) {
 			console.warn('SEO keyword generation failed, using fallback:', e && e.message ? e.message : e);
+		}
+
+		// Generate comprehensive SEO article if requested
+		if (generateSeoArticle && seoArticleConfig.topic && seoArticleConfig.keywords && seoArticleConfig.targetAudience) {
+			try {
+				console.log('🎯 Generating comprehensive SEO article...');
+				seoArticleData = await generateSeoArticle(
+					seoArticleConfig.topic,
+					seoArticleConfig.keywords,
+					seoArticleConfig.targetAudience,
+					nasaData.title,
+					nasaData.explanation
+				);
+				console.log('✅ SEO article generated successfully');
+			} catch (e) {
+				console.warn('SEO article generation failed:', e && e.message ? e.message : e);
+			}
 		}
 
 		// Ensure the article ends with a complete conclusion
@@ -696,7 +926,9 @@ async function processAPODContent(date, nasaData) {
         articleLengthChars: lengthChars,
         articleLengthWords: lengthWords,
         generatedAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
+        // SEO article data (if generated)
+        seoArticle: seoArticleData
     };
     
     console.log('✅ Content processing completed');
