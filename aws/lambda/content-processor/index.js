@@ -511,8 +511,8 @@ async function generateSeoArticle(topic, keywords, targetAudience, nasaTitle, na
 **Cieľová skupina:** ${targetAudience}
 
 **Požiadavky na obsah:**
-- Minimálna dĺžka: 2000 slov (môže byť dlhší ak je potrebný na pokrytie témy)
-- Jasná hierarchia: H1 (nadpis), H2 (hlavné sekcie), H3 (podsekcie)
+- Minimálna dĺžka: 1500-2000 slov (optimálne pre SEO a čitateľnosť)
+- Jasná hierarchia: Používaj markdown nadpisy ## pre hlavné sekcie, ### pre podsekcie
 - Pútavý úvod, ktorý zaujme čitateľa a vysvetlí, čo sa naučí
 - Komplexný záver s kľúčovými poznatkami a praktickými radami
 - Prirodzená integrácia kľúčových slov bez spamovania (1-2% hustota kľúčových slov)
@@ -520,6 +520,7 @@ async function generateSeoArticle(topic, keywords, targetAudience, nasaTitle, na
 - Krátke odseky (max 2-3 vety)
 - Zoznamy s odrážkami a číslovanými zoznamami pre ľahké skenovanie
 - Tučné formátovanie pre dôležité frázy a kľúčové termíny
+- Rozdeľ obsah do logických sekcií s nadpismi
 
 **Štandardy kvality obsahu:**
 - Presnosť: Všetky astronomické fakty musia byť vedecky presné
@@ -543,7 +544,7 @@ Opis (EN): ${nasaExplanation}
 [Pútavý úvod, ktorý zaujme čitateľa]
 
 ## Hlavný článok
-[Kompletný článok so všetkými sekciami, H2 a H3 nadpismi]
+[Kompletný článok s markdown nadpismi ## a ### pre sekcie a podsekcie]
 
 ## FAQ
 [6+ otázok a odpovedí]
@@ -557,7 +558,32 @@ Opis (EN): ${nasaExplanation}
 ## Externé referencie
 [Autoritatívne zdroje pre citácie]
 
-Napíš článok teraz:`;
+**KRITICKÉ INŠTRUKCIE PRE FORMÁTOVANIE:**
+V hlavnom článku MUSÍŠ používať markdown nadpisy:
+- ## pre hlavné sekcie (napr. ## Čo sú kométy?)
+- ### pre podsekcie (napr. ### Typy komét)
+- Rozdeľ obsah do 4-6 hlavných sekcií s nadpismi
+- Každá sekcia by mala mať 200-400 slov
+- NIKDY nepíš súvislý text bez nadpisov
+- VŽDY začni každú novú tému s ## nadpisom
+
+**PRÍKLAD SPRÁVNEHO FORMÁTOVANIA:**
+## Úvod do astronómie
+Text úvodu...
+
+## Hlavné objekty vo vesmíre
+Text o objektoch...
+
+### Hviezdy
+Text o hviezdach...
+
+### Planéty
+Text o planétach...
+
+## Praktické pozorovanie
+Text o pozorovaní...
+
+Napíš článok teraz s TÝMITO nadpismi:`;
 
 	const payload = JSON.stringify({
 		model: 'gpt-4o',

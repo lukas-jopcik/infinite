@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface AdSenseProps {
   adSlot: string
@@ -16,6 +16,14 @@ declare global {
   }
 }
 
+// Type assertion for AdSense
+const getAdSense = () => {
+  if (typeof window !== 'undefined') {
+    return (window as any).adsbygoogle as any[]
+  }
+  return []
+}
+
 export default function AdSense({
   adSlot,
   adFormat = 'auto',
@@ -23,18 +31,29 @@ export default function AdSense({
   className = '',
   responsive = true,
 }: AdSenseProps) {
+  const adRef = useRef<HTMLDivElement>(null)
+  const adLoaded = useRef(false)
+
   useEffect(() => {
     try {
-      if (typeof window !== 'undefined' && window.adsbygoogle) {
-        (window.adsbygoogle = window.adsbygoogle || []).push({})
+      if (typeof window !== 'undefined' && adRef.current && !adLoaded.current) {
+        const adsbygoogle = getAdSense()
+        if (adsbygoogle) {
+          // Check if ads are already loaded for this specific element
+          const adElement = adRef.current.querySelector('.adsbygoogle')
+          if (adElement && !adElement.hasAttribute('data-adsbygoogle-status')) {
+            adsbygoogle.push({})
+            adLoaded.current = true
+          }
+        }
       }
     } catch (error) {
       console.error('AdSense error:', error)
     }
-  }, [])
+  }, [adSlot])
 
   return (
-    <div className={`adsense-container ${className}`}>
+    <div ref={adRef} className={`adsense-container ${className}`}>
       <ins
         className="adsbygoogle"
         style={adStyle}
