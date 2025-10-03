@@ -797,7 +797,7 @@ async function processAPODContent(date, nasaData, options = {}) {
     console.log(`📝 Processing content for date: ${date}`);
     
     // Check if we should generate comprehensive SEO article
-    const generateSeoArticle = options.generateSeoArticle || false;
+    const shouldGenerateSeoArticle = options.generateSeoArticle || false;
     const seoArticleConfig = options.seoArticleConfig || {};
     
 	let slovakTitle = `Slovenský názov: ${nasaData.title}`;
@@ -839,7 +839,7 @@ async function processAPODContent(date, nasaData, options = {}) {
 		}
 
 		// Generate comprehensive SEO article if requested
-		if (generateSeoArticle && seoArticleConfig.topic && seoArticleConfig.keywords && seoArticleConfig.targetAudience) {
+		if (shouldGenerateSeoArticle && seoArticleConfig.topic && seoArticleConfig.keywords && seoArticleConfig.targetAudience) {
 			try {
 				console.log('🎯 Generating comprehensive SEO article...');
 				seoArticleData = await generateSeoArticle(

@@ -8,8 +8,8 @@ const AWS = require('aws-sdk');
 const lambda = new AWS.Lambda();
 const dynamodb = new AWS.DynamoDB();
 
-const PROCESSOR_FUNCTION = process.env.PROCESSOR_FUNCTION;
-const TABLE_NAME = process.env.TABLE_NAME;
+const PROCESSOR_FUNCTION = process.env.PROCESSOR_FUNCTION || 'infinite-nasa-apod-dev-content-processor';
+const TABLE_NAME = process.env.TABLE_NAME || process.env.DYNAMODB_TABLE_NAME;
 const NASA_API_KEY = process.env.NASA_API_KEY;
 const NASA_APOD_URL = 'https://api.nasa.gov/planetary/apod';
 

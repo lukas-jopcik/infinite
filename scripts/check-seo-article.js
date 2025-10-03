@@ -7,7 +7,11 @@
 const AWS = require('aws-sdk');
 
 // Configure AWS
-AWS.config.update({ region: 'eu-central-1' });
+const credentials = new AWS.SharedIniFileCredentials({profile: 'infinite-nasa-apod-dev'});
+AWS.config.update({ 
+    region: 'eu-central-1',
+    credentials: credentials
+});
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 async function checkSeoArticle(date = '2025-10-01') {
@@ -18,7 +22,6 @@ async function checkSeoArticle(date = '2025-10-01') {
         const params = {
             TableName: 'infinite-nasa-apod-dev-content',
             Key: {
-                pk: 'LATEST',
                 date: date
             }
         };

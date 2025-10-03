@@ -27,10 +27,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/infinite-nasa-apod"
+    "url": "git+https://github.com/your-username/infinite-nasa-apod.git"
   },
   "bugs": {
     "url": "https://github.com/your-username/infinite-nasa-apod/issues"
   },
-  "homepage": "https://github.com/your-username/infinite-nasa-apod#readme"
+  "homepage": "https://github.com/your-username/infinite-nasa-apod#readme",
+  "type": "commonjs"
 }

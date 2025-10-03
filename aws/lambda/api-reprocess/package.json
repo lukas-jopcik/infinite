@@ -7,9 +7,13 @@
     "package": "zip -r api-reprocess.zip ."
   },
   "dependencies": {
-    "aws-sdk": "^2.1691.0"
+    "aws-sdk": "^2.1692.0"
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "type": "commonjs"
 }
