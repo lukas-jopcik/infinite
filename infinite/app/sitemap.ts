@@ -9,17 +9,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   
   // Filter out future dates and validate date format - only include past and current dates
   const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+  console.log(`🗓️ Sitemap generation - Today: ${today}, Total APODs: ${apods.length}`)
+  
   const validApods = apods.filter(apod => {
     // Validate date format (YYYY-MM-DD)
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/
     if (!dateRegex.test(apod.date)) {
-      console.warn(`Invalid date format in sitemap: ${apod.date}`)
+      console.warn(`❌ Invalid date format in sitemap: ${apod.date}`)
       return false
     }
     
     // Only include past and current dates
-    return apod.date <= today
+    const isValid = apod.date <= today
+    if (!isValid) {
+      console.log(`🚫 Filtering out future date: ${apod.date} (today: ${today})`)
+    }
+    return isValid
   })
+  
+  console.log(`✅ Valid APODs after filtering: ${validApods.length}`)
   
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

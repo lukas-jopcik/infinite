@@ -94,7 +94,18 @@ export async function getAllAvailableFromApi(): Promise<Apod[]> {
   
   // Filter out future dates - only include past and current dates
   const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
-  return allApods.filter(apod => apod.date <= today)
+  console.log(`📡 API - Today: ${today}, Raw APODs: ${allApods.length}`)
+  
+  const filteredApods = allApods.filter(apod => {
+    const isValid = apod.date <= today
+    if (!isValid) {
+      console.log(`🚫 API filtering out future date: ${apod.date}`)
+    }
+    return isValid
+  })
+  
+  console.log(`✅ API - Valid APODs after filtering: ${filteredApods.length}`)
+  return filteredApods
 }
 
 export async function getByDateFromApi(date: string): Promise<Apod | null> {
