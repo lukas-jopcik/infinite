@@ -17,6 +17,51 @@ interface ApodDetailPageProps {
   }>
 }
 
+// Helper function to parse FAQ text into schema.org format
+function parseFaqToSchema(faqText: string) {
+  const questions = [];
+  const lines = faqText.split('\n');
+  let currentQ = '';
+  let currentA = '';
+  
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.match(/^\d+\.\s+\*\*/)) {
+      // New question found, save previous Q&A if exists
+      if (currentQ && currentA) {
+        questions.push({
+          '@type': 'Question',
+          name: currentQ,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: currentA.trim()
+          }
+        });
+      }
+      // Extract question (remove number and ** markers)
+      currentQ = trimmed.replace(/^\d+\.\s+\*\*/, '').replace(/\*\*$/, '').trim();
+      currentA = '';
+    } else if (trimmed && currentQ) {
+      // Answer line
+      currentA += ' ' + trimmed;
+    }
+  }
+  
+  // Save last Q&A
+  if (currentQ && currentA) {
+    questions.push({
+      '@type': 'Question',
+      name: currentQ,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: currentA.trim()
+      }
+    });
+  }
+  
+  return questions;
+}
+
 export async function generateMetadata({ params }: ApodDetailPageProps) {
   const { date } = await params
   const apod = await getByDateFromApi(date)
@@ -88,7 +133,41 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
         </div>
 
         <div className="mb-8">
-          <ArticleContent content={apod.explanation} />
+          {apod.seoArticle ? (
+            <>
+              {/* SEO Article - Intro */}
+              {apod.seoArticle.intro && (
+                <div className="mb-8 text-lg text-gray-300 leading-relaxed">
+                  <ArticleContent content={apod.seoArticle.intro} />
+                </div>
+              )}
+              
+              {/* SEO Article - Main Content */}
+              {apod.seoArticle.article && (
+                <div className="mb-8">
+                  <ArticleContent content={apod.seoArticle.article} />
+                </div>
+              )}
+              
+              {/* SEO Article - FAQ */}
+              {apod.seoArticle.faq && (
+                <div className="mb-8 bg-black/20 border border-white/10 rounded-lg p-6">
+                  <h2 className="text-2xl font-bold mb-6">Často kladené otázky</h2>
+                  <ArticleContent content={apod.seoArticle.faq} />
+                </div>
+              )}
+              
+              {/* SEO Article - Conclusion */}
+              {apod.seoArticle.conclusion && (
+                <div className="mb-8 bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-white/10 rounded-lg p-6">
+                  <h2 className="text-xl font-bold mb-4">Záver</h2>
+                  <ArticleContent content={apod.seoArticle.conclusion} />
+                </div>
+              )}
+            </>
+          ) : (
+            <ArticleContent content={apod.explanation} />
+          )}
         </div>
 
         {/* Enhanced JSON-LD Structured Data */}
@@ -99,7 +178,7 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
               {
                 '@context': 'https://schema.org',
                 '@type': 'Article',
-                headline: apod.title,
+                headline: apod.seoArticle?.metaTitle || apod.title,
                 datePublished: apod.date,
                 dateModified: apod.date,
                 image: apod.hdurl || apod.url,
@@ -118,7 +197,7 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
                 mainEntityOfPage: `https://infinite.example/apod/${apod.date}`,
                 articleSection: 'Astronómia',
                 keywords: apod.seoKeywords?.join(', ') || '',
-                description: apod.explanation?.slice(0, 160) || '',
+                description: apod.seoArticle?.metaDescription || apod.explanation?.slice(0, 160) || '',
               },
               {
                 '@context': 'https://schema.org',
@@ -156,8 +235,14 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
                   target: 'https://infinite.example/search?q={search_term_string}',
                   'query-input': 'required name=search_term_string'
                 }
-              }
-            ]),
+              },
+              // FAQ Schema (if available)
+              ...(apod.seoArticle?.faq ? [{
+                '@context': 'https://schema.org',
+                '@type': 'FAQPage',
+                mainEntity: parseFaqToSchema(apod.seoArticle.faq)
+              }] : [])
+            ].filter(Boolean)),
           }}
         />
 

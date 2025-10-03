@@ -1,15 +1,25 @@
 import type { Apod } from "./nasa"
 
 export function generateApodMetadata(apod: Apod) {
-  const title = `${apod.title} | Infinite`
-  const description = (apod.explanation || "").slice(0, 160) + (apod.explanation?.length > 160 ? "..." : "")
+  // Use SEO meta title/description if available, otherwise fallback to regular content
+  const title = apod.seoArticle?.metaTitle 
+    ? `${apod.seoArticle.metaTitle} | Infinite`
+    : `${apod.title} | Infinite`
+  
+  const description = apod.seoArticle?.metaDescription 
+    || (apod.explanation || "").slice(0, 160) + (apod.explanation?.length > 160 ? "..." : "")
+  
   const base = process.env.NEXT_PUBLIC_SITE_URL || "https://infinite.example"
   const canonical = `${base}/apod/${apod.date}`
   const ogUrl = `${base}/apod/${apod.date}/opengraph-image`
 
+  // Add keywords from SEO article
+  const keywords = apod.seoKeywords?.join(', ') || ''
+
   return {
     title,
     description,
+    keywords,
     alternates: {
       canonical,
     },

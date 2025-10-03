@@ -110,7 +110,18 @@ function marshalItem(it) {
     mediaType: it.mediaType?.S,
     seoKeywords: Array.isArray(it.seoKeywords?.L) ? it.seoKeywords.L.map((x) => x.S).filter(Boolean) : [],
     slovakArticle: it.slovakArticle?.S,
-    contentQuality: it.contentQuality?.N ? Number(it.contentQuality.N) : undefined
+    contentQuality: it.contentQuality?.N ? Number(it.contentQuality.N) : undefined,
+    // SEO Article data
+    seoArticle: it.seoArticle?.M ? {
+      metaTitle: it.seoArticle.M.metaTitle?.S,
+      metaDescription: it.seoArticle.M.metaDescription?.S,
+      intro: it.seoArticle.M.intro?.S,
+      article: it.seoArticle.M.article?.S,
+      faq: it.seoArticle.M.faq?.S,
+      conclusion: it.seoArticle.M.conclusion?.S,
+      internalLinks: Array.isArray(it.seoArticle.M.internalLinks?.L) ? it.seoArticle.M.internalLinks.L.map((x) => x.S).filter(Boolean) : [],
+      externalRefs: Array.isArray(it.seoArticle.M.externalRefs?.L) ? it.seoArticle.M.externalRefs.L.map((x) => x.S).filter(Boolean) : []
+    } : undefined
   };
 }
 

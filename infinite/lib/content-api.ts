@@ -23,6 +23,16 @@ type ApiItem = {
     contentType?: string
     originalUrl?: string
   }
+  seoArticle?: {
+    metaTitle?: string
+    metaDescription?: string
+    intro?: string
+    article?: string
+    faq?: string
+    conclusion?: string
+    internalLinks?: string[]
+    externalRefs?: string[]
+  }
 }
 
 function mapApiItemToApod(item: ApiItem): Apod {
@@ -51,6 +61,9 @@ function mapApiItemToApod(item: ApiItem): Apod {
     media_type,
     // Store both headlines for potential future use
     headlineEN: item.headlineEN?.trim(),
+    // SEO article data
+    seoArticle: item.seoArticle,
+    seoKeywords: item.seoKeywords,
   }
 }
 

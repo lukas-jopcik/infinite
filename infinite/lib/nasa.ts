@@ -8,6 +8,16 @@ export type Apod = {
   copyright?: string
   headlineEN?: string // English version of the curiosity-driven headline
   seoKeywords?: string[] // SEO keywords for the article
+  seoArticle?: {
+    metaTitle?: string
+    metaDescription?: string
+    intro?: string
+    article?: string
+    faq?: string
+    conclusion?: string
+    internalLinks?: string[]
+    externalRefs?: string[]
+  }
 }
 
 const NASA_API_KEY = process.env.NASA_API_KEY || "DEMO_KEY"
