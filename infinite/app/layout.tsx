@@ -38,7 +38,7 @@ export const metadata = {
     },
   },
   verification: {
-    google: process.env.GOOGLE_SITE_VERIFICATION,
+    google: 'ksv3P1l5lAT-48H1XihCans8tJu9t8xUAzhoNCf2VvA',
   },
   other: {
     'application/ld+json': JSON.stringify({
