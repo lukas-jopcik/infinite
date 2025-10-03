@@ -73,8 +73,8 @@ export async function getLatestApodsFromApi(limit = 12): Promise<Apod[]> {
 
   const res = await fetch(url, { 
     next: { 
-      revalidate: 300, // 5-minute cache
-      tags: ['apod-latest']
+      revalidate: 300, // 5-minute cache for sitemap freshness
+      tags: ['apod-latest', 'sitemap-data'] // Multiple tags for better cache invalidation
     },
     headers: {
       'Accept': 'application/json',
@@ -90,7 +90,11 @@ export async function getLatestApodsFromApi(limit = 12): Promise<Apod[]> {
 }
 
 export async function getAllAvailableFromApi(): Promise<Apod[]> {
-  return getLatestApodsFromApi(100)
+  const allApods = await getLatestApodsFromApi(100)
+  
+  // Filter out future dates - only include past and current dates
+  const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+  return allApods.filter(apod => apod.date <= today)
 }
 
 export async function getByDateFromApi(date: string): Promise<Apod | null> {
