@@ -23,7 +23,7 @@ exports.handler = async (event) => {
       return response(400, { error: 'Invalid JSON in request body' });
     }
 
-    const { date } = requestBody;
+    const { date, generateSeoArticle, seoArticleConfig } = requestBody;
 
     if (!date) {
       return response(400, { error: 'Missing required parameter: date' });
@@ -65,6 +65,10 @@ exports.handler = async (event) => {
         hdurl: nasaData.hdurl,
         media_type: nasaData.media_type,
         copyright: nasaData.copyright
+      },
+      options: {
+        generateSeoArticle: generateSeoArticle || false,
+        seoArticleConfig: seoArticleConfig || {}
       }
     };
 
