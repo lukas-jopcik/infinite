@@ -18,7 +18,7 @@ export function ApodCard({ apod, priority = false }: ApodCardProps) {
   return (
     <article className="h-full">
       <Link 
-        href={`/apod/${apod.date}`} 
+        href={`/objav-dna/${apod.date}`} 
         className="apod-card block focus-visible h-full flex flex-col" 
         onClick={() => trackEvent('card_open_detail', { category: 'navigation', label: apod.date })}
         aria-label={`Prečítať článok: ${apod.title} z ${formatDate(apod.date)}`}

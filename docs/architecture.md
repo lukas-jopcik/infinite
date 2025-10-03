@@ -519,7 +519,7 @@ Based on your existing Next.js project structure and the need for AI-enhanced co
 ```
 infinite/
 ├── app/                    # Next.js App Router
-│   ├── apod/[date]/       # Existing APOD detail pages
+│   ├── objav-dna/[date]/    # Existing APOD detail pages
 │   ├── rss.xml/           # Existing RSS feed
 │   ├── globals.css        # Existing global styles
 │   ├── layout.tsx         # Existing root layout
@@ -543,7 +543,7 @@ infinite/
 ```
 infinite/
 ├── app/                    # Existing structure preserved
-│   ├── apod/[date]/       # Existing APOD detail pages
+│   ├── objav-dna/[date]/    # Existing APOD detail pages
 │   ├── rss.xml/           # Existing RSS feed
 │   ├── api/               # New API routes
 │   │   ├── content/       # AI content management

@@ -194,7 +194,7 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
                     url: 'https://infinite.example/logo.png'
                   }
                 },
-                mainEntityOfPage: `https://infinite.example/apod/${apod.date}`,
+                mainEntityOfPage: `https://infinite.example/objav-dna/${apod.date}`,
                 articleSection: 'Astronómia',
                 keywords: apod.seoKeywords?.join(', ') || '',
                 description: apod.seoArticle?.metaDescription || apod.explanation?.slice(0, 160) || '',
@@ -212,14 +212,14 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
                   {
                     '@type': 'ListItem',
                     position: 2,
-                    name: 'APOD',
+                    name: 'Objav dňa',
                     item: 'https://infinite.example'
                   },
                   {
                     '@type': 'ListItem',
                     position: 3,
                     name: apod.title,
-                    item: `https://infinite.example/apod/${apod.date}`
+                    item: `https://infinite.example/objav-dna/${apod.date}`
                   }
                 ]
               },
@@ -283,8 +283,8 @@ export default async function ApodDetailPage({ params }: ApodDetailPageProps) {
 
         <nav aria-label="Navigácia medzi článkami">
           <DetailNav
-            newerHref={newer ? `/apod/${newer.date}` : undefined}
-            olderHref={older ? `/apod/${older.date}` : undefined}
+            newerHref={newer ? `/objav-dna/${newer.date}` : undefined}
+            olderHref={older ? `/objav-dna/${older.date}` : undefined}
           />
         </nav>
       </div>

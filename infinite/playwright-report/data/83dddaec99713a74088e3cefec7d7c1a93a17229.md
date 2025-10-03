@@ -1,0 +1,164 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "Infinite - Domovská stránka" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7] [cursor=pointer]:
+            - heading "infinite" [level=1] [ref=e8] [cursor=pointer]
+            - paragraph [ref=e9] [cursor=pointer]: nekonečné objavy, každý deň
+        - navigation "Hlavná navigácia" [ref=e10]:
+          - generic [ref=e11]:
+            - link "Objav dňa" [ref=e12] [cursor=pointer]:
+              - /url: /
+            - button "Kategórie" [ref=e14] [cursor=pointer]:
+              - text: Kategórie
+              - img [ref=e15] [cursor=pointer]
+    - main [ref=e17]:
+      - generic [ref=e18]:
+        - 'region "Hmlovina závoja: Aké tajomstvá skrýva?" [ref=e20]':
+          - generic [ref=e22]:
+            - generic [ref=e23]:
+              - generic [ref=e24]:
+                - generic [ref=e25]: Dnes objavujeme
+                - 'heading "Hmlovina závoja: Aké tajomstvá skrýva?" [level=1] [ref=e26]'
+                - generic [ref=e27]:
+                  - time [ref=e28]: 1. októbra 2025
+                  - 'generic "Čas čítania: 4 minút" [ref=e29]': 4 min čítania
+              - list "Témy článku" [ref=e30]:
+                - listitem [ref=e31]: galaxie
+                - listitem [ref=e32]: hviezdy
+                - listitem [ref=e33]: vesmírna štruktúra
+              - paragraph [ref=e34]: "Astronomická fotografia dňa: Záhadná \"Metla čarodejnice\" v oblohe Pred desiatimi tisíc rokmi, v čase, keď ľudia ešte len začínali písať svoju históriu, sa na n..."
+              - 'link "Prečítať celý článok: Hmlovina závoja: Aké tajomstvá skrýva?" [ref=e35] [cursor=pointer]':
+                - /url: /apod/2025-10-01
+                - text: Čítať ďalej
+                - img [ref=e36] [cursor=pointer]
+            - 'img "Hmlovina závoja: Aké tajomstvá skrýva?" [ref=e40]'
+        - region "Predchádzajúce objavy" [ref=e42]:
+          - generic [ref=e43]:
+            - insertion [ref=e46]:
+              - iframe [ref=e48]:
+                
+            - heading "Predchádzajúce objavy" [level=2] [ref=e49]
+            - list "Zoznam článkov" [ref=e50]:
+              - listitem [ref=e51]:
+                - article [ref=e52]:
+                  - 'link "Prečítať článok: Kométa Lemmon sa blíži k Zemi: Čo očakávať? z 30. septembra 2025" [ref=e53] [cursor=pointer]':
+                    - /url: /apod/2025-09-30
+                    - 'img "Kométa Lemmon sa blíži k Zemi: Čo očakávať?" [ref=e55] [cursor=pointer]'
+                    - generic [ref=e56] [cursor=pointer]:
+                      - 'heading "Kométa Lemmon sa blíži k Zemi: Čo očakávať?" [level=3] [ref=e57] [cursor=pointer]'
+                      - generic [ref=e58] [cursor=pointer]:
+                        - time [ref=e59] [cursor=pointer]: 30. septembra 2025
+                        - 'generic "Čas čítania: 3 minút" [ref=e60] [cursor=pointer]': 3 min
+              - listitem [ref=e61]:
+                - article [ref=e62]:
+                  - 'link "Prečítať článok: Dve kométy spolu zdobia nočnú oblohu z 29. septembra 2025" [ref=e63] [cursor=pointer]':
+                    - /url: /apod/2025-09-29
+                    - img "Dve kométy spolu zdobia nočnú oblohu" [ref=e65] [cursor=pointer]
+                    - generic [ref=e66] [cursor=pointer]:
+                      - heading "Dve kométy spolu zdobia nočnú oblohu" [level=3] [ref=e67] [cursor=pointer]
+                      - generic [ref=e68] [cursor=pointer]:
+                        - time [ref=e69] [cursor=pointer]: 29. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e70] [cursor=pointer]': 4 min
+              - listitem [ref=e71]:
+                - article [ref=e72]:
+                  - 'link "Prečítať článok: Marťanské \"leopardie škvrny\" vyvolávajú teórie o živote z 28. septembra 2025" [ref=e73] [cursor=pointer]':
+                    - /url: /apod/2025-09-28
+                    - img "Marťanské \"leopardie škvrny\" vyvolávajú teórie o živote" [ref=e75] [cursor=pointer]
+                    - generic [ref=e76] [cursor=pointer]:
+                      - heading "Marťanské \"leopardie škvrny\" vyvolávajú teórie o živote" [level=3] [ref=e77] [cursor=pointer]
+                      - generic [ref=e78] [cursor=pointer]:
+                        - time [ref=e79] [cursor=pointer]: 28. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e80] [cursor=pointer]': 4 min
+              - listitem [ref=e81]:
+                - article [ref=e82]:
+                  - 'link "Prečítať článok: Raketa prechádza slnkom: Čo sa stane ďalej? z 27. septembra 2025" [ref=e83] [cursor=pointer]':
+                    - /url: /apod/2025-09-27
+                    - 'img "Raketa prechádza slnkom: Čo sa stane ďalej?" [ref=e85] [cursor=pointer]'
+                    - generic [ref=e86] [cursor=pointer]:
+                      - 'heading "Raketa prechádza slnkom: Čo sa stane ďalej?" [level=3] [ref=e87] [cursor=pointer]'
+                      - generic [ref=e88] [cursor=pointer]:
+                        - time [ref=e89] [cursor=pointer]: 27. septembra 2025
+                        - 'generic "Čas čítania: 5 minút" [ref=e90] [cursor=pointer]': 5 min
+              - listitem [ref=e91]:
+                - article [ref=e92]:
+                  - 'link "Prečítať článok: Nové kométy osvetľujú našu nočnú oblohu z 26. septembra 2025" [ref=e93] [cursor=pointer]':
+                    - /url: /apod/2025-09-26
+                    - img "Nové kométy osvetľujú našu nočnú oblohu" [ref=e95] [cursor=pointer]
+                    - generic [ref=e96] [cursor=pointer]:
+                      - heading "Nové kométy osvetľujú našu nočnú oblohu" [level=3] [ref=e97] [cursor=pointer]
+                      - generic [ref=e98] [cursor=pointer]:
+                        - time [ref=e99] [cursor=pointer]: 26. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e100] [cursor=pointer]': 4 min
+              - listitem [ref=e101]:
+                - article [ref=e102]:
+                  - 'link "Prečítať článok: Saturnova opozícia: Čo môžeme objaviť? z 25. septembra 2025" [ref=e103] [cursor=pointer]':
+                    - /url: /apod/2025-09-25
+                    - 'img "Saturnova opozícia: Čo môžeme objaviť?" [ref=e105] [cursor=pointer]'
+                    - generic [ref=e106] [cursor=pointer]:
+                      - 'heading "Saturnova opozícia: Čo môžeme objaviť?" [level=3] [ref=e107] [cursor=pointer]'
+                      - generic [ref=e108] [cursor=pointer]:
+                        - time [ref=e109] [cursor=pointer]: 25. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e110] [cursor=pointer]': 4 min
+              - listitem [ref=e111]:
+                - article [ref=e112]:
+                  - 'link "Prečítať článok: NASA zachytila jedinečný signál z kolízie čiernych dier z 24. septembra 2025" [ref=e113] [cursor=pointer]':
+                    - /url: /apod/2025-09-24
+                    - img "NASA zachytila jedinečný signál z kolízie čiernych dier" [ref=e115] [cursor=pointer]
+                    - generic [ref=e116] [cursor=pointer]:
+                      - heading "NASA zachytila jedinečný signál z kolízie čiernych dier" [level=3] [ref=e117] [cursor=pointer]
+                      - generic [ref=e118] [cursor=pointer]:
+                        - time [ref=e119] [cursor=pointer]: 24. septembra 2025
+                        - 'generic "Čas čítania: 5 minút" [ref=e120] [cursor=pointer]': 5 min
+              - listitem [ref=e121]:
+                - article [ref=e122]:
+                  - 'link "Prečítať článok: Objavovanie tajomstiev hviezd NGC 6357 z 23. septembra 2025" [ref=e123] [cursor=pointer]':
+                    - /url: /apod/2025-09-23
+                    - img "Objavovanie tajomstiev hviezd NGC 6357" [ref=e125] [cursor=pointer]
+                    - generic [ref=e126] [cursor=pointer]:
+                      - heading "Objavovanie tajomstiev hviezd NGC 6357" [level=3] [ref=e127] [cursor=pointer]
+                      - generic [ref=e128] [cursor=pointer]:
+                        - time [ref=e129] [cursor=pointer]: 23. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e130] [cursor=pointer]': 4 min
+              - listitem [ref=e131]:
+                - article [ref=e132]:
+                  - 'link "Prečítať článok: Ako rovnodennosť ovplyvňuje prstence Saturnu každý rok z 22. septembra 2025" [ref=e133] [cursor=pointer]':
+                    - /url: /apod/2025-09-22
+                    - img "Ako rovnodennosť ovplyvňuje prstence Saturnu každý rok" [ref=e135] [cursor=pointer]
+                    - generic [ref=e136] [cursor=pointer]:
+                      - heading "Ako rovnodennosť ovplyvňuje prstence Saturnu každý rok" [level=3] [ref=e137] [cursor=pointer]
+                      - generic [ref=e138] [cursor=pointer]:
+                        - time [ref=e139] [cursor=pointer]: 22. septembra 2025
+                        - 'generic "Čas čítania: 4 minút" [ref=e140] [cursor=pointer]': 4 min
+            - navigation "Stránkovanie" [ref=e141]:
+              - generic [ref=e142]:
+                - generic [ref=e143]:
+                  - generic [ref=e144]: Stránka
+                  - generic [ref=e145]: "1"
+                - link "Staršie" [ref=e146] [cursor=pointer]:
+                  - /url: /?page=2
+                  - text: Staršie
+                  - img [ref=e147] [cursor=pointer]
+    - contentinfo [ref=e149]:
+      - generic [ref=e150]:
+        - paragraph [ref=e151]: © 2025 Infinite — Nekonečné objavy, každý deň.
+        - paragraph [ref=e152]:
+          - text: "Zdroj dát:"
+          - link "NASA APOD" [ref=e153] [cursor=pointer]:
+            - /url: https://apod.nasa.gov/
+        - button "Zmeniť nastavenia súhlasu pre cookies a analýzu" [ref=e155] [cursor=pointer]: Zmeniť nastavenia súhlasu
+  - alert [ref=e156]
+  - generic [ref=e157]:
+    - paragraph [ref=e158]: Používame súbory cookie na analytiku (Google Analytics). Môžeš zmeniť rozhodnutie kedykoľvek v pätičke.
+    - list [ref=e159]:
+      - listitem [ref=e160]: bez reklamných cookies
+      - listitem [ref=e161]: iba agregované štatistiky návštevnosti
+    - generic [ref=e162]:
+      - button "Odmietnuť" [ref=e163] [cursor=pointer]
+      - button "Povoliť analytiku" [ref=e164] [cursor=pointer]
+```

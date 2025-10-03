@@ -4,7 +4,7 @@ test.describe('APOD Detail Page', () => {
   test('should load detail page for a specific date', async ({ page }) => {
     // Use a known date that should have content
     const testDate = '2025-09-29';
-    await page.goto(`/apod/${testDate}`);
+    await page.goto(`/objav-dna/${testDate}`);
     
     // Check that the page loads without errors
     await expect(page).toHaveTitle(/Infinite/);
@@ -18,7 +18,7 @@ test.describe('APOD Detail Page', () => {
 
   test('should display APOD content for specific date', async ({ page }) => {
     const testDate = '2025-09-29';
-    await page.goto(`/apod/${testDate}`);
+    await page.goto(`/objav-dna/${testDate}`);
     await page.waitForLoadState('networkidle');
     
     // Check for APOD content elements
@@ -42,7 +42,7 @@ test.describe('APOD Detail Page', () => {
 
   test('should have working back navigation', async ({ page }) => {
     const testDate = '2025-09-29';
-    await page.goto(`/apod/${testDate}`);
+    await page.goto(`/objav-dna/${testDate}`);
     
     // Look for back button or home link
     const backButton = page.locator('a[href="/"], button:has-text("Back"), button:has-text("←")');
@@ -57,7 +57,7 @@ test.describe('APOD Detail Page', () => {
 
   test('should handle invalid dates gracefully', async ({ page }) => {
     // Test with invalid date format
-    await page.goto('/apod/invalid-date');
+    await page.goto('/objav-dna/invalid-date');
     
     // Check that the page still loads
     await expect(page.locator('main')).toBeVisible();
@@ -72,7 +72,7 @@ test.describe('APOD Detail Page', () => {
   test('should handle future dates gracefully', async ({ page }) => {
     // Test with future date
     const futureDate = '2030-12-31';
-    await page.goto(`/apod/${futureDate}`);
+    await page.goto(`/objav-dna/${futureDate}`);
     await page.waitForLoadState('networkidle');
     
     // Check that the page loads
@@ -94,7 +94,7 @@ test.describe('APOD Detail Page', () => {
     await page.setViewportSize({ width: 375, height: 667 });
     
     const testDate = '2025-09-29';
-    await page.goto(`/apod/${testDate}`);
+    await page.goto(`/objav-dna/${testDate}`);
     
     // Check that the page is still functional on mobile
     await expect(page.locator('main')).toBeVisible();
@@ -124,7 +124,7 @@ test.describe('APOD Detail Page', () => {
     });
     
     const testDate = '2025-09-29';
-    await page.goto(`/apod/${testDate}`);
+    await page.goto(`/objav-dna/${testDate}`);
     await page.waitForLoadState('networkidle');
     
     // Check that the page still loads even with API errors
@@ -139,7 +139,7 @@ test.describe('APOD Detail Page', () => {
 
   test('should have proper meta tags for SEO', async ({ page }) => {
     const testDate = '2025-09-29';
-    await page.goto(`/apod/${testDate}`);
+    await page.goto(`/objav-dna/${testDate}`);
     
     // Check for essential meta tags
     await expect(page.locator('meta[name="description"]')).toHaveCount(1);

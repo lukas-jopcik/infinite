@@ -18,8 +18,8 @@ export async function GET() {
     <item>
       <title><![CDATA[${apod.title}]]></title>
       <description><![CDATA[${apod.explanation?.substring(0, 500)}...]]></description>
-      <link>${baseUrl}/apod/${apod.date}</link>
-      <guid>${baseUrl}/apod/${apod.date}</guid>
+      <link>${baseUrl}/objav-dna/${apod.date}</link>
+      <guid>${baseUrl}/objav-dna/${apod.date}</guid>
       <pubDate>${new Date(apod.date).toUTCString()}</pubDate>
       <enclosure url="${apod.hdurl || apod.url}" type="image/jpeg"/>
     </item>

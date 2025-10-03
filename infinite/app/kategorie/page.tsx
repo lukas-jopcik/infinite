@@ -112,7 +112,7 @@ export default async function CategoryPage({}: CategoryPageProps) {
                     {category.items.slice(0, 3).map((item: any) => (
                       <Link
                         key={item.date}
-                        href={`/apod/${item.date}`}
+                        href={`/objav-dna/${item.date}`}
                         className="block text-sm text-blue-400 hover:text-blue-300 transition-colors truncate hover:underline"
                       >
                         {item.title}

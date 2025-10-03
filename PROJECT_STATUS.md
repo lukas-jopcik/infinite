@@ -257,7 +257,7 @@ lib/
 ```
 app/
 ├── page.tsx               # Homepage (latest APODs)
-├── apod/[date]/page.tsx   # Detail page
+├── objav-dna/[date]/page.tsx   # Detail page
 ├── rss.xml/route.ts       # RSS feed
 ├── sitemap.ts             # Sitemap generation
 └── robots.ts              # robots.txt

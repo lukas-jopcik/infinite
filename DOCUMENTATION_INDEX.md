@@ -161,7 +161,7 @@ For new developers or operators, start with these documents in order:
 infinite/
 ├── app/                      # Next.js App Router pages
 │   ├── page.tsx             # Homepage
-│   ├── apod/[date]/page.tsx # Detail pages
+│   ├── objav-dna/[date]/page.tsx # Detail pages
 │   ├── rss.xml/route.ts     # RSS feed
 │   └── sitemap.ts           # Sitemap
 ├── components/              # React components

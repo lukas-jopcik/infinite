@@ -1,7 +1,6 @@
 "use client"
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
-import { isMobileDevice, getMobileImageConfig, getMobileImageUrl } from '@/lib/mobile-optimization'
+import { useState } from 'react'
 import { getBestImageUrl, isImageUrlReliable } from '@/lib/image-loader'
 
 interface OptimizedImageProps {
@@ -54,25 +53,19 @@ export function OptimizedImage({
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
   const [currentSrc, setCurrentSrc] = useState(src)
-  const [isMobile, setIsMobile] = useState(false)
-  
-  useEffect(() => {
-    setIsMobile(isMobileDevice())
-  }, [])
-  
-  // Get mobile-optimized config
-  const mobileConfig = isMobile ? getMobileImageConfig() : { quality: 70, sizes: sizes }
-  const finalQuality = isMobile ? mobileConfig.quality || 50 : quality
-  const finalSizes = isMobile ? mobileConfig.sizes || sizes : sizes
+  const [imageLoaded, setImageLoaded] = useState(false)
   
   // Get the best available image URL with fallbacks
   const bestSrc = getBestImageUrl(currentSrc, hdSrc, src)
   
-  // Get mobile-optimized image URL (no HD on mobile)
-  const finalSrc = isMobile ? getMobileImageUrl(bestSrc, hdSrc) : bestSrc
+  // Use consistent quality and sizes to avoid hydration mismatch
+  const finalQuality = quality
+  const finalSizes = sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+  const finalSrc = bestSrc
 
   const handleLoad = () => {
     setIsLoading(false)
+    setImageLoaded(true)
   }
 
   const handleError = () => {
@@ -102,36 +95,60 @@ export function OptimizedImage({
 
   if (fill) {
     return (
-      <Image
-        src={finalSrc}
-        alt={alt}
-        fill
-        className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-        priority={priority}
-        sizes={finalSizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
-        quality={finalQuality}
-        placeholder="blur"
-        blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
-        onLoad={handleLoad}
-        onError={handleError}
-      />
+      <>
+        <Image
+          src={finalSrc}
+          alt={alt}
+          fill
+          className={`${className} transition-opacity duration-200 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+          priority={priority}
+          sizes={finalSizes}
+          quality={finalQuality}
+          placeholder="blur"
+          blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
+          onLoad={handleLoad}
+          onError={handleError}
+        />
+        {!imageLoaded && (
+          <div 
+            className="absolute inset-0 bg-gray-800 animate-pulse"
+            style={{
+              backgroundImage: `url("data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}")`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          />
+        )}
+      </>
     )
   }
 
   return (
-    <Image
-      src={finalSrc}
-      alt={alt}
-      width={width}
-      height={height}
-      className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-      priority={priority}
-      quality={finalQuality}
-      placeholder="blur"
-      blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`}
-      sizes={finalSizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
-      onLoad={handleLoad}
-      onError={handleError}
-    />
+    <>
+      <Image
+        src={finalSrc}
+        alt={alt}
+        width={width}
+        height={height}
+        className={`${className} transition-opacity duration-200 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+        priority={priority}
+        quality={finalQuality}
+        placeholder="blur"
+        blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(width, height))}`}
+        sizes={finalSizes}
+        onLoad={handleLoad}
+        onError={handleError}
+      />
+      {!imageLoaded && (
+        <div 
+          className="absolute inset-0 bg-gray-800 animate-pulse"
+          style={{
+            backgroundImage: `url("data:image/svg+xml;base64,${toBase64(shimmer(width, height))}")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        />
+      )}
+    </>
   )
 }

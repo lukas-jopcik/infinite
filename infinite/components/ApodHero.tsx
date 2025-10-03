@@ -60,7 +60,7 @@ export function ApodHero({ apod }: ApodHeroProps) {
             <p className="text-lg lg:text-xl leading-relaxed text-pretty text-gray-300">{shortDescription}</p>
 
             <Link
-              href={`/apod/${apod.date}`}
+              href={`/objav-dna/${apod.date}`}
               className="btn-primary inline-flex items-center px-8 py-4 text-lg focus-visible"
               onClick={() => trackEvent('cta_read_more', { category: 'cta', label: apod.date })}
               aria-label={`Prečítať celý článok: ${apod.title}`}

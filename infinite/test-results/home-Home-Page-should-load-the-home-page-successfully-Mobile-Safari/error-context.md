@@ -14,25 +14,25 @@
           - img [ref=e11] [cursor=pointer]
     - main [ref=e13]:
       - generic [ref=e14]:
-        - 'region "Veilova hmlovina: Aké tajomstvá skrýva?" [ref=e16]':
+        - 'region "Hmlovina závoja: Aké tajomstvá skrýva?" [ref=e16]':
           - generic [ref=e18]:
             - generic [ref=e19]:
               - generic [ref=e20]:
                 - generic [ref=e21]: Dnes objavujeme
-                - 'heading "Veilova hmlovina: Aké tajomstvá skrýva?" [level=1] [ref=e22]'
+                - 'heading "Hmlovina závoja: Aké tajomstvá skrýva?" [level=1] [ref=e22]'
                 - generic [ref=e23]:
                   - time [ref=e24]: 1. októbra 2025
                   - 'generic "Čas čítania: 4 minút" [ref=e25]': 4 min čítania
               - list "Témy článku" [ref=e26]:
-                - listitem [ref=e27]: hmlovina
+                - listitem [ref=e27]: galaxie
                 - listitem [ref=e28]: hviezdy
-                - listitem [ref=e29]: kozmické farby
-              - paragraph [ref=e30]: "Astronomický obrázok dňa: Mysteriózna Veil Nebula Astronómia, ako veda o vesmíre, nám neustále otvára dvere do fascinujúcich svetov, ktoré sú od nás vzdialené ..."
-              - 'link "Prečítať celý článok: Veilova hmlovina: Aké tajomstvá skrýva?" [ref=e31] [cursor=pointer]':
+                - listitem [ref=e29]: vesmírna štruktúra
+              - paragraph [ref=e30]: "Astronomická fotografia dňa: Záhadná \"Metla čarodejnice\" v oblohe Pred desiatimi tisíc rokmi, v čase, keď ľudia ešte len začínali písať svoju históriu, sa na n..."
+              - 'link "Prečítať celý článok: Hmlovina závoja: Aké tajomstvá skrýva?" [ref=e31] [cursor=pointer]':
                 - /url: /apod/2025-10-01
                 - text: Čítať ďalej
                 - img [ref=e32] [cursor=pointer]
-            - 'img "Veilova hmlovina: Aké tajomstvá skrýva?" [ref=e36]'
+            - 'img "Hmlovina závoja: Aké tajomstvá skrýva?" [ref=e36]'
         - region "Predchádzajúce objavy" [ref=e38]:
           - generic [ref=e39]:
             - insertion [ref=e42]:
@@ -42,91 +42,91 @@
             - list "Zoznam článkov" [ref=e46]:
               - listitem [ref=e47]:
                 - article [ref=e48]:
-                  - 'link "Prečítať článok: Kométa Lemmon sa jasní na severnej oblohe z 30. septembra 2025" [ref=e49]':
+                  - 'link "Prečítať článok: Kométa Lemmon sa blíži k Zemi: Čo očakávať? z 30. septembra 2025" [ref=e49]':
                     - /url: /apod/2025-09-30
-                    - img "Kométa Lemmon sa jasní na severnej oblohe" [ref=e51]
+                    - 'img "Kométa Lemmon sa blíži k Zemi: Čo očakávať?" [ref=e51]'
                     - generic [ref=e52]:
-                      - heading "Kométa Lemmon sa jasní na severnej oblohe" [level=3] [ref=e53]
+                      - 'heading "Kométa Lemmon sa blíži k Zemi: Čo očakávať?" [level=3] [ref=e53]'
                       - generic [ref=e54]:
                         - time [ref=e55]: 30. septembra 2025
                         - 'generic "Čas čítania: 3 minút" [ref=e56]': 3 min
               - listitem [ref=e57]:
                 - article [ref=e58]:
-                  - 'link "Prečítať článok: Na oblohe žiaria dve kométy z 29. septembra 2025" [ref=e59]':
+                  - 'link "Prečítať článok: Dve kométy spolu zdobia nočnú oblohu z 29. septembra 2025" [ref=e59]':
                     - /url: /apod/2025-09-29
-                    - img "Na oblohe žiaria dve kométy" [ref=e61]
+                    - img "Dve kométy spolu zdobia nočnú oblohu" [ref=e61]
                     - generic [ref=e62]:
-                      - heading "Na oblohe žiaria dve kométy" [level=3] [ref=e63]
+                      - heading "Dve kométy spolu zdobia nočnú oblohu" [level=3] [ref=e63]
                       - generic [ref=e64]:
                         - time [ref=e65]: 29. septembra 2025
-                        - 'generic "Čas čítania: 3 minút" [ref=e66]': 3 min
+                        - 'generic "Čas čítania: 4 minút" [ref=e66]': 4 min
               - listitem [ref=e67]:
                 - article [ref=e68]:
-                  - 'link "Prečítať článok: Tajomstvo leopardích škvŕn na marsovských skalách z 28. septembra 2025" [ref=e69]':
+                  - 'link "Prečítať článok: Marťanské \"leopardie škvrny\" vyvolávajú teórie o živote z 28. septembra 2025" [ref=e69]':
                     - /url: /apod/2025-09-28
-                    - img "Tajomstvo leopardích škvŕn na marsovských skalách" [ref=e71]
+                    - img "Marťanské \"leopardie škvrny\" vyvolávajú teórie o živote" [ref=e71]
                     - generic [ref=e72]:
-                      - heading "Tajomstvo leopardích škvŕn na marsovských skalách" [level=3] [ref=e73]
+                      - heading "Marťanské \"leopardie škvrny\" vyvolávajú teórie o živote" [level=3] [ref=e73]
                       - generic [ref=e74]:
                         - time [ref=e75]: 28. septembra 2025
                         - 'generic "Čas čítania: 4 minút" [ref=e76]': 4 min
               - listitem [ref=e77]:
                 - article [ref=e78]:
-                  - 'link "Prečítať článok: Raketa preletela pred slnkom, zachytená naživo z 27. septembra 2025" [ref=e79]':
+                  - 'link "Prečítať článok: Raketa prechádza slnkom: Čo sa stane ďalej? z 27. septembra 2025" [ref=e79]':
                     - /url: /apod/2025-09-27
-                    - img "Raketa preletela pred slnkom, zachytená naživo" [ref=e81]
+                    - 'img "Raketa prechádza slnkom: Čo sa stane ďalej?" [ref=e81]'
                     - generic [ref=e82]:
-                      - heading "Raketa preletela pred slnkom, zachytená naživo" [level=3] [ref=e83]
+                      - 'heading "Raketa prechádza slnkom: Čo sa stane ďalej?" [level=3] [ref=e83]'
                       - generic [ref=e84]:
                         - time [ref=e85]: 27. septembra 2025
                         - 'generic "Čas čítania: 5 minút" [ref=e86]': 5 min
               - listitem [ref=e87]:
                 - article [ref=e88]:
-                  - 'link "Prečítať článok: Nové kométy osvetľujú nočnú oblohu Marsu z 26. septembra 2025" [ref=e89]':
+                  - 'link "Prečítať článok: Nové kométy osvetľujú našu nočnú oblohu z 26. septembra 2025" [ref=e89]':
                     - /url: /apod/2025-09-26
-                    - img "Nové kométy osvetľujú nočnú oblohu Marsu" [ref=e91]
+                    - img "Nové kométy osvetľujú našu nočnú oblohu" [ref=e91]
                     - generic [ref=e92]:
-                      - heading "Nové kométy osvetľujú nočnú oblohu Marsu" [level=3] [ref=e93]
+                      - heading "Nové kométy osvetľujú našu nočnú oblohu" [level=3] [ref=e93]
                       - generic [ref=e94]:
                         - time [ref=e95]: 26. septembra 2025
                         - 'generic "Čas čítania: 4 minút" [ref=e96]': 4 min
               - listitem [ref=e97]:
                 - article [ref=e98]:
-                  - 'link "Prečítať článok: Opozícia Saturnu: Udalosť na nočnej oblohe odkrytá z 25. septembra 2025" [ref=e99]':
+                  - 'link "Prečítať článok: Saturnova opozícia: Čo môžeme objaviť? z 25. septembra 2025" [ref=e99]':
                     - /url: /apod/2025-09-25
-                    - 'img "Opozícia Saturnu: Udalosť na nočnej oblohe odkrytá" [ref=e101]'
+                    - 'img "Saturnova opozícia: Čo môžeme objaviť?" [ref=e101]'
                     - generic [ref=e102]:
-                      - 'heading "Opozícia Saturnu: Udalosť na nočnej oblohe odkrytá" [level=3] [ref=e103]'
+                      - 'heading "Saturnova opozícia: Čo môžeme objaviť?" [level=3] [ref=e103]'
                       - generic [ref=e104]:
                         - time [ref=e105]: 25. septembra 2025
                         - 'generic "Čas čítania: 4 minút" [ref=e106]': 4 min
               - listitem [ref=e107]:
                 - article [ref=e108]:
-                  - 'link "Prečítať článok: Zrážka čiernych dier: Čo odhaľuje o vesmíre z 24. septembra 2025" [ref=e109]':
+                  - 'link "Prečítať článok: NASA zachytila jedinečný signál z kolízie čiernych dier z 24. septembra 2025" [ref=e109]':
                     - /url: /apod/2025-09-24
-                    - 'img "Zrážka čiernych dier: Čo odhaľuje o vesmíre" [ref=e111]'
+                    - img "NASA zachytila jedinečný signál z kolízie čiernych dier" [ref=e111]
                     - generic [ref=e112]:
-                      - 'heading "Zrážka čiernych dier: Čo odhaľuje o vesmíre" [level=3] [ref=e113]'
+                      - heading "NASA zachytila jedinečný signál z kolízie čiernych dier" [level=3] [ref=e113]
                       - generic [ref=e114]:
                         - time [ref=e115]: 24. septembra 2025
-                        - 'generic "Čas čítania: 3 minút" [ref=e116]': 3 min
+                        - 'generic "Čas čítania: 5 minút" [ref=e116]': 5 min
               - listitem [ref=e117]:
                 - article [ref=e118]:
-                  - 'link "Prečítať článok: NGC 6357: Kozmická jaslička pre hviezdy z 23. septembra 2025" [ref=e119]':
+                  - 'link "Prečítať článok: Objavovanie tajomstiev hviezd NGC 6357 z 23. septembra 2025" [ref=e119]':
                     - /url: /apod/2025-09-23
-                    - 'img "NGC 6357: Kozmická jaslička pre hviezdy" [ref=e121]'
+                    - img "Objavovanie tajomstiev hviezd NGC 6357" [ref=e121]
                     - generic [ref=e122]:
-                      - 'heading "NGC 6357: Kozmická jaslička pre hviezdy" [level=3] [ref=e123]'
+                      - heading "Objavovanie tajomstiev hviezd NGC 6357" [level=3] [ref=e123]
                       - generic [ref=e124]:
                         - time [ref=e125]: 23. septembra 2025
                         - 'generic "Čas čítania: 4 minút" [ref=e126]': 4 min
               - listitem [ref=e127]:
                 - article [ref=e128]:
-                  - 'link "Prečítať článok: Prstene Saturna: Tanec sezónnych zmien z 22. septembra 2025" [ref=e129]':
+                  - 'link "Prečítať článok: Ako rovnodennosť ovplyvňuje prstence Saturnu každý rok z 22. septembra 2025" [ref=e129]':
                     - /url: /apod/2025-09-22
-                    - 'img "Prstene Saturna: Tanec sezónnych zmien" [ref=e131]'
+                    - img "Ako rovnodennosť ovplyvňuje prstence Saturnu každý rok" [ref=e131]
                     - generic [ref=e132]:
-                      - 'heading "Prstene Saturna: Tanec sezónnych zmien" [level=3] [ref=e133]'
+                      - heading "Ako rovnodennosť ovplyvňuje prstence Saturnu každý rok" [level=3] [ref=e133]
                       - generic [ref=e134]:
                         - time [ref=e135]: 22. septembra 2025
                         - 'generic "Čas čítania: 4 minút" [ref=e136]': 4 min
