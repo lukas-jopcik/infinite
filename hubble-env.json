@@ -1,7 +1,0 @@
-{
-  "Variables": {
-    "HUBBLE_RSS_URL": "https://feeds.feedburner.com/esahubble/images/potw/",
-    "PROCESSOR_FUNCTION": "infinite-nasa-apod-dev-content-processor",
-    "ENVIRONMENT": "development"
-  }
-}

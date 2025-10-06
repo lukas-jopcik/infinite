@@ -10,7 +10,6 @@ fi
 
 # DynamoDB MCP Aliases
 alias db-stats='./scripts/db.sh stats'
-alias db-hubble='./scripts/db.sh hubble'
 alias db-apod='./scripts/db.sh apod'
 alias db-list='./scripts/db.sh list'
 alias db-scan='./scripts/db.sh scan'
@@ -30,7 +29,6 @@ echo "🔗 DynamoDB MCP aliases načítané!"
 echo ""
 echo "📖 Dostupné aliasy:"
 echo "  db-stats      - Štatistiky tabuľky"
-echo "  db-hubble 5   - 5 najnovších Hubble položiek"
 echo "  db-apod 3     - 3 najnovšie APOD položky"
 echo "  db-list       - Zoznam tabuliek"
 echo "  db-scan 10    - Skenovanie tabuľky"

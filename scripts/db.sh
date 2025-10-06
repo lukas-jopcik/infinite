@@ -23,7 +23,6 @@ show_help() {
     echo "Dostupné príkazy:"
     echo "  list                    - Zoznam všetkých tabuliek"
     echo "  stats                   - Štatistiky hlavnej tabuľky"
-    echo "  hubble [limit]          - Hubble položky (default: 5)"
     echo "  apod [limit]            - APOD položky (default: 5)"
     echo "  scan [limit]            - Skenovanie tabuľky (default: 10)"
     echo "  item <date>             - Konkrétna položka podľa dátumu"
@@ -33,7 +32,6 @@ show_help() {
     echo "Príklady:"
     echo "  $0 list"
     echo "  $0 stats"
-    echo "  $0 hubble 10"
     echo "  $0 apod 3"
     echo "  $0 item 2024-12-19"
     echo "  $0 scan 5"
@@ -61,11 +59,6 @@ case "$1" in
     "stats")
         echo -e "${GREEN}📊 Štatistiky tabuľky${NC}"
         python3 "$PYTHON_SCRIPT" --profile infinite-nasa-apod-dev --region eu-central-1 table-stats
-        ;;
-    "hubble")
-        limit=${2:-5}
-        echo -e "${GREEN}🔭 Hubble položky (limit: $limit)${NC}"
-        python3 "$PYTHON_SCRIPT" --profile infinite-nasa-apod-dev --region eu-central-1 query-hubble --limit "$limit"
         ;;
     "apod")
         limit=${2:-5}

@@ -61,7 +61,6 @@ aws dynamodb describe-table --table-name infinite-nasa-apod-dev-content --region
 
 # 2. Použitie shell wrapper (najjednoduchšie)
 ./scripts/db.sh stats          # Štatistiky tabuľky
-./scripts/db.sh hubble 5       # 5 najnovších Hubble položiek
 ./scripts/db.sh apod 3         # 3 najnovšie APOD položky
 ./scripts/db.sh list           # Zoznam tabuliek
 ```
@@ -88,8 +87,6 @@ python3 scripts/dynamodb-mcp-client.py table-stats
 # Skenovanie tabuľky (všetky položky)
 python3 scripts/dynamodb-mcp-client.py scan-table --limit 10
 
-# Query Hubble položiek
-python3 scripts/dynamodb-mcp-client.py query-hubble --limit 5
 
 # Query APOD položiek
 python3 scripts/dynamodb-mcp-client.py query-apod --limit 5
@@ -115,7 +112,6 @@ Skript poskytuje štruktúrovaný výstup s emoji ikonami pre lepšiu čitateľn
 - 🔗 Pripojenie k DynamoDB
 - 📋 Zoznam tabuliek
 - 📊 Štatistiky
-- 🔭 Hubble položky
 - 🌌 APOD položky
 - 📅 Dátumy
 - 📝 Názvy
@@ -134,20 +130,9 @@ Skript poskytuje štruktúrovaný výstup s emoji ikonami pre lepšiu čitateľn
 **GSI:** `gsi_latest` (pk, date)
 
 #### Partition Keys:
-- `HUBBLE` - ESA Hubble Picture of the Week položky
 - `LATEST` - NASA APOD položky
 
 #### Kľúčové atribúty:
-
-**Hubble položky:**
-- `date` - Dátum publikácie
-- `originalTitle` - Pôvodný názov
-- `slovakTitle` - Slovenský názov
-- `link` - Link na ESA Hubble
-- `imageUrl` - URL obrázka
-- `contentQuality` - Kvalita obsahu (0-100)
-- `articleLengthWords` - Dĺžka článku v slovách
-- `lastUpdated` - Posledná aktualizácia
 
 **APOD položky:**
 - `date` - Dátum publikácie
@@ -166,8 +151,6 @@ Skript poskytuje štruktúrovaný výstup s emoji ikonami pre lepšiu čitateľn
 # Celkové štatistiky
 python3 scripts/dynamodb-mcp-client.py table-stats
 
-# Počet Hubble položiek
-python3 scripts/dynamodb-mcp-client.py query-hubble --limit 100 | grep "Nájdených položiek"
 
 # Počet APOD položiek
 python3 scripts/dynamodb-mcp-client.py query-apod --limit 100 | grep "Nájdených položiek"
@@ -175,8 +158,6 @@ python3 scripts/dynamodb-mcp-client.py query-apod --limit 100 | grep "Nájdenýc
 
 ### Analýza kvality obsahu
 ```bash
-# Najnovšie Hubble položky
-python3 scripts/dynamodb-mcp-client.py query-hubble --limit 10
 
 # Najnovšie APOD položky
 python3 scripts/dynamodb-mcp-client.py query-apod --limit 10

@@ -98,32 +98,6 @@ export function ClientLayout({
                   Objav dňa
                 </Link>
                 
-                <Link
-                  href="/objav-tyzdna"
-                  style={{
-                    color: "#eaeaea",
-                    fontSize: "0.875rem",
-                    fontWeight: "500",
-                    padding: "0.5rem 1rem",
-                    borderRadius: "0.375rem",
-                    transition: "all 0.2s ease",
-                    border: "1px solid #333",
-                    backgroundColor: "transparent",
-                    textDecoration: "none",
-                    display: "block",
-                    textTransform: "uppercase"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#1a1a1a"
-                    e.currentTarget.style.borderColor = "#555"
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent"
-                    e.currentTarget.style.borderColor = "#333"
-                  }}
-                >
-                  Objav týždňa
-                </Link>
                 
                 <div style={{ position: "relative" }}>
                   <button
@@ -357,23 +331,6 @@ export function ClientLayout({
                       onClick={closeDropdowns}
                     >
                       Objav dňa
-                    </Link>
-                  </li>
-                  <li style={{ marginBottom: "0.5rem" }}>
-                    <Link
-                      href="/objav-tyzdna"
-                      style={{
-                        display: "block",
-                        padding: "0.75rem 1rem",
-                        color: "#eaeaea",
-                        textDecoration: "none",
-                        borderRadius: "0.375rem",
-                        border: "1px solid #333",
-                        transition: "background-color 0.2s ease"
-                      }}
-                      onClick={closeDropdowns}
-                    >
-                      Objav týždňa
                     </Link>
                   </li>
                   <li style={{ marginBottom: "0.5rem" }}>

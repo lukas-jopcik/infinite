@@ -1,6 +1,5 @@
 import { MetadataRoute } from 'next'
 import { getAllAvailableFromApi } from '@/lib/content-api'
-import { getAllAvailableHubbleFromApi } from '@/lib/hubble-api'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://infinite.example'
@@ -8,12 +7,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Get all APOD dates for sitemap
   const apods = await getAllAvailableFromApi().catch(() => [])
   
-  // Get all Hubble items for sitemap
-  const hubbleItems = await getAllAvailableHubbleFromApi().catch(() => [])
   
   // Filter out future dates and validate date format - only include past and current dates
   const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD format
-  console.log(`🗓️ Sitemap generation - Today: ${today}, Total APODs: ${apods.length}, Total Hubble: ${hubbleItems.length}`)
+  console.log(`🗓️ Sitemap generation - Today: ${today}, Total APODs: ${apods.length}`)
   
   const validApods = apods.filter(apod => {
     // Validate date format (YYYY-MM-DD)
@@ -52,12 +49,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/objav-tyzdna`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
     },
   ]
 
@@ -128,20 +119,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   })
   
-  // Dynamic Hubble pages
-  const hubblePages: MetadataRoute.Sitemap = hubbleItems.map((hubble) => {
-    // Higher priority for recent articles (last 7 days)
-    const articleDate = new Date(hubble.pubDate)
-    const daysSinceArticle = Math.floor((Date.now() - articleDate.getTime()) / (1000 * 60 * 60 * 24))
-    const isRecent = daysSinceArticle <= 7
-    
-    return {
-      url: `${baseUrl}/objav-tyzdna/${hubble.guid}`,
-      lastModified: new Date(), // Use current time for better SEO
-      changeFrequency: isRecent ? 'daily' : 'weekly', // More frequent updates for recent content
-      priority: isRecent ? 0.9 : 0.8, // Higher priority for recent articles
-    }
-  })
   
-  return [...staticPages, ...categoryPages, ...apodPages, ...hubblePages]
+  return [...staticPages, ...categoryPages, ...apodPages]
 }

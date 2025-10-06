@@ -3,28 +3,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   async redirects() {
-    return [
-      {
-        source: '/hubble',
-        destination: '/objav-tyzdna',
-        permanent: true,
-      },
-      {
-        source: '/hubble/:path*',
-        destination: '/objav-tyzdna/:path*',
-        permanent: true,
-      },
-      {
-        source: '/hubble-obrazky',
-        destination: '/objav-tyzdna',
-        permanent: true,
-      },
-      {
-        source: '/hubble-obrazky/:path*',
-        destination: '/objav-tyzdna/:path*',
-        permanent: true,
-      },
-    ]
+    return []
   },
   typescript: {
     ignoreBuildErrors: true,
@@ -92,12 +71,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'googleads.g.doubleclick.net',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn.esahubble.org',
         port: '',
         pathname: '/**',
       },

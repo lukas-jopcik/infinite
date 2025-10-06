@@ -1,8 +1,0 @@
-{
-  "source": "aws.events",
-  "detail-type": "Scheduled Event",
-  "detail": {
-    "schedule": "cron(0 6 ? * MON *)",
-    "description": "Weekly Hubble RSS fetch - every Monday at 6 AM UTC"
-  }
-}

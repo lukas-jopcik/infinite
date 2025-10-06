@@ -760,11 +760,6 @@ exports.handler = async (event, context) => {
     console.log('Event:', JSON.stringify(event, null, 2));
     
     try {
-        // Check if this is Hubble data or APOD data
-        if (event.type === 'hubble') {
-            console.log('🔭 Processing Hubble data...');
-            return await processHubbleContent(event.data);
-        }
         
         // Parse the event for APOD data
         const { date, nasaData } = event;
@@ -1127,161 +1122,10 @@ async function testFunction() {
 }
 
 // Export for testing
-/**
- * Process Hubble content and generate Slovak version
- * 
- * @param {Object} hubbleData - Hubble RSS data
- * @returns {Object} Response object
- */
-async function processHubbleContent(hubbleData) {
-    console.log(`🔭 Processing Hubble content: ${hubbleData.title}`);
-    
-    try {
-        // Generate Slovak content using AI
-        let slovakTitle = `Slovenský názov: ${hubbleData.title}`;
-        let slovakArticle;
-        let seoKeywords = ['ESA Hubble', 'Hubble Space Telescope', 'astronómia', 'vesmír', 'galaxie', 'hviezdy', 'nebulae'];
-        let quality = 85;
-        let issues = [];
-        let lengthChars = 0;
-        let lengthWords = 0;
-        
-        // Try AI generation first
-        try {
-            const aiPrompt = [
-                'Generuj kvalitný slovenský článok o tomto ESA Hubble objave.',
-                'Použij názov: ' + hubbleData.title,
-                'Použij popis: ' + hubbleData.description,
-                'Napíš 500-800 slov v slovenčine.',
-                'Zameraj sa na vedecké vysvetlenie a zaujímavosti.',
-                'Použij odborné termíny, ale vysvetli ich.',
-                'Pridaj kontext o Hubble teleskope a jeho význam.',
-                'Článok má byť vzdelávací a zaujímavý pre širokú verejnosť.'
-            ].join('\n');
-            
-            const aiResult = await generateSlovakContent(aiPrompt);
-            if (aiResult && aiResult.content) {
-                slovakArticle = aiResult.content;
-                seoKeywords = aiResult.keywords || seoKeywords;
-                quality = aiResult.quality || 85;
-                issues = aiResult.issues || [];
-                
-                // Calculate article metrics
-                lengthChars = slovakArticle.length;
-                lengthWords = slovakArticle.split(/\s+/).length;
-                
-                console.log(`✅ AI generated Hubble content: ${lengthWords} words, quality: ${quality}`);
-            }
-        } catch (aiError) {
-            console.warn('AI generation failed for Hubble content:', aiError.message);
-            // Fallback to basic content
-            slovakArticle = `Tento fascinujúci objav z Hubble Space Telescope predstavuje ${hubbleData.title}. ${hubbleData.excerpt}`;
-            quality = 60;
-            issues.push('AI generation failed');
-        }
-        
-        // Generate curiosity-driven headline
-        let headline = slovakTitle;
-        let headlineEN = hubbleData.title;
-        try {
-            console.log('🎯 Generating curiosity-driven headline for Hubble...');
-            const headlineResult = await generateCuriosityHeadline(slovakTitle, slovakArticle, 3);
-            headline = headlineResult.slovak;
-            headlineEN = headlineResult.english;
-            
-            if (headlineResult.fallback) {
-                console.warn('⚠️  Using fallback headline for Hubble (generation failed)');
-            } else if (headlineResult.hasIssues) {
-                console.warn(`⚠️  Hubble headline has validation issues but was used (attempts: ${headlineResult.attempts})`);
-            } else {
-                console.log(`✅ Hubble headline generated successfully (attempts: ${headlineResult.attempts})`);
-            }
-        } catch (err) {
-            console.warn('Hubble headline generation error, using fallback:', err.message);
-        }
-        
-        // Cache Hubble image in S3
-        let cachedImage = null;
-        if (hubbleData.image_main) {
-            try {
-                const cacheInfo = await cacheImageInS3(hubbleData.image_main, hubbleData.guid);
-                if (cacheInfo) {
-                    cachedImage = cacheInfo;
-                }
-            } catch (e) {
-                console.warn('Hubble image cache step failed:', e && e.message ? e.message : e);
-            }
-        }
-        
-        // Create processed content object
-        // Extract date from pubDate for DynamoDB primary key
-        const hubbleDate = new Date(hubbleData.pubDate).toISOString().split('T')[0]; // YYYY-MM-DD format
-        
-        const processedContent = {
-            pk: 'HUBBLE',
-            date: hubbleDate, // Use date as primary key for DynamoDB
-            guid: hubbleData.guid,
-            originalTitle: hubbleData.title,
-            originalDescription: hubbleData.description,
-            originalExcerpt: hubbleData.excerpt,
-            imageUrl: hubbleData.image_main,
-            imageVariants: hubbleData.image_variants || [],
-            link: hubbleData.link,
-            pubDate: hubbleData.pubDate,
-            category: hubbleData.category || [],
-            creditRaw: hubbleData.credit_raw,
-            copyrightRaw: hubbleData.copyright_raw,
-            creditFallback: hubbleData.credit_fallback,
-            keywords: hubbleData.keywords || [],
-            slovakTitle: slovakTitle,
-            slovakArticle: slovakArticle,
-            headline: headline,
-            headlineEN: headlineEN,
-            seoKeywords: seoKeywords,
-            contentQuality: quality,
-            qualityIssues: issues,
-            articleLengthChars: lengthChars,
-            articleLengthWords: lengthWords,
-            generatedAt: new Date().toISOString(),
-            lastUpdated: new Date().toISOString(),
-            cachedImage: cachedImage
-        };
-        
-        // Store in DynamoDB
-        await storeContentInDynamoDB(processedContent);
-        
-        console.log('✅ Hubble content processing completed successfully');
-        
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                success: true,
-                message: 'Hubble content processed successfully',
-                guid: hubbleData.guid,
-                contentId: processedContent.guid,
-                timestamp: new Date().toISOString()
-            })
-        };
-        
-    } catch (error) {
-        console.error('❌ Error processing Hubble content:', error);
-        
-        return {
-            statusCode: 500,
-            body: JSON.stringify({
-                success: false,
-                error: 'Hubble content processing failed',
-                message: error.message,
-                timestamp: new Date().toISOString()
-            })
-        };
-    }
-}
 
 module.exports = {
     handler: exports.handler,
     processAPODContent,
-    processHubbleContent,
     storeContentInDynamoDB,
     cacheImageInS3,
     testFunction

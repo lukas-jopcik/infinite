@@ -24,7 +24,6 @@
 #### **Shell Wrapper (Najjednoduchšie)**
 ```bash
 ./scripts/db.sh stats          # Štatistiky tabuľky
-./scripts/db.sh hubble 5       # 5 najnovších Hubble položiek
 ./scripts/db.sh apod 3         # 3 najnovšie APOD položky
 ./scripts/db.sh list           # Zoznam tabuliek
 ./scripts/db.sh help           # Nápoveda
@@ -33,7 +32,6 @@
 #### **Python MCP Klient (Pokročilé)**
 ```bash
 python3 scripts/dynamodb-mcp-client.py --help
-python3 scripts/dynamodb-mcp-client.py query-hubble --limit 10
 python3 scripts/dynamodb-mcp-client.py table-stats
 ```
 
@@ -41,7 +39,6 @@ python3 scripts/dynamodb-mcp-client.py table-stats
 ```bash
 source scripts/aliases.sh      # Načítanie aliasov
 db-stats                       # Štatistiky
-db-hubble 5                    # Hubble položky
 db-apod 3                      # APOD položky
 aws-who                        # AWS identity
 ```
@@ -55,7 +52,6 @@ aws-who                        # AWS identity
 - **Billing:** PAY_PER_REQUEST
 
 ### **Rozdelenie dát:**
-- **Hubble položky:** 25 položiek (pk: HUBBLE)
 - **APOD položky:** 31 položiek (pk: LATEST)
 
 ## 🚀 Rýchly štart
@@ -84,14 +80,11 @@ db-stats
 ./scripts/db.sh stats
 
 # Počet položiek podľa typu
-./scripts/db.sh hubble 100 | grep "Nájdených položiek"
 ./scripts/db.sh apod 100 | grep "Nájdených položiek"
 ```
 
 ### **Analýza obsahu**
 ```bash
-# Najnovšie Hubble položky
-./scripts/db.sh hubble 10
 
 # Najnovšie APOD položky
 ./scripts/db.sh apod 10
@@ -120,7 +113,7 @@ db-stats
 ### **DynamoDB Štruktúra**
 - **Primary Key:** `date` (String)
 - **GSI:** `gsi_latest` (pk, date)
-- **Partition Keys:** `HUBBLE`, `LATEST`
+- **Partition Keys:** `LATEST`
 
 ### **Súbory**
 - `scripts/dynamodb-mcp-client.py` - Hlavný MCP klient

@@ -69,21 +69,6 @@ class DynamoDBMCPClient:
             print(f"❌ Chyba pri skenovaní tabuľky {table_name}: {e}")
             return []
     
-    def query_hubble_items(self, limit: int = 10) -> List[Dict[str, Any]]:
-        """Query pre Hubble položky"""
-        try:
-            table = self.dynamodb.Table('infinite-nasa-apod-dev-content')
-            response = table.query(
-                IndexName='gsi_latest',
-                KeyConditionExpression='pk = :pk',
-                ExpressionAttributeValues={':pk': 'HUBBLE'},
-                Limit=limit,
-                ScanIndexForward=False  # Najnovšie najprv
-            )
-            return response.get('Items', [])
-        except Exception as e:
-            print(f"❌ Chyba pri query Hubble položiek: {e}")
-            return []
     
     def query_apod_items(self, limit: int = 10) -> List[Dict[str, Any]]:
         """Query pre APOD položky"""
@@ -130,22 +115,13 @@ class DynamoDBMCPClient:
         except Exception as e:
             print(f"❌ Chyba pri získavaní štatistík tabuľky {table_name}: {e}")
             return {}
+    
 
 def format_item(item: Dict[str, Any], item_type: str = "unknown") -> str:
     """Formátovanie položky pre výpis"""
     output = []
     
-    if item_type == "hubble":
-        output.append(f"🔭 **Hubble Item**")
-        output.append(f"   📅 Dátum: {item.get('date', 'N/A')}")
-        output.append(f"   📝 Názov: {item.get('originalTitle', 'N/A')}")
-        output.append(f"   🏷️  Slovenský názov: {item.get('slovakTitle', 'N/A')}")
-        output.append(f"   🔗 Link: {item.get('link', 'N/A')}")
-        output.append(f"   🖼️  Obrázok: {item.get('imageUrl', 'N/A')}")
-        output.append(f"   ⭐ Kvalita: {item.get('contentQuality', 'N/A')}")
-        output.append(f"   📊 Dĺžka článku: {item.get('articleLengthWords', 0)} slov")
-        
-    elif item_type == "apod":
+    if item_type == "apod":
         output.append(f"🌌 **APOD Item**")
         output.append(f"   📅 Dátum: {item.get('date', 'N/A')}")
         output.append(f"   📝 Názov: {item.get('originalTitle', 'N/A')}")
@@ -180,9 +156,6 @@ def main():
     scan_parser.add_argument('--table', help='Názov tabuľky')
     scan_parser.add_argument('--limit', type=int, default=10, help='Počet položiek')
     
-    # Query Hubble
-    hubble_parser = subparsers.add_parser('query-hubble', help='Query Hubble položiek')
-    hubble_parser.add_argument('--limit', type=int, default=10, help='Počet položiek')
     
     # Query APOD
     apod_parser = subparsers.add_parser('query-apod', help='Query APOD položiek')
@@ -195,6 +168,7 @@ def main():
     # Table stats
     stats_parser = subparsers.add_parser('table-stats', help='Štatistiky tabuľky')
     stats_parser.add_argument('--table', help='Názov tabuľky')
+    
     
     args = parser.parse_args()
     
@@ -229,12 +203,6 @@ def main():
             print(f"\n--- Položka {i} ---")
             print(json.dumps(item, indent=2, default=str))
     
-    elif args.command == 'query-hubble':
-        items = client.query_hubble_items(args.limit)
-        print(f"🔭 Hubble položky (limit: {args.limit})")
-        print(f"📊 Nájdených položiek: {len(items)}")
-        for item in items:
-            print(format_item(item, "hubble"))
     
     elif args.command == 'query-apod':
         items = client.query_apod_items(args.limit)
@@ -259,6 +227,7 @@ def main():
             print(json.dumps(stats, indent=2, default=str))
         else:
             print(f"❌ Nepodarilo sa získať štatistiky pre tabuľku {table_name}")
+    
 
 if __name__ == '__main__':
     main()
