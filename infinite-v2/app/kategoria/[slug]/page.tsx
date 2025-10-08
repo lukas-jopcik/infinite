@@ -44,13 +44,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound()
   }
 
-  // Fetch articles from API
+  // Fetch articles from API using optimized category endpoint
   let articles: Article[] = []
   
   try {
-    const response = await ArticlesAPI.getAllArticles(100) // Get more articles to ensure we have enough
-    // Filter articles by category
-    articles = response.articles.filter(article => article.category === slug)
+    const response = await ArticlesAPI.getArticlesByCategory(slug, 50) // Use optimized category endpoint
+    articles = response.articles
   } catch (error) {
     console.error('Error fetching articles:', error)
     // Fallback to empty array if API fails

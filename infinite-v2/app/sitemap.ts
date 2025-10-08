@@ -57,8 +57,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   try {
-    // Fetch all articles
-    const articles = await ArticlesAPI.getAllArticles()
+    // Fetch objav-dna articles using optimized category endpoint
+    const articles = await ArticlesAPI.getArticlesByCategory("objav-dna", 100)
     
     // Generate sitemap entries for articles
     const articlePages: MetadataRoute.Sitemap = articles.articles.map((article) => ({

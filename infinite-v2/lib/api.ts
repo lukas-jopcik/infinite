@@ -1,4 +1,5 @@
 // API service for fetching articles from Lambda backend
+// import { cache, CacheKeys } from './cache';
 
 export interface Article {
   id: string;
@@ -101,38 +102,43 @@ export class ArticlesAPI {
       return null;
     }
   }
+
+  static async getArticlesByCategory(category: string, limit: number = 20, lastKey?: string): Promise<{
+    articles: Article[];
+    lastKey?: string;
+    count: number;
+  }> {
+    try {
+      // TODO: Re-enable cache when ioredis is installed
+      // Check cache first
+      // const cacheKey = CacheKeys.articlesByCategory(category);
+      // const cached = await cache.getCachedArticlesByCategory(category);
+      // if (cached) {
+      //   console.log('Cache hit for category:', category);
+      //   return { articles: cached, count: cached.length };
+      // }
+
+      const params = new URLSearchParams({ limit: limit.toString() });
+      if (lastKey) {
+        params.append('lastKey', lastKey);
+      }
+      
+      const response = await this.makeRequest(`/articles/category/${category}?${params.toString()}`);
+      
+      // TODO: Re-enable cache when ioredis is installed
+      // Cache the result
+      // if (response.articles) {
+      //   await cache.cacheArticlesByCategory(category, response.articles);
+      // }
+      
+      return response;
+    } catch (error) {
+      console.error('Error fetching articles by category:', error);
+      // Fallback to getAllArticles with client-side filtering
+      const allArticles = await this.getAllArticles(100);
+      const filteredArticles = allArticles.articles.filter(article => article.category === category);
+      return { articles: filteredArticles, count: filteredArticles.length };
+    }
+  }
 }
 
-// For development/testing, we can use mock data when API is not available
-export const getMockArticles = (): Article[] => {
-  return [
-    {
-      id: 'mock-1',
-      title: 'Krabia hmlovina: Výbuch hviezdy z pohľadu Hubblea',
-      slug: 'krabia-hmlovina-vybuch-hviezdy-z-pohladu-hubblea',
-      perex: 'Krabia hmlovina je jedným z najfascinujúcejších objektov na oblohe. Pozostatok supernovy z roku 1054, ktorého komplexná štruktúra a energetický pulsar fascinujú vedcov po celom svete.',
-      category: 'objav-dna',
-      publishedAt: '2025-10-07T20:13:46.334Z',
-      originalDate: '2025-10-07T20:13:46.334Z',
-      author: 'Infinite AI',
-      readingTime: '6 minút',
-      metaTitle: 'Krabia hmlovina: Tajomstvá supernovy odhalené',
-      metaDescription: 'Preskúmajte fascinujúci svet Krabej hmloviny, pozostatok supernovy z roku 1054.',
-      type: 'discovery'
-    },
-    {
-      id: 'mock-2',
-      title: 'Veil Nebula: Mystický Pozostatok Explodujúcej Hviezdy',
-      slug: 'veil-nebula-mysticky-pozostatok-explodujucej-hviezdy',
-      perex: 'Pred desiatimi tisícročiami sa na nočnej oblohe objavilo nové svetlo, ktoré zmizlo po niekoľkých týždňoch. Dnes vieme, že to bolo svetlo supernovy.',
-      category: 'objav-dna',
-      publishedAt: '2025-10-07T20:13:59.368Z',
-      originalDate: '2025-10-07T20:13:59.368Z',
-      author: 'Infinite AI',
-      readingTime: '5 minút',
-      metaTitle: 'Záhadná Veil Nebula: Poklady nočnej oblohy',
-      metaDescription: 'Objavte tajomstvá Veil Nebula, pozostatku supernovy, ktorá fascinuje astronómov už tisíce rokov.',
-      type: 'discovery'
-    }
-  ];
-};

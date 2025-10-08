@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import Image from "next/image"
-import { ArticlesAPI, Article, ArticleDetail, getMockArticles } from "@/lib/api"
+import { ArticlesAPI, Article, ArticleDetail } from "@/lib/api"
 import { generateArticleMetadata } from "@/lib/seo"
 import { ArticleCard } from "@/components/article-card"
 import { Breadcrumbs } from "@/components/breadcrumbs"
@@ -60,18 +60,16 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
     article = await ArticlesAPI.getArticleBySlug(slug)
     
     if (article) {
-      // Get related discoveries with a smaller limit for better performance
-      const response = await ArticlesAPI.getAllArticles(15) // Further reduced for related articles
+      // Get related discoveries using optimized category endpoint
+      const response = await ArticlesAPI.getArticlesByCategory("objav-dna", 10)
       relatedDiscoveries = response.articles
-        .filter(a => a.category === "objav-dna" && a.slug !== slug)
+        .filter(a => a.slug !== slug)
         .slice(0, 3)
     }
   } catch (error) {
     console.error('Error fetching article:', error)
-    // Fallback to mock data if API fails
-    const mockArticles = getMockArticles()
-    article = mockArticles.find(a => a.slug === slug) as ArticleDetail || null
-    relatedDiscoveries = mockArticles.filter(a => a.category === "objav-dna" && a.slug !== slug).slice(0, 3)
+    // If API fails, show 404 instead of mock data
+    notFound()
   }
 
   if (!article || article.category !== "objav-dna") {

@@ -4,14 +4,6 @@ const nextConfig: NextConfig = {
   // Performance optimizations
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
   },
   
   // Image optimization
@@ -36,6 +28,10 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   generateEtags: false,
+  
+  // Router configuration
+  trailingSlash: false,
+  skipTrailingSlashRedirect: true,
 
   // Headers for better caching
   async headers() {

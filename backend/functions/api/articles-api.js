@@ -1,7 +1,9 @@
-const AWS = require('aws-sdk');
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocumentClient, QueryCommand, ScanCommand, GetCommand } = require('@aws-sdk/lib-dynamodb');
 
 // Initialize AWS services
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+const client = new DynamoDBClient({ region: process.env.REGION || 'eu-central-1' });
+const dynamodb = DynamoDBDocumentClient.from(client);
 
 // Configuration
 const REGION = process.env.REGION || 'eu-central-1';
@@ -43,6 +45,9 @@ exports.handler = async (event) => {
         } else if (path.startsWith('/articles/slug/') && httpMethod === 'GET') {
             const slug = path.split('/')[3];
             return await getArticleBySlug(slug, headers);
+        } else if (path.startsWith('/articles/category/') && httpMethod === 'GET') {
+            const category = path.split('/')[3];
+            return await getArticlesByCategory(category, headers, event.queryStringParameters);
         } else if (path.startsWith('/articles/') && httpMethod === 'GET') {
             const articleId = path.split('/')[2];
             return await getArticleById(articleId, headers);
@@ -82,7 +87,7 @@ async function getAllArticles(headers, queryParams) {
         ...(lastKey && { ExclusiveStartKey: lastKey })
     };
     
-    const result = await dynamodb.scan(params).promise();
+        const result = await dynamodb.send(new ScanCommand(params));
     
     // Transform the data for frontend
     const articles = result.Items.map(item => ({
@@ -133,7 +138,7 @@ async function getArticleById(articleId, headers) {
         }
     };
     
-    const result = await dynamodb.get(params).promise();
+        const result = await dynamodb.send(new GetCommand(params));
     
     if (!result.Item) {
         return {
@@ -186,7 +191,7 @@ async function getLatestArticles(headers, queryParams) {
         ScanIndexForward: false // Sort by publishedAt descending
     };
     
-    const result = await dynamodb.scan(params).promise();
+        const result = await dynamodb.send(new ScanCommand(params));
     
     // Transform the data for frontend
     const articles = result.Items.map(item => ({
@@ -242,7 +247,7 @@ async function getArticleBySlug(slug, headers) {
                 Limit: 1 // We only need one result
             };
             
-            result = await dynamodb.query(params).promise();
+            result = await dynamodb.send(new QueryCommand(params));
         } catch (gsiError) {
             console.log('GSI not ready, falling back to scan:', gsiError.message);
             // Fallback to scan if GSI is not ready
@@ -255,7 +260,7 @@ async function getArticleBySlug(slug, headers) {
                 Limit: 1 // We only need one result
             };
             
-            result = await dynamodb.scan(scanParams).promise();
+            result = await dynamodb.send(new ScanCommand(scanParams));
         }
         
         if (!result.Items || result.Items.length === 0) {
@@ -308,11 +313,101 @@ async function getArticleBySlug(slug, headers) {
     }
 }
 
+/**
+ * Get articles by category with pagination
+ */
+async function getArticlesByCategory(category, headers, queryParams = {}) {
+    try {
+        const limit = parseInt(queryParams.limit) || 20;
+        const lastKey = queryParams.lastKey ? JSON.parse(decodeURIComponent(queryParams.lastKey)) : null;
+        
+        console.log(`Getting articles for category: ${category}, limit: ${limit}`);
+        
+        // Use GSI on category field for efficient querying
+        const queryParams_dynamo = {
+            TableName: ARTICLES_TABLE,
+            IndexName: 'category-originalDate-index', // Use new GSI with originalDate
+            KeyConditionExpression: 'category = :category',
+            ExpressionAttributeValues: {
+                ':category': category
+            },
+            ScanIndexForward: false, // Sort by originalDate descending (newest first)
+            Limit: limit
+        };
+        
+        if (lastKey) {
+            queryParams_dynamo.ExclusiveStartKey = lastKey;
+        }
+        
+        let result;
+        try {
+            result = await dynamodb.send(new QueryCommand(queryParams_dynamo));
+        } catch (gsiError) {
+            console.log('GSI not ready, falling back to scan:', gsiError.message);
+            // Fallback to scan if GSI is not ready
+            const scanParams = {
+                TableName: ARTICLES_TABLE,
+                FilterExpression: 'category = :category',
+                ExpressionAttributeValues: {
+                    ':category': category
+                },
+                ScanIndexForward: false,
+                Limit: limit
+            };
+            
+            if (lastKey) {
+                scanParams.ExclusiveStartKey = lastKey;
+            }
+            
+            result = await dynamodb.send(new ScanCommand(scanParams));
+        }
+        
+        // Transform the data to match frontend expectations
+        const articles = result.Items.map(item => ({
+            id: item.articleId,
+            title: item.title,
+            slug: item.slug,
+            perex: item.perex,
+            category: item.category || 'discovery',
+            publishedAt: item.originalDate || item.publishedAt,
+            originalDate: item.originalDate,
+            author: item.author,
+            readingTime: item.estimatedReadingTime,
+            imageUrl: item.imageUrl || item.images?.heroImage?.url || item.images?.cardImage?.url || item.images?.ogImage?.url,
+            metaTitle: item.metaTitle,
+            metaDescription: item.metaDescription,
+            type: item.type,
+            source: item.source,
+            sourceUrl: item.sourceUrl
+        }));
+        
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+                articles,
+                lastKey: result.LastEvaluatedKey ? encodeURIComponent(JSON.stringify(result.LastEvaluatedKey)) : null,
+                count: articles.length,
+                total: result.Count
+            })
+        };
+        
+    } catch (error) {
+        console.error('Error getting articles by category:', error);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ error: 'Internal server error' })
+        };
+    }
+}
+
 // Export functions for testing
 module.exports = {
     handler: exports.handler,
     getAllArticles,
     getArticleById,
     getLatestArticles,
-    getArticleBySlug
+    getArticleBySlug,
+    getArticlesByCategory
 };

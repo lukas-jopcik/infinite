@@ -1,7 +1,7 @@
 import { ArticleHero } from "@/components/article-hero"
 import { ArticleCard } from "@/components/article-card"
 import { NewsletterSignup } from "@/components/newsletter-signup"
-import { ArticlesAPI, getMockArticles } from "@/lib/api"
+import { ArticlesAPI } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
@@ -14,37 +14,44 @@ import type { Metadata } from "next"
 export const metadata: Metadata = generateHomepageMetadata()
 
 async function HomePageContent() {
-  // Single API call to get all articles, then filter client-side
-  let articles: any[] = [];
+  // Use optimized GSI endpoints for each category
+  let latestArticle: any = null;
+  let recentArticles: any[] = [];
+  let discoveryArticles: any[] = [];
+  let communityArticles: any[] = [];
+  let kidsArticles: any[] = [];
   
   try {
-    const response = await ArticlesAPI.getAllArticles(50);
-    articles = response?.articles || [];
+    // Get latest articles from objav-dna category (most important)
+    const discoveryResponse = await ArticlesAPI.getArticlesByCategory("objav-dna", 10);
+    discoveryArticles = discoveryResponse?.articles || [];
     
-    // Sort articles by originalDate (newest first) on client-side
-    if (Array.isArray(articles)) {
-      articles.sort((a, b) => {
-        const dateA = new Date(a.originalDate || a.publishedAt)
-        const dateB = new Date(b.originalDate || b.publishedAt)
-        return dateB.getTime() - dateA.getTime()
-      })
+    // Get latest article for hero section
+    if (discoveryArticles.length > 0) {
+      latestArticle = discoveryArticles[0];
+      recentArticles = discoveryArticles.slice(1, 7);
     }
+    
+    // Get articles from other categories in parallel
+    const [communityResponse, kidsResponse] = await Promise.all([
+      ArticlesAPI.getArticlesByCategory("komunita", 3).catch(() => ({ articles: [] })),
+      ArticlesAPI.getArticlesByCategory("deti-a-vesmir", 3).catch(() => ({ articles: [] }))
+    ]);
+    
+    communityArticles = communityResponse?.articles || [];
+    kidsArticles = kidsResponse?.articles || [];
+    
   } catch (error) {
-    console.log('Using mock data for development', error);
-    articles = getMockArticles();
+    console.error('Failed to fetch articles:', error);
+    // Return error state instead of mock data
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[50vh]">
+        <h1 className="text-2xl font-bold text-foreground mb-4">Chyba pri načítavaní článkov</h1>
+        <p className="text-muted-foreground mb-4">Nepodarilo sa načítať články z API.</p>
+        <p className="text-sm text-muted-foreground">Skúste obnoviť stránku alebo to skúste neskôr.</p>
+      </div>
+    );
   }
-
-  // Ensure articles is an array
-  if (!Array.isArray(articles)) {
-    articles = [];
-  }
-
-  // Filter articles by category
-  const latestArticle = articles[0]
-  const recentArticles = articles.slice(1, 7)
-  const discoveryArticles = articles.filter(article => article.category === "objav-dna")
-  const communityArticles = articles.filter(article => article.category === "komunita")
-  const kidsArticles = articles.filter(article => article.category === "deti-a-vesmir")
 
   // Safety check - if no articles are available, show a message
   if (!latestArticle) {
@@ -79,6 +86,7 @@ async function HomePageContent() {
           date={latestArticle.originalDate || latestArticle.publishedAt}
           image={latestArticle.imageUrl || '/placeholder-astronomy.jpg'}
           imageAlt={latestArticle.title}
+          type="discovery"
         />
       </section>
 

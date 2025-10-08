@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import Image from "next/image"
-import { ArticlesAPI, getMockArticles, Article, ArticleDetail } from "@/lib/api"
+import { ArticlesAPI, Article, ArticleDetail } from "@/lib/api"
 import { generateArticleMetadata } from "@/lib/seo"
 import { CategoryBadge } from "@/components/category-badge"
 import { ArticleCard } from "@/components/article-card"
@@ -59,18 +59,16 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     article = await ArticlesAPI.getArticleBySlug(slug)
     
     if (article) {
-      // Get related articles with a smaller limit for better performance
-      const response = await ArticlesAPI.getAllArticles(15) // Reduced for related articles
+      // Get related articles using optimized category endpoint
+      const response = await ArticlesAPI.getArticlesByCategory(article.category, 10)
       relatedArticles = response.articles
-        .filter(a => a.category === article!.category && a.slug !== slug)
+        .filter(a => a.slug !== slug)
         .slice(0, 3)
     }
   } catch (error) {
     console.error('Error fetching article:', error)
-    // Fallback to mock data if API fails
-    const mockArticles = getMockArticles()
-    article = mockArticles.find(a => a.slug === slug) as ArticleDetail || null
-    relatedArticles = mockArticles.filter(a => a.category === article?.category && a.slug !== slug).slice(0, 3)
+    // If API fails, show 404 instead of mock data
+    notFound()
   }
 
   if (!article) {

@@ -12,11 +12,15 @@ interface ArticleHeroProps {
   date: string
   image: string
   imageAlt: string
+  type?: "article" | "discovery"
 }
 
-export function ArticleHero({ slug, title, perex, category, date, image, imageAlt }: ArticleHeroProps) {
+export function ArticleHero({ slug, title, perex, category, date, image, imageAlt, type = "discovery" }: ArticleHeroProps) {
   // Optimize date formatting
   const formattedDate = new Date(date).toLocaleDateString("sk-SK")
+  
+  // Generate correct href based on type
+  const href = type === "discovery" ? `/objav-dna/${slug}` : `/clanok/${slug}`
   
   return (
     <div className="group relative overflow-hidden rounded-3xl bg-card">
@@ -52,7 +56,7 @@ export function ArticleHero({ slug, title, perex, category, date, image, imageAl
 
           <div>
             <Button size="lg" asChild>
-              <Link href={`/objav-dna/${slug}`} className="flex items-center gap-2">
+              <Link href={href} className="flex items-center gap-2" prefetch={true} scroll={true} shallow={false}>
                 Čítať článok
                 <ArrowRight className="h-4 w-4" />
               </Link>
