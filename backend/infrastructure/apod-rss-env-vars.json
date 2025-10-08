@@ -1,0 +1,7 @@
+{
+  "Variables": {
+    "ENVIRONMENT": "dev",
+    "REGION": "eu-central-1",
+    "DYNAMODB_RAW_CONTENT_TABLE": "InfiniteRawContent-dev"
+  }
+}
