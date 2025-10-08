@@ -15,7 +15,11 @@ First, determine the project type by checking:
 
 2. Is this a BROWNFIELD project (enhancing existing system)?
    - Look for: References to existing codebase, enhancement/modification language
+<<<<<<< HEAD
    - Check for: prd.md, architecture.md, existing system analysis
+=======
+   - Check for: brownfield-prd.md, brownfield-architecture.md, existing system analysis
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
 
 3. Does the project include UI/UX components?
    - Check for: frontend-architecture.md, UI/UX specifications, design files
@@ -33,8 +37,13 @@ For GREENFIELD projects:
 
 For BROWNFIELD projects:
 
+<<<<<<< HEAD
 - prd.md - The brownfield enhancement requirements
 - architecture.md - The enhancement architecture
+=======
+- brownfield-prd.md - The brownfield enhancement requirements
+- brownfield-architecture.md - The enhancement architecture
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
 - Existing project codebase access (CRITICAL - cannot proceed without this)
 - Current deployment configuration and infrastructure details
 - Database schemas, API documentation, monitoring setup

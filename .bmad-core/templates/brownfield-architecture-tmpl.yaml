@@ -23,7 +23,11 @@ sections:
       1. **Verify Complexity**: Confirm this enhancement requires architectural planning. For simple additions, recommend: "For simpler changes that don't require architectural planning, consider using the brownfield-create-epic or brownfield-create-story task with the Product Owner instead."
 
       2. **REQUIRED INPUTS**:
+<<<<<<< HEAD
          - Completed prd.md
+=======
+         - Completed brownfield-prd.md
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
          - Existing project technical documentation (from docs folder or user-provided)
          - Access to existing project structure (IDE or uploaded files)
 
@@ -109,8 +113,13 @@ sections:
           - **UI/UX Consistency:** {{ui_compatibility}}
           - **Performance Impact:** {{performance_constraints}}
 
+<<<<<<< HEAD
   - id: tech-stack
     title: Tech Stack
+=======
+  - id: tech-stack-alignment
+    title: Tech Stack Alignment
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
     instruction: |
       Ensure new components align with existing technology choices:
 
@@ -272,8 +281,13 @@ sections:
 
           **Error Handling:** {{error_handling_strategy}}
 
+<<<<<<< HEAD
   - id: source-tree
     title: Source Tree
+=======
+  - id: source-tree-integration
+    title: Source Tree Integration
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
     instruction: |
       Define how new code will integrate with existing project structure:
 
@@ -342,7 +356,11 @@ sections:
           **Monitoring:** {{monitoring_approach}}
 
   - id: coding-standards
+<<<<<<< HEAD
     title: Coding Standards
+=======
+    title: Coding Standards and Conventions
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
     instruction: |
       Ensure new code follows existing project conventions:
 

@@ -16,8 +16,13 @@ Implement fixes based on QA results (gate and assessments) for a specific story.
 ```yaml
 required:
   - story_id: '{epic}.{story}' # e.g., "2.2"
+<<<<<<< HEAD
   - qa_root: from `.bmad-core/core-config.yaml` key `qa.qaLocation` (e.g., `docs/project/qa`)
   - story_root: from `.bmad-core/core-config.yaml` key `devStoryLocation` (e.g., `docs/project/stories`)
+=======
+  - qa_root: from `bmad-core/core-config.yaml` key `qa.qaLocation` (e.g., `docs/project/qa`)
+  - story_root: from `bmad-core/core-config.yaml` key `devStoryLocation` (e.g., `docs/project/stories`)
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
 
 optional:
   - story_title: '{title}' # derive from story H1 if missing
@@ -45,7 +50,11 @@ optional:
 
 ### 0) Load Core Config & Locate Story
 
+<<<<<<< HEAD
 - Read `.bmad-core/core-config.yaml` and resolve `qa_root` and `story_root`
+=======
+- Read `bmad-core/core-config.yaml` and resolve `qa_root` and `story_root`
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
 - Locate story file in `{story_root}/{epic}.{story}.*.md`
   - HALT if missing and ask for correct story id/path
 
@@ -113,7 +122,11 @@ Status Rule:
 
 ## Blocking Conditions
 
+<<<<<<< HEAD
 - Missing `.bmad-core/core-config.yaml`
+=======
+- Missing `bmad-core/core-config.yaml`
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
 - Story file not found for `story_id`
 - No QA artifacts found (neither gate nor assessments)
   - HALT and request QA to generate at least a gate file (or proceed only with clear developer-provided fix list)

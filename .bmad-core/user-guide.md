@@ -187,6 +187,7 @@ If you want to do the planning on the web with Claude (Sonnet 4 or Opus), Gemini
 npx bmad-method install
 ```
 
+<<<<<<< HEAD
 ### OpenCode
 
 BMAD integrates with OpenCode via a project-level `opencode.jsonc`/`opencode.json` (JSON-only, no Markdown fallback).
@@ -234,6 +235,8 @@ BMAD integrates with OpenCode via a project-level `opencode.jsonc`/`opencode.jso
     }
     ```
 
+=======
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
 ### Codex (CLI & Web)
 
 BMAD integrates with OpenAI Codex via `AGENTS.md` and committed core agent files.
@@ -548,7 +551,11 @@ When creating custom web bundles or uploading to AI platforms, include your `tec
 
 ## Core Configuration
 
+<<<<<<< HEAD
 The `.bmad-core/core-config.yaml` file is a critical config that enables BMad to work seamlessly with differing project structures, more options will be made available in the future. Currently the most important is the devLoadAlwaysFiles list section in the yaml.
+=======
+The `bmad-core/core-config.yaml` file is a critical config that enables BMad to work seamlessly with differing project structures, more options will be made available in the future. Currently the most important is the devLoadAlwaysFiles list section in the yaml.
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
 
 ### Developer Context Files
 

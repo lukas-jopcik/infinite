@@ -1,0 +1,23 @@
+{
+  "Rules": [
+    {
+      "ID": "TransitionCurrentToIA30d",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "images/" },
+      "Transitions": [
+        { "Days": 30, "StorageClass": "STANDARD_IA" },
+        { "Days": 90, "StorageClass": "GLACIER" }
+      ]
+    },
+    {
+      "ID": "ExpireOldVersions180d",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "" },
+      "NoncurrentVersionTransitions": [
+        { "NoncurrentDays": 30, "StorageClass": "STANDARD_IA" },
+        { "NoncurrentDays": 90, "StorageClass": "GLACIER" }
+      ],
+      "NoncurrentVersionExpiration": { "NoncurrentDays": 180 }
+    }
+  ]
+}

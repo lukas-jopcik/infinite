@@ -1,0 +1,42 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowCloudFrontAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::infinite-nasa-apod-*/*"
+    },
+    {
+      "Sid": "AllowLambdaAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::*:role/infinite-nasa-apod-*"
+      },
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::infinite-nasa-apod-*/*"
+    },
+    {
+      "Sid": "AllowPublicReadForImages",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::infinite-nasa-apod-*/images/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:Referer": [
+            "https://infinite-nasa-apod.com/*",
+            "https://*.infinite-nasa-apod.com/*"
+          ]
+        }
+      }
+    }
+  ]
+}

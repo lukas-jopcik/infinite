@@ -1,0 +1,37 @@
+{
+  "name": "infinite-nasa-apod-content-processor",
+  "version": "1.0.0",
+  "description": "Lambda function for processing NASA APOD content and generating Slovak articles",
+  "main": "index.js",
+  "scripts": {
+    "test": "node -e \"require('./index.js').testFunction()\"",
+    "package": "zip -r content-processor.zip .",
+    "deploy": "aws lambda update-function-code --function-name infinite-nasa-apod-dev-content-processor --zip-file fileb://content-processor.zip --profile infinite-nasa-apod-dev"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "nasa",
+    "apod",
+    "slovak",
+    "ai",
+    "content-processing"
+  ],
+  "author": "Developer Agent",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/infinite-nasa-apod.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/infinite-nasa-apod/issues"
+  },
+  "homepage": "https://github.com/your-username/infinite-nasa-apod#readme",
+  "type": "commonjs"
+}

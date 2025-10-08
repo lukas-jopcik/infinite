@@ -16,7 +16,11 @@ Generate a standalone quality gate file that provides a clear pass/fail decision
 
 ## Gate File Location
 
+<<<<<<< HEAD
 **ALWAYS** check the `.bmad-core/core-config.yaml` for the `qa.qaLocation/gates`
+=======
+**ALWAYS** check the `bmad-core/core-config.yaml` for the `qa.qaLocation/gates`
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
 
 Slug rules:
 
@@ -126,7 +130,11 @@ waiver:
 
 ## Output Requirements
 
+<<<<<<< HEAD
 1. **ALWAYS** create gate file at: `qa.qaLocation/gates` from `.bmad-core/core-config.yaml`
+=======
+1. **ALWAYS** create gate file at: `qa.qaLocation/gates` from `bmad-core/core-config.yaml`
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
 2. **ALWAYS** append this exact format to story's QA Results section:
 
    ```text

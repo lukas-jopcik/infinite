@@ -9,11 +9,19 @@ Quick NFR validation focused on the core four: security, performance, reliabilit
 ```yaml
 required:
   - story_id: '{epic}.{story}' # e.g., "1.3"
+<<<<<<< HEAD
   - story_path: `.bmad-core/core-config.yaml` for the `devStoryLocation`
 
 optional:
   - architecture_refs: `.bmad-core/core-config.yaml` for the `architecture.architectureFile`
   - technical_preferences: `.bmad-core/core-config.yaml` for the `technicalPreferences`
+=======
+  - story_path: `bmad-core/core-config.yaml` for the `devStoryLocation`
+
+optional:
+  - architecture_refs: `bmad-core/core-config.yaml` for the `architecture.architectureFile`
+  - technical_preferences: `bmad-core/core-config.yaml` for the `technicalPreferences`
+>>>>>>> ef0b8de5b5302fd074816ae876fda868a338dc05
   - acceptance_criteria: From story file
 ```
 

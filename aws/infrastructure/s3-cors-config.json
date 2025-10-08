@@ -1,0 +1,16 @@
+{
+  "CORSRules": [
+    {
+      "AllowedHeaders": ["*"],
+      "AllowedMethods": ["GET", "HEAD"],
+      "AllowedOrigins": [
+        "https://infinite-nasa-apod.com",
+        "https://*.infinite-nasa-apod.com",
+        "http://localhost:3000",
+        "http://localhost:3001"
+      ],
+      "ExposeHeaders": ["ETag", "x-amz-version-id"],
+      "MaxAgeSeconds": 3600
+    }
+  ]
+}
