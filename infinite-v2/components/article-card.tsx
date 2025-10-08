@@ -18,6 +18,9 @@ interface ArticleCardProps {
 
 export function ArticleCard({ slug, title, perex, category, date, image, imageAlt, type }: ArticleCardProps) {
   const href = type === "discovery" ? `/objav-dna/${slug}` : `/clanok/${slug}`
+  
+  // Optimize date formatting - avoid creating new Date object on every render
+  const formattedDate = new Date(date).toLocaleDateString("sk-SK")
 
   return (
     <Link
@@ -31,7 +34,7 @@ export function ArticleCard({ slug, title, perex, category, date, image, imageAl
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover transition-transform duration-300 group-hover:scale-105"
-          quality={75}
+          quality={60}
           loading="lazy"
           placeholder="blur"
           blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
@@ -42,7 +45,7 @@ export function ArticleCard({ slug, title, perex, category, date, image, imageAl
           <CategoryBadge category={category} />
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Calendar className="h-3 w-3" />
-            <time dateTime={date}>{new Date(date).toLocaleDateString("sk-SK")}</time>
+            <time dateTime={date}>{formattedDate}</time>
           </div>
         </div>
         <h3 className="text-balance text-xl font-bold leading-tight text-card-foreground transition-colors group-hover:text-accent">

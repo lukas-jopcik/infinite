@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation"
 import Image from "next/image"
-import { ArticlesAPI, getMockArticles } from "@/lib/api"
+import { ArticlesAPI, getMockArticles, Article, ArticleDetail } from "@/lib/api"
 import { generateArticleMetadata } from "@/lib/seo"
 import { CategoryBadge } from "@/components/category-badge"
 import { ArticleCard } from "@/components/article-card"
 import { Breadcrumbs } from "@/components/breadcrumbs"
-import { ArticleBody } from "@/components/article-body"
 import { NewsletterSignup } from "@/components/newsletter-signup"
 import { ScrollToTop } from "@/components/scroll-to-top"
 import { ArticlePageWrapper, SocialSharingSection } from "@/components/article-page-wrapper"
@@ -53,8 +52,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const { slug } = await params
   
-  let article = null
-  let relatedArticles = []
+  let article: ArticleDetail | null = null
+  let relatedArticles: Article[] = []
   
   try {
     // First get all articles to find the article and related articles
@@ -67,7 +66,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       
       if (article) {
         relatedArticles = response.articles
-          .filter(a => a.category === article.category && a.slug !== slug)
+          .filter(a => a.category === article!.category && a.slug !== slug)
           .slice(0, 3)
       }
     }
@@ -75,7 +74,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     console.error('Error fetching article:', error)
     // Fallback to mock data if API fails
     const mockArticles = getMockArticles()
-    article = mockArticles.find(a => a.slug === slug) || null
+    article = mockArticles.find(a => a.slug === slug) as ArticleDetail || null
     relatedArticles = mockArticles.filter(a => a.category === article?.category && a.slug !== slug).slice(0, 3)
   }
 

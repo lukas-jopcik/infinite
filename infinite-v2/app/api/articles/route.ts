@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       articles,
       total: articles.length,
-      hasMore: response.hasMore
+      hasMore: response.lastKey ? true : false
     })
   } catch (error) {
     console.error('Error fetching articles:', error)

@@ -7,31 +7,30 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { generateHomepageMetadata } from "@/lib/seo"
 import { WebsiteStructuredData } from "@/components/structured-data"
-import { AdContainer } from "@/components/ad-manager"
+import { HomepageSkeleton } from "@/components/skeleton-loader"
+import { Suspense } from "react"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = generateHomepageMetadata()
 
-export default async function HomePage() {
-  // Try to fetch real articles from API, fallback to mock data
-  let latestArticles = [];
-  let allArticles = [];
+async function HomePageContent() {
+  // Single API call to get all articles, then filter client-side
+  let articles = [];
   
   try {
-    latestArticles = await ArticlesAPI.getLatestArticles(10);
-    const response = await ArticlesAPI.getAllArticles(20);
-    allArticles = response.articles;
+    const response = await ArticlesAPI.getAllArticles(30);
+    articles = response.articles;
   } catch {
     console.log('Using mock data for development');
-    latestArticles = getMockArticles();
-    allArticles = getMockArticles();
+    articles = getMockArticles();
   }
 
-  const latestArticle = latestArticles[0] || allArticles[0]
-  const recentArticles = latestArticles.slice(1, 7)
-  const discoveryArticles = allArticles.filter(article => article.category === "objav-dna")
-  const communityArticles = allArticles.filter(article => article.category === "komunita")
-  const kidsArticles = allArticles.filter(article => article.category === "deti-a-vesmir")
+  // Filter articles by category
+  const latestArticle = articles[0]
+  const recentArticles = articles.slice(1, 7)
+  const discoveryArticles = articles.filter(article => article.category === "objav-dna")
+  const communityArticles = articles.filter(article => article.category === "komunita")
+  const kidsArticles = articles.filter(article => article.category === "deti-a-vesmir")
 
   // Safety check - if no articles are available, show a message
   if (!latestArticle) {
@@ -55,9 +54,6 @@ export default async function HomePage() {
           type="image/webp"
         />
       )}
-      
-      {/* Header Ad */}
-      <AdContainer position="header" />
       
       {/* Hero Section */}
       <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -198,9 +194,14 @@ export default async function HomePage() {
           <NewsletterSignup />
         </div>
       </section>
-      
-      {/* Footer Ad */}
-      <AdContainer position="footer" />
     </div>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<HomepageSkeleton />}>
+      <HomePageContent />
+    </Suspense>
   )
 }

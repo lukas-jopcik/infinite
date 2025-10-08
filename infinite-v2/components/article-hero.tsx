@@ -15,6 +15,9 @@ interface ArticleHeroProps {
 }
 
 export function ArticleHero({ slug, title, perex, category, date, image, imageAlt }: ArticleHeroProps) {
+  // Optimize date formatting
+  const formattedDate = new Date(date).toLocaleDateString("sk-SK")
+  
   return (
     <div className="group relative overflow-hidden rounded-3xl bg-card">
       <div className="grid gap-0 lg:grid-cols-2">
@@ -27,7 +30,7 @@ export function ArticleHero({ slug, title, perex, category, date, image, imageAl
             priority 
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover" 
-            quality={85}
+            quality={80}
             placeholder="blur"
             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
           />
@@ -39,7 +42,7 @@ export function ArticleHero({ slug, title, perex, category, date, image, imageAl
             <CategoryBadge category={category} />
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4" />
-              <time dateTime={date}>{new Date(date).toLocaleDateString("sk-SK")}</time>
+              <time dateTime={date}>{formattedDate}</time>
             </div>
           </div>
 
@@ -49,7 +52,7 @@ export function ArticleHero({ slug, title, perex, category, date, image, imageAl
 
           <div>
             <Button size="lg" asChild>
-              <Link href={`/clanok/${slug}`} className="flex items-center gap-2">
+              <Link href={`/objav-dna/${slug}`} className="flex items-center gap-2">
                 Čítať článok
                 <ArrowRight className="h-4 w-4" />
               </Link>
