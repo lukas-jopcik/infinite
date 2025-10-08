@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation"
 import { ArticlesAPI, Article } from "@/lib/api"
-import { generateSEO } from "@/components/seo"
+import { generateCategoryMetadata } from "@/lib/seo"
 import { ArticleCard } from "@/components/article-card"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { CategoryBadge } from "@/components/category-badge"
+import type { Metadata } from "next"
 
 const categories = [
   { name: "Objav dňa", slug: "objav-dna", description: "Denné objavy a vizuálne snímky z vesmíru" },
@@ -21,20 +22,18 @@ interface CategoryPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: CategoryPageProps) {
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params
   const category = categories.find((c) => c.slug === slug)
 
   if (!category) {
     return {
-      title: "Kategória nenájdená",
+      title: "Kategória nenájdená | Infinite",
+      description: "Požadovaná kategória nebola nájdená.",
     }
   }
 
-  return generateSEO({
-    title: category.name,
-    description: category.description,
-  })
+  return generateCategoryMetadata(slug, category.description)
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {

@@ -59,8 +59,8 @@ export default function SearchPage() {
           <p className="text-muted-foreground">
             {query ? (
               <>
-                Nájdených <span className="font-semibold text-foreground">{results.length}</span> výsledkov pre "
-                <span className="font-semibold text-foreground">{query}</span>"
+                Nájdených <span className="font-semibold text-foreground">{results.length}</span> výsledkov pre &quot;
+                <span className="font-semibold text-foreground">{query}</span>&quot;
               </>
             ) : (
               <>

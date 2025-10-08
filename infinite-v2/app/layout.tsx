@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
+import { PerformanceMonitor } from "@/components/performance-monitor"
 import { Suspense } from "react"
 
 export const metadata: Metadata = {
@@ -39,6 +40,7 @@ export default function RootLayout({
           <main className="min-h-screen">{children}</main>
           <Footer />
         </Suspense>
+        <PerformanceMonitor />
         <Analytics />
       </body>
     </html>

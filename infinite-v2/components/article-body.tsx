@@ -1,8 +1,8 @@
 interface ArticleBodyProps {
-  content: string
+  content?: string
 }
 
-export function ArticleBody({ content }: ArticleBodyProps) {
+export function ArticleBody({ }: ArticleBodyProps) {
   return (
     <div className="prose prose-lg prose-invert max-w-none">
       <div className="space-y-6 text-foreground">
@@ -19,7 +19,7 @@ export function ArticleBody({ content }: ArticleBodyProps) {
         </p>
 
         <blockquote className="border-l-4 border-accent pl-6 italic text-muted-foreground">
-          "Každý nový objav nás približuje k pochopeniu tajomstiev vesmíru a našej pozície v ňom."
+          &quot;Každý nový objav nás približuje k pochopeniu tajomstiev vesmíru a našej pozície v ňom.&quot;
         </blockquote>
 
         <h2 className="text-2xl font-bold text-foreground">Čo to znamená pre vedu?</h2>

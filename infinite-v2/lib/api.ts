@@ -14,6 +14,7 @@ export interface Article {
   metaTitle: string;
   metaDescription: string;
   type: string;
+  tags?: string[];
 }
 
 export interface ArticleDetail extends Article {
@@ -27,6 +28,7 @@ export interface ArticleDetail extends Article {
     thumb?: string;
   };
   keywords?: string[];
+  source?: string;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://jqg44jstd1.execute-api.eu-central-1.amazonaws.com/dev';
@@ -118,6 +120,7 @@ export const getMockArticles = (): Article[] => {
       perex: 'Krabia hmlovina je jedným z najfascinujúcejších objektov na oblohe. Pozostatok supernovy z roku 1054, ktorého komplexná štruktúra a energetický pulsar fascinujú vedcov po celom svete.',
       category: 'objav-dna',
       publishedAt: '2025-10-07T20:13:46.334Z',
+      originalDate: '2025-10-07T20:13:46.334Z',
       author: 'Infinite AI',
       readingTime: '6 minút',
       metaTitle: 'Krabia hmlovina: Tajomstvá supernovy odhalené',
@@ -131,6 +134,7 @@ export const getMockArticles = (): Article[] => {
       perex: 'Pred desiatimi tisícročiami sa na nočnej oblohe objavilo nové svetlo, ktoré zmizlo po niekoľkých týždňoch. Dnes vieme, že to bolo svetlo supernovy.',
       category: 'objav-dna',
       publishedAt: '2025-10-07T20:13:59.368Z',
+      originalDate: '2025-10-07T20:13:59.368Z',
       author: 'Infinite AI',
       readingTime: '5 minút',
       metaTitle: 'Záhadná Veil Nebula: Poklady nočnej oblohy',

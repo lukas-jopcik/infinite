@@ -1,18 +1,20 @@
 import { notFound } from "next/navigation"
 import Image from "next/image"
-import { ArticlesAPI, Article } from "@/lib/api"
-import { generateSEO } from "@/components/seo"
+import { ArticlesAPI, Article, ArticleDetail, getMockArticles } from "@/lib/api"
+import { generateArticleMetadata } from "@/lib/seo"
 import { ArticleCard } from "@/components/article-card"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { NewsletterSignup } from "@/components/newsletter-signup"
 import { ScrollToTop } from "@/components/scroll-to-top"
+import { ArticleStructuredData, BreadcrumbStructuredData } from "@/components/structured-data"
 import { Calendar, ExternalLink } from "lucide-react"
+import type { Metadata } from "next"
 
 interface DiscoveryPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: DiscoveryPageProps) {
+export async function generateMetadata({ params }: DiscoveryPageProps): Promise<Metadata> {
   const { slug } = await params
   
   try {
@@ -21,21 +23,26 @@ export async function generateMetadata({ params }: DiscoveryPageProps) {
 
     if (!article) {
       return {
-        title: "Objav nenájdený",
+        title: "Objav nenájdený | Infinite",
+        description: "Požadovaný objav nebol nájdený.",
       }
     }
 
-    return generateSEO({
-      title: `${article.title} – Objav dňa`,
+    return generateArticleMetadata({
+      title: article.title,
       description: article.perex,
-      image: article.imageUrl,
-      type: "article",
-      publishedTime: article.originalDate || article.publishedAt,
+      slug: article.slug,
+      imageUrl: article.imageUrl,
+      publishedAt: article.publishedAt,
+      originalDate: article.originalDate,
       author: article.author,
+      category: article.category,
+      tags: article.tags,
     })
-  } catch (error) {
+  } catch {
     return {
-      title: "Objav nenájdený",
+      title: "Objav nenájdený | Infinite",
+      description: "Požadovaný objav nebol nájdený.",
     }
   }
 }
@@ -43,7 +50,7 @@ export async function generateMetadata({ params }: DiscoveryPageProps) {
 export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
   const { slug } = await params
   
-  let article: Article | null = null
+  let article: ArticleDetail | null = null
   let relatedDiscoveries: Article[] = []
   
   try {
@@ -63,6 +70,10 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
     }
   } catch (error) {
     console.error('Error fetching article:', error)
+    // Fallback to mock data if API fails
+    const mockArticles = getMockArticles()
+    article = mockArticles.find(a => a.slug === slug) as ArticleDetail || null
+    relatedDiscoveries = mockArticles.filter(a => a.category === "objav-dna" && a.slug !== slug).slice(0, 3)
   }
 
   if (!article || article.category !== "objav-dna") {
@@ -72,6 +83,28 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
   return (
     <div className="flex flex-col">
       <ScrollToTop />
+      
+      {/* Structured Data */}
+      <ArticleStructuredData 
+        article={{
+          title: article.title,
+          description: article.perex,
+          slug: article.slug,
+          imageUrl: article.imageUrl,
+          publishedAt: article.publishedAt,
+          originalDate: article.originalDate,
+          author: article.author,
+          category: article.category,
+          tags: article.tags,
+        }}
+      />
+      <BreadcrumbStructuredData 
+        items={[
+          { name: "Domov", url: "/" },
+          { name: "Objav dňa", url: "/kategoria/objav-dna" },
+          { name: article.title, url: `/objav-dna/${article.slug}` },
+        ]}
+      />
 
       {/* Breadcrumbs */}
       <div className="border-b border-border bg-card/30">

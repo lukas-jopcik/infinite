@@ -5,6 +5,11 @@ import { ArticlesAPI, getMockArticles } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
+import { generateHomepageMetadata } from "@/lib/seo"
+import { WebsiteStructuredData } from "@/components/structured-data"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = generateHomepageMetadata()
 
 export default async function HomePage() {
   // Try to fetch real articles from API, fallback to mock data
@@ -15,7 +20,7 @@ export default async function HomePage() {
     latestArticles = await ArticlesAPI.getLatestArticles(10);
     const response = await ArticlesAPI.getAllArticles(20);
     allArticles = response.articles;
-  } catch (error) {
+  } catch {
     console.log('Using mock data for development');
     latestArticles = getMockArticles();
     allArticles = getMockArticles();
@@ -39,6 +44,16 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col">
+      <WebsiteStructuredData />
+      {/* Preload hero image for better LCP */}
+      {latestArticle.imageUrl && (
+        <link
+          rel="preload"
+          as="image"
+          href={latestArticle.imageUrl}
+          type="image/webp"
+        />
+      )}
       {/* Hero Section */}
       <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <ArticleHero
