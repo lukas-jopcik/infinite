@@ -11,6 +11,13 @@ export async function GET(request: NextRequest) {
     
     let articles = response.articles
     
+    // Sort articles by originalDate (newest first)
+    articles.sort((a, b) => {
+      const dateA = new Date(a.originalDate || a.publishedAt)
+      const dateB = new Date(b.originalDate || b.publishedAt)
+      return dateB.getTime() - dateA.getTime()
+    })
+    
     // Filter by category if specified
     if (category) {
       articles = articles.filter(article => article.category === category)
