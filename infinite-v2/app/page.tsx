@@ -7,6 +7,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { generateHomepageMetadata } from "@/lib/seo"
 import { WebsiteStructuredData } from "@/components/structured-data"
+import { AdContainer } from "@/components/ad-manager"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = generateHomepageMetadata()
@@ -54,6 +55,10 @@ export default async function HomePage() {
           type="image/webp"
         />
       )}
+      
+      {/* Header Ad */}
+      <AdContainer position="header" />
+      
       {/* Hero Section */}
       <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <ArticleHero
@@ -193,6 +198,9 @@ export default async function HomePage() {
           <NewsletterSignup />
         </div>
       </section>
+      
+      {/* Footer Ad */}
+      <AdContainer position="footer" />
     </div>
   )
 }

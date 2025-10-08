@@ -7,6 +7,8 @@ import "./globals.css"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { PerformanceMonitor } from "@/components/performance-monitor"
+import { AnalyticsProvider } from "@/components/google-analytics"
+import { AdManager } from "@/components/ad-manager"
 import { Suspense } from "react"
 
 export const metadata: Metadata = {
@@ -35,13 +37,17 @@ export default function RootLayout({
   return (
     <html lang="sk" className="dark">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Navigation />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-        </Suspense>
-        <PerformanceMonitor />
-        <Analytics />
+        <AnalyticsProvider>
+          <AdManager>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Navigation />
+              <main className="min-h-screen">{children}</main>
+              <Footer />
+            </Suspense>
+            <PerformanceMonitor />
+            <Analytics />
+          </AdManager>
+        </AnalyticsProvider>
       </body>
     </html>
   )

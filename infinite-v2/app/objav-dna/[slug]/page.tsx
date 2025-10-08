@@ -7,6 +7,8 @@ import { Breadcrumbs } from "@/components/breadcrumbs"
 import { NewsletterSignup } from "@/components/newsletter-signup"
 import { ScrollToTop } from "@/components/scroll-to-top"
 import { ArticleStructuredData, BreadcrumbStructuredData } from "@/components/structured-data"
+import { ArticlePageWrapper, SocialSharingSection } from "@/components/article-page-wrapper"
+import { AdContainer } from "@/components/ad-manager"
 import { Calendar, ExternalLink } from "lucide-react"
 import type { Metadata } from "next"
 
@@ -81,30 +83,31 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
   }
 
   return (
-    <div className="flex flex-col">
-      <ScrollToTop />
-      
-      {/* Structured Data */}
-      <ArticleStructuredData 
-        article={{
-          title: article.title,
-          description: article.perex,
-          slug: article.slug,
-          imageUrl: article.imageUrl,
-          publishedAt: article.publishedAt,
-          originalDate: article.originalDate,
-          author: article.author,
-          category: article.category,
-          tags: article.tags,
-        }}
-      />
-      <BreadcrumbStructuredData 
-        items={[
-          { name: "Domov", url: "/" },
-          { name: "Objav dňa", url: "/kategoria/objav-dna" },
-          { name: article.title, url: `/objav-dna/${article.slug}` },
-        ]}
-      />
+    <ArticlePageWrapper article={article}>
+      <div className="flex flex-col">
+        <ScrollToTop />
+        
+        {/* Structured Data */}
+        <ArticleStructuredData 
+          article={{
+            title: article.title,
+            description: article.perex,
+            slug: article.slug,
+            imageUrl: article.imageUrl,
+            publishedAt: article.publishedAt,
+            originalDate: article.originalDate,
+            author: article.author,
+            category: article.category,
+            tags: article.tags,
+          }}
+        />
+        <BreadcrumbStructuredData 
+          items={[
+            { name: "Domov", url: "/" },
+            { name: "Objav dňa", url: "/kategoria/objav-dna" },
+            { name: article.title, url: `/objav-dna/${article.slug}` },
+          ]}
+        />
 
       {/* Breadcrumbs */}
       <div className="border-b border-border bg-card/30">
@@ -155,6 +158,9 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
           <p className="text-pretty text-xl leading-relaxed text-muted-foreground">{article.perex}</p>
         </div>
 
+        {/* Article Ad */}
+        <AdContainer position="article" />
+
         {/* Article Sections */}
         {article.content && article.content.length > 0 && (
           <div className="mt-8 space-y-8">
@@ -197,6 +203,13 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
           </div>
         )}
 
+        {/* Social Sharing */}
+        <SocialSharingSection 
+          articleSlug={article.slug}
+          articleTitle={article.title}
+          url={`https://infinite.sk/objav-dna/${article.slug}`}
+        />
+
         {/* Newsletter CTA */}
         <div className="mt-12 rounded-2xl border border-border bg-gradient-to-br from-accent/5 to-accent/10 p-8 text-center">
           <h3 className="mb-2 text-2xl font-bold text-foreground">Nenechaj si ujsť žiadny objav</h3>
@@ -230,6 +243,7 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
           </div>
         </section>
       )}
-    </div>
+      </div>
+    </ArticlePageWrapper>
   )
 }
