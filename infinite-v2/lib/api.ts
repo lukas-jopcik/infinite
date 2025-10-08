@@ -29,6 +29,7 @@ export interface ArticleDetail extends Article {
   };
   keywords?: string[];
   source?: string;
+  sourceUrl?: string;
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://jqg44jstd1.execute-api.eu-central-1.amazonaws.com/dev';
@@ -92,17 +93,9 @@ export class ArticlesAPI {
   }
 
   static async getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
-    // For now, we'll need to implement this by fetching all articles and finding by slug
-    // In a real implementation, you'd want a dedicated endpoint for this
     try {
-      const { articles } = await this.getAllArticles(100); // Get more articles to search through
-      const article = articles.find(a => a.slug === slug);
-      
-      if (article) {
-        return await this.getArticleById(article.id);
-      }
-      
-      return null;
+      const response = await this.makeRequest(`/articles/slug/${slug}`);
+      return response;
     } catch (error) {
       console.error('Error fetching article by slug:', error);
       return null;

@@ -15,21 +15,28 @@ export const metadata: Metadata = generateHomepageMetadata()
 
 async function HomePageContent() {
   // Single API call to get all articles, then filter client-side
-  let articles = [];
+  let articles: any[] = [];
   
   try {
     const response = await ArticlesAPI.getAllArticles(50);
-    articles = response.articles;
+    articles = response?.articles || [];
     
     // Sort articles by originalDate (newest first) on client-side
-    articles.sort((a, b) => {
-      const dateA = new Date(a.originalDate || a.publishedAt)
-      const dateB = new Date(b.originalDate || b.publishedAt)
-      return dateB.getTime() - dateA.getTime()
-    })
-  } catch {
-    console.log('Using mock data for development');
+    if (Array.isArray(articles)) {
+      articles.sort((a, b) => {
+        const dateA = new Date(a.originalDate || a.publishedAt)
+        const dateB = new Date(b.originalDate || b.publishedAt)
+        return dateB.getTime() - dateA.getTime()
+      })
+    }
+  } catch (error) {
+    console.log('Using mock data for development', error);
     articles = getMockArticles();
+  }
+
+  // Ensure articles is an array
+  if (!Array.isArray(articles)) {
+    articles = [];
   }
 
   // Filter articles by category

@@ -19,9 +19,9 @@ interface DiscoveryPageProps {
 export async function generateMetadata({ params }: DiscoveryPageProps): Promise<Metadata> {
   const { slug } = await params
   
+  // Use the optimized getArticleBySlug endpoint for metadata
   try {
-    const response = await ArticlesAPI.getAllArticles(100)
-    const article = response.articles.find(a => a.slug === slug)
+    const article = await ArticlesAPI.getArticleBySlug(slug)
 
     if (!article) {
       return {
@@ -56,19 +56,15 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
   let relatedDiscoveries: Article[] = []
   
   try {
-    // First get all articles to find the article and related discoveries
-    const response = await ArticlesAPI.getAllArticles(100)
-    const basicArticle = response.articles.find(a => a.slug === slug)
+    // Get the article by slug using optimized endpoint
+    article = await ArticlesAPI.getArticleBySlug(slug)
     
-    if (basicArticle) {
-      // Get the full article data with content, sections, and FAQ
-      article = await ArticlesAPI.getArticleById(basicArticle.id)
-      
-      if (article) {
-        relatedDiscoveries = response.articles
-          .filter(a => a.category === "objav-dna" && a.slug !== slug)
-          .slice(0, 3)
-      }
+    if (article) {
+      // Get related discoveries with a smaller limit for better performance
+      const response = await ArticlesAPI.getAllArticles(15) // Further reduced for related articles
+      relatedDiscoveries = response.articles
+        .filter(a => a.category === "objav-dna" && a.slug !== slug)
+        .slice(0, 3)
     }
   } catch (error) {
     console.error('Error fetching article:', error)
@@ -124,17 +120,25 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
 
       {/* Discovery Content */}
       <article className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Date Badge */}
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm font-medium text-accent">
-          <Calendar className="h-4 w-4" />
-          <time dateTime={article.originalDate || article.publishedAt}>
-            Objav dňa –{" "}
-            {new Date(article.originalDate || article.publishedAt).toLocaleDateString("sk-SK", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </time>
+        {/* Date and AI Badges */}
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <div className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm font-medium text-accent">
+            <Calendar className="h-4 w-4" />
+            <time dateTime={article.originalDate || article.publishedAt}>
+              Objav dňa –{" "}
+              {new Date(article.originalDate || article.publishedAt).toLocaleDateString("sk-SK", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </time>
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-full bg-gray-100/10 px-4 py-2 text-sm font-medium text-gray-500 border border-gray-200/20">
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+            </svg>
+            AI generované
+          </div>
         </div>
 
         {/* Title */}
@@ -143,14 +147,35 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
         </h1>
 
         {/* Main Image - Larger for discoveries */}
-        <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl bg-muted">
-          <Image
-            src={article.imageUrl || "/placeholder.svg"}
-            alt={article.title}
-            fill
-            priority
-            className="object-cover"
-          />
+        <div className="mb-8">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted">
+            <Image
+              src={article.imageUrl || "/placeholder.svg"}
+              alt={article.title}
+              fill
+              priority
+              className="object-cover"
+            />
+          </div>
+          {/* Image Source */}
+          {article.source && (
+            <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+              <ExternalLink className="h-4 w-4" />
+              <span>Zdroj: </span>
+              {article.sourceUrl ? (
+                <a 
+                  href={article.sourceUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-accent hover:text-accent/80 underline"
+                >
+                  {article.source === 'apod-rss' ? 'NASA APOD' : article.source === 'esa-hubble' ? 'ESA Hubble' : article.source}
+                </a>
+              ) : (
+                <span>{article.source === 'apod-rss' ? 'NASA APOD' : article.source === 'esa-hubble' ? 'ESA Hubble' : article.source}</span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Description */}
@@ -190,18 +215,37 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
           </section>
         )}
 
-        {/* Source */}
-        {article.source && (
-          <div className="mt-8 rounded-lg border border-border bg-card/50 p-6">
+        {/* Source and Credits */}
+        <div className="mt-8 space-y-4">
+          {/* Image Source */}
+          {article.source && (
+            <div className="rounded-lg border border-border bg-card/50 p-6">
+              <div className="flex items-start gap-3">
+                <ExternalLink className="mt-1 h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="mb-1 text-sm font-medium text-foreground">Zdroj snímky</p>
+                  <p className="text-sm text-muted-foreground">{article.source}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Content Credits */}
+          <div className="rounded-lg border border-border bg-card/50 p-6">
             <div className="flex items-start gap-3">
-              <ExternalLink className="mt-1 h-5 w-5 text-muted-foreground" />
+              <svg className="mt-1 h-5 w-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+              </svg>
               <div>
-                <p className="mb-1 text-sm font-medium text-foreground">Zdroj snímky</p>
-                <p className="text-sm text-muted-foreground">{article.source}</p>
+                <p className="mb-1 text-sm font-medium text-foreground">Obsah článku</p>
+                <p className="text-sm text-muted-foreground">
+                  Článok bol vygenerovaný pomocou AI (OpenAI GPT-4) na základe oficiálnych zdrojov ako NASA APOD a ESA Hubble. 
+                  Text bol preložený a prispôsobený pre slovenských čitateľov.
+                </p>
               </div>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Social Sharing */}
         <SocialSharingSection 

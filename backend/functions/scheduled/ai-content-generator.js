@@ -693,6 +693,7 @@ function createArticleRecord(rawItem, generatedContent, processedImages) {
         type: 'discovery',
         status: 'published',
         source: rawItem.source,
+        sourceUrl: rawItem.url, // Add original source URL
         originalDate: rawItem.date,
         publishedAt: new Date().toISOString(),
         author: 'Infinite AI',

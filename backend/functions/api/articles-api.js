@@ -40,6 +40,9 @@ exports.handler = async (event) => {
             return await getAllArticles(headers, event.queryStringParameters);
         } else if (path === '/articles/latest' && httpMethod === 'GET') {
             return await getLatestArticles(headers, event.queryStringParameters);
+        } else if (path.startsWith('/articles/slug/') && httpMethod === 'GET') {
+            const slug = path.split('/')[3];
+            return await getArticleBySlug(slug, headers);
         } else if (path.startsWith('/articles/') && httpMethod === 'GET') {
             const articleId = path.split('/')[2];
             return await getArticleById(articleId, headers);
@@ -95,7 +98,9 @@ async function getAllArticles(headers, queryParams) {
         imageUrl: item.imageUrl || item.images?.heroImage?.url || item.images?.cardImage?.url || item.images?.ogImage?.url,
         metaTitle: item.metaTitle,
         metaDescription: item.metaDescription,
-        type: item.type
+        type: item.type,
+        source: item.source,
+        sourceUrl: item.sourceUrl
     }))
     // Sort by originalDate descending (latest first)
     .sort((a, b) => {
@@ -157,7 +162,9 @@ async function getArticleById(articleId, headers) {
         metaTitle: result.Item.metaTitle,
         metaDescription: result.Item.metaDescription,
         keywords: result.Item.keywords,
-        type: result.Item.type
+        type: result.Item.type,
+        source: result.Item.source,
+        sourceUrl: result.Item.sourceUrl
     };
     
     return {
@@ -214,10 +221,98 @@ async function getLatestArticles(headers, queryParams) {
     };
 }
 
+/**
+ * Get article by slug - optimized for direct lookup using GSI
+ */
+async function getArticleBySlug(slug, headers) {
+    console.log('Getting article by slug:', slug);
+    
+    try {
+        // Try GSI first, fallback to scan if GSI is not ready
+        let result;
+        try {
+            // Use GSI (Global Secondary Index) for fast query instead of scan
+            const params = {
+                TableName: ARTICLES_TABLE,
+                IndexName: 'slug-index',
+                KeyConditionExpression: 'slug = :slug',
+                ExpressionAttributeValues: {
+                    ':slug': slug
+                },
+                Limit: 1 // We only need one result
+            };
+            
+            result = await dynamodb.query(params).promise();
+        } catch (gsiError) {
+            console.log('GSI not ready, falling back to scan:', gsiError.message);
+            // Fallback to scan if GSI is not ready
+            const scanParams = {
+                TableName: ARTICLES_TABLE,
+                FilterExpression: 'slug = :slug',
+                ExpressionAttributeValues: {
+                    ':slug': slug
+                },
+                Limit: 1 // We only need one result
+            };
+            
+            result = await dynamodb.scan(scanParams).promise();
+        }
+        
+        if (!result.Items || result.Items.length === 0) {
+            return {
+                statusCode: 404,
+                headers,
+                body: JSON.stringify({ error: 'Article not found' })
+            };
+        }
+        
+        const item = result.Items[0];
+        
+        // Transform the data to match frontend expectations
+        const article = {
+            id: item.articleId,
+            title: item.title,
+            slug: item.slug,
+            perex: item.perex,
+            content: item.content,
+            sections: item.content,
+            faq: item.faq,
+            category: item.category || 'discovery',
+            publishedAt: item.originalDate || item.publishedAt,
+            originalDate: item.originalDate,
+            author: item.author,
+            readingTime: item.estimatedReadingTime,
+            images: item.images,
+            imageUrl: item.imageUrl || item.images?.heroImage?.url || item.images?.cardImage?.url || item.images?.ogImage?.url,
+            metaTitle: item.metaTitle,
+            metaDescription: item.metaDescription,
+            keywords: item.keywords,
+            type: item.type,
+            source: item.source,
+            sourceUrl: item.sourceUrl
+        };
+        
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify(article)
+        };
+        
+    } catch (error) {
+        console.error('Error getting article by slug:', error);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ error: 'Internal server error' })
+        };
+    }
+}
+
 // Export functions for testing
 module.exports = {
     handler: exports.handler,
     getAllArticles,
     getArticleById,
-    getLatestArticles
+    getLatestArticles,
+    getArticleBySlug
 };
