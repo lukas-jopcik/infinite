@@ -12,7 +12,7 @@ export function PerformanceMonitor() {
           if (entry.entryType === 'largest-contentful-paint') {
             console.log('LCP:', entry.startTime)
             // Send to analytics
-            if (typeof window !== 'undefined' && window.gtag) {
+            if (typeof window !== 'undefined' && window.gtag && typeof window.gtag === 'function') {
               window.gtag('event', 'web_vitals', {
                 name: 'LCP',
                 value: Math.round(entry.startTime),
@@ -36,7 +36,7 @@ export function PerformanceMonitor() {
         }
         console.log('CLS:', clsValue)
         // Send to analytics
-        if (typeof window !== 'undefined' && window.gtag) {
+        if (typeof window !== 'undefined' && window.gtag && typeof window.gtag === 'function') {
           window.gtag('event', 'web_vitals', {
             name: 'CLS',
             value: Math.round(clsValue * 1000),
@@ -54,7 +54,7 @@ export function PerformanceMonitor() {
           const fidValue = (fidEntry.processingStart || 0) - (fidEntry.startTime || 0)
           console.log('FID:', fidValue)
           // Send to analytics
-          if (typeof window !== 'undefined' && window.gtag) {
+          if (typeof window !== 'undefined' && window.gtag && typeof window.gtag === 'function') {
             window.gtag('event', 'web_vitals', {
               name: 'FID',
               value: Math.round(fidValue),

@@ -94,7 +94,15 @@ const AdContext = createContext<AdContextType>({
 })
 
 export function useAdContext() {
-  return useContext(AdContext)
+  const context = useContext(AdContext)
+  if (!context) {
+    // Return default values if context is not available
+    return {
+      adsEnabled: false,
+      adFrequency: 6
+    }
+  }
+  return context
 }
 
 // Ad container component
