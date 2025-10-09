@@ -3,7 +3,7 @@ import { ArticlesAPI, Article } from "@/lib/api"
 import { generateCategoryMetadata } from "@/lib/seo"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { CategoryBadge } from "@/components/category-badge"
-import { CategoryArticles } from "@/components/category-articles"
+import { CategoryArticlesSimple as CategoryArticles } from "@/components/category-articles-simple"
 import type { Metadata } from "next"
 
 const categories = [

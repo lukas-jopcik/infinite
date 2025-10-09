@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { ArticlesAPI, Article } from "@/lib/api"
 import { ArticleCard } from "@/components/article-card"
 import { Pagination } from "@/components/pagination"
@@ -21,6 +21,15 @@ export function CategoryArticles({
   initialLastKey, 
   initialCount 
 }: CategoryArticlesProps) {
+  // Add safety checks for props
+  if (!category) {
+    return (
+      <div className="rounded-2xl border border-border bg-card p-12 text-center">
+        <p className="text-lg text-muted-foreground">Chyba: Kategória nie je definovaná.</p>
+      </div>
+    )
+  }
+
   const [articles, setArticles] = useState<Article[]>(initialArticles || [])
   const [lastKey, setLastKey] = useState<string | undefined>(initialLastKey)
   const [currentPage, setCurrentPage] = useState(1)
