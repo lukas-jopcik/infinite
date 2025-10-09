@@ -18,7 +18,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
         <Fragment key={index}>
           {index > 0 && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
           {item.href ? (
-            <Link href={item.href} className="text-muted-foreground transition-colors hover:text-foreground">
+            <Link href={item.href} className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer" prefetch={true} scroll={true} shallow={false}>
               {item.label}
             </Link>
           ) : (

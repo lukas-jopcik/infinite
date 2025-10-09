@@ -36,7 +36,10 @@ export function Footer() {
                 <li key={category.slug}>
                   <Link
                     href={`/kategoria/${category.slug}`}
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                    prefetch={true}
+                    scroll={true}
+                    shallow={false}
                   >
                     {category.name}
                   </Link>
@@ -52,13 +55,16 @@ export function Footer() {
               <li>
                 <Link
                   href="/o-projekte"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                  prefetch={true}
+                  scroll={true}
+                  shallow={false}
                 >
                   O projekte
                 </Link>
               </li>
               <li>
-                <Link href="/hladat" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                <Link href="/hladat" className="text-sm text-muted-foreground transition-colors hover:text-foreground cursor-pointer" prefetch={true} scroll={true} shallow={false}>
                   Vyhľadávanie
                 </Link>
               </li>

@@ -31,7 +31,7 @@ export function DiscoveryCarousel({ articles }: DiscoveryCarouselProps) {
     <div className="relative">
       {/* Main Carousel */}
       <div className="relative overflow-hidden rounded-2xl">
-        <Link href={`/objav-dna/${currentArticle.slug}`} className="group block">
+        <Link href={`/objav-dna/${currentArticle.slug}`} className="group block" prefetch={true} scroll={true} shallow={false}>
           <div className="relative aspect-[21/9] bg-muted">
             <Image
               src={currentArticle.image || "/placeholder.svg"}

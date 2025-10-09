@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Article, ArticlesAPI } from "@/lib/api"
+import { ArticlesAPI, Article } from "@/lib/api"
 import { ArticleCard } from "@/components/article-card"
 import { Pagination } from "@/components/pagination"
 import { Skeleton } from "@/components/ui/skeleton"
 
-interface CategoryArticlesSimpleProps {
+interface CategoryArticlesWithPaginationProps {
   category: string
   initialArticles: Article[]
   initialLastKey?: string
@@ -15,28 +15,21 @@ interface CategoryArticlesSimpleProps {
 
 const ARTICLES_PER_PAGE = 12 // 4 rows × 3 columns
 
-export function CategoryArticlesSimple({ 
+export function CategoryArticlesWithPagination({ 
   category, 
   initialArticles, 
-  initialLastKey,
+  initialLastKey, 
   initialCount 
-}: CategoryArticlesSimpleProps) {
+}: CategoryArticlesWithPaginationProps) {
   const [articles, setArticles] = useState<Article[]>(initialArticles || [])
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [totalCount, setTotalCount] = useState(initialCount || 0)
 
-  // Add safety checks for props
-  if (!category) {
-    return (
-      <div className="rounded-2xl border border-border bg-card p-12 text-center">
-        <p className="text-lg text-muted-foreground">Chyba: Kategória nie je definovaná.</p>
-      </div>
-    )
-  }
-
   const totalPages = Math.ceil(totalCount / ARTICLES_PER_PAGE)
+  const hasNextPage = currentPage < totalPages
+  const hasPreviousPage = currentPage > 1
 
   const loadPage = async (page: number) => {
     if (loading || !category) return
@@ -85,7 +78,7 @@ export function CategoryArticlesSimple({
         <p className="text-lg text-destructive">{error}</p>
         <button 
           onClick={() => loadPage(currentPage)}
-          className="mt-4 text-sm text-accent hover:underline"
+          className="mt-4 text-sm text-accent hover:underline cursor-pointer"
         >
           Skúsiť znovu
         </button>
@@ -93,16 +86,14 @@ export function CategoryArticlesSimple({
     )
   }
 
-  if (articles.length === 0 && !loading) {
-    return (
-      <div className="rounded-2xl border border-border bg-card p-12 text-center">
-        <p className="text-lg text-muted-foreground">Žiadne články na zobrazenie.</p>
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-8">
+      {/* Results Info */}
+      <div className="text-center text-sm text-muted-foreground">
+        Zobrazené {articles?.length || 0} z {totalCount} článkov
+        {totalPages > 1 && ` • Strana ${currentPage} z ${totalPages}`}
+      </div>
+
       {/* Articles Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {loading ? (
@@ -122,7 +113,7 @@ export function CategoryArticlesSimple({
             </div>
           ))
         ) : (
-          articles.map((article) => (
+          articles && articles.length > 0 ? articles.map((article) => (
             <ArticleCard 
               key={article.slug} 
               slug={article.slug}
@@ -134,27 +125,27 @@ export function CategoryArticlesSimple({
               imageAlt={article.title}
               type={article.type as "article" | "discovery"}
             />
-          ))
+          )) : (
+            <div className="col-span-full rounded-2xl border border-border bg-card p-12 text-center">
+              <p className="text-lg text-muted-foreground">Žiadne články na zobrazenie.</p>
+            </div>
+          )
         )}
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          baseUrl={`/kategoria/${category}`}
-          hasNextPage={currentPage < totalPages}
-          hasPreviousPage={currentPage > 1}
-          onPageChange={handlePageChange}
-        />
+        <div className="mt-8">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            baseUrl={`/kategoria/${category}`}
+            hasNextPage={hasNextPage}
+            hasPreviousPage={hasPreviousPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
       )}
-
-      {/* Results Info */}
-      <div className="text-center text-sm text-muted-foreground">
-        Zobrazené {articles.length} z {totalCount} článkov
-        {totalPages > 1 && ` • Strana ${currentPage} z ${totalPages}`}
-      </div>
     </div>
   )
 }

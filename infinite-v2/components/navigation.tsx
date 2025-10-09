@@ -22,7 +22,7 @@ export function Navigation() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2" prefetch={true} scroll={true} shallow={false}>
             <div className="text-2xl font-bold tracking-tight text-foreground">Infinite</div>
           </Link>
 
@@ -32,7 +32,10 @@ export function Navigation() {
               <Link
                 key={category.slug}
                 href={`/kategoria/${category.slug}`}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+                prefetch={true}
+                scroll={true}
+                shallow={false}
               >
                 {category.name}
               </Link>
@@ -42,7 +45,7 @@ export function Navigation() {
           {/* Search & Mobile Menu */}
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" asChild>
-              <Link href="/hladat">
+              <Link href="/hladat" prefetch={true} scroll={true} shallow={false}>
                 <Search className="h-5 w-5" />
                 <span className="sr-only">Hľadať</span>
               </Link>
@@ -72,8 +75,11 @@ export function Navigation() {
               <Link
                 key={category.slug}
                 href={`/kategoria/${category.slug}`}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground cursor-pointer"
                 onClick={() => setMobileMenuOpen(false)}
+                prefetch={true}
+                scroll={true}
+                shallow={false}
               >
                 {category.name}
               </Link>

@@ -27,7 +27,7 @@ export function ArticleCard({ slug, title, perex, category, date, image, imageAl
   return (
     <Link
       href={href}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg cursor-pointer"
       prefetch={true}
       scroll={true}
       shallow={false}
