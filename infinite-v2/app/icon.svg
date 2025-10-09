@@ -1,0 +1,28 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="96" cy="96" r="88" fill="#0a0a0a" stroke="#1a1a1a" stroke-width="2"/>
+  
+  <!-- Central star -->
+  <circle cx="96" cy="96" r="8" fill="#3b82f6" opacity="0.9"/>
+  <circle cx="96" cy="96" r="4" fill="#60a5fa"/>
+  
+  <!-- Orbiting planet 1 -->
+  <circle cx="96" cy="48" r="6" fill="#8b5cf6" opacity="0.8"/>
+  <circle cx="96" cy="48" r="3" fill="#a78bfa"/>
+  
+  <!-- Orbiting planet 2 -->
+  <circle cx="144" cy="96" r="5" fill="#06b6d4" opacity="0.8"/>
+  <circle cx="144" cy="96" r="2.5" fill="#22d3ee"/>
+  
+  <!-- Orbiting star -->
+  <circle cx="96" cy="144" r="4" fill="#f59e0b" opacity="0.9"/>
+  <circle cx="96" cy="144" r="2" fill="#fbbf24"/>
+  
+  <!-- Connection lines (subtle) -->
+  <path d="M96 96 L96 48" stroke="#1e293b" stroke-width="1" opacity="0.3"/>
+  <path d="M96 96 L144 96" stroke="#1e293b" stroke-width="1" opacity="0.3"/>
+  <path d="M96 96 L96 144" stroke="#1e293b" stroke-width="1" opacity="0.3"/>
+  
+  <!-- Outer ring -->
+  <circle cx="96" cy="96" r="76" fill="none" stroke="#374151" stroke-width="1" opacity="0.4"/>
+</svg>

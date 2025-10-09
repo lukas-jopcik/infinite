@@ -22,8 +22,9 @@ export default function WeeklyPicksPage() {
   return (
     <div className="flex flex-col">
       {/* Breadcrumbs */}
-      <div className="border-b border-border bg-card/30">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <div className="relative border-b border-border/50 bg-gradient-to-r from-card/40 via-card/20 to-card/40 backdrop-blur-sm">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-purple-500/5" />
+        <div className="relative mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
           <Breadcrumbs items={[{ label: "Domov", href: "/" }, { label: "Týždenný výber" }]} />
         </div>
       </div>
