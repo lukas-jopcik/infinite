@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation"
 import { ArticlesAPI, Article } from "@/lib/api"
 import { generateCategoryMetadata } from "@/lib/seo"
-import { ArticleCard } from "@/components/article-card"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { CategoryBadge } from "@/components/category-badge"
+import { CategoryArticles } from "@/components/category-articles"
 import type { Metadata } from "next"
 
 const categories = [
@@ -44,16 +44,23 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound()
   }
 
-  // Fetch articles from API using optimized category endpoint
-  let articles: Article[] = []
+  // Fetch initial articles from API using optimized category endpoint
+  let initialArticles: Article[] = []
+  let initialLastKey: string | undefined
+  let totalCount = 0
   
   try {
-    const response = await ArticlesAPI.getArticlesByCategory(slug, 50) // Use optimized category endpoint
-    articles = response.articles
+    const response = await ArticlesAPI.getArticlesByCategory(slug, 100) // Fetch more for pagination
+    if (response && response.articles) {
+      initialArticles = response.articles.slice(0, 12) // Show first 12 articles (4 rows)
+      initialLastKey = response.lastKey
+      totalCount = response.count || 0
+    }
   } catch (error) {
     console.error('Error fetching articles:', error)
     // Fallback to empty array if API fails
-    articles = []
+    initialArticles = []
+    totalCount = 0
   }
 
   return (
@@ -76,24 +83,15 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </div>
       </div>
 
-      {/* Articles Grid */}
+      {/* Articles Grid with Pagination */}
       <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {articles.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {articles.map((article) => (
-              <ArticleCard 
-                key={article.slug} 
-                slug={article.slug}
-                title={article.title}
-                perex={article.perex}
-                category={article.category}
-                     date={article.originalDate || article.publishedAt}
-                image={article.imageUrl || "/placeholder.svg"}
-                imageAlt={article.title}
-                type={article.type as "article" | "discovery"}
-              />
-            ))}
-          </div>
+        {initialArticles && initialArticles.length > 0 ? (
+          <CategoryArticles
+            category={slug}
+            initialArticles={initialArticles}
+            initialLastKey={initialLastKey}
+            initialCount={totalCount}
+          />
         ) : (
           <div className="rounded-2xl border border-border bg-card p-12 text-center">
             <p className="text-lg text-muted-foreground">V tejto kategórii zatiaľ nie sú žiadne články.</p>
