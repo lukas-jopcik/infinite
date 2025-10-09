@@ -111,6 +111,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
+                    timeZone: "UTC"
                   })}
                 </time>
               </div>

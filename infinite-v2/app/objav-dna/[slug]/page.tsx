@@ -128,6 +128,7 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
+                timeZone: "UTC"
               })}
             </time>
           </div>

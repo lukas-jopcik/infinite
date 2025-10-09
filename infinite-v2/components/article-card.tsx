@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { CategoryBadge } from "./category-badge"
 import { Calendar } from "lucide-react"
+import { formatDateShort, formatDateForDateTime } from "@/lib/date-utils"
 
 interface ArticleCardProps {
   slug: string
@@ -19,8 +20,9 @@ interface ArticleCardProps {
 export function ArticleCard({ slug, title, perex, category, date, image, imageAlt, type }: ArticleCardProps) {
   const href = type === "discovery" ? `/objav-dna/${slug}` : `/clanok/${slug}`
   
-  // Optimize date formatting - avoid creating new Date object on every render
-  const formattedDate = new Date(date).toLocaleDateString("sk-SK")
+  // Use consistent date formatting to prevent hydration mismatches
+  const formattedDate = formatDateShort(date)
+  const dateTimeValue = formatDateForDateTime(date)
 
   return (
     <Link
@@ -48,7 +50,7 @@ export function ArticleCard({ slug, title, perex, category, date, image, imageAl
           <CategoryBadge category={category} />
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Calendar className="h-3 w-3" />
-            <time dateTime={date}>{formattedDate}</time>
+            <time dateTime={dateTimeValue}>{formattedDate}</time>
           </div>
         </div>
         <h3 className="text-balance text-xl font-bold leading-tight text-card-foreground transition-colors group-hover:text-accent">

@@ -3,6 +3,7 @@ import Image from "next/image"
 import { CategoryBadge } from "./category-badge"
 import { Calendar, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { formatDateShort, formatDateForDateTime } from "@/lib/date-utils"
 
 interface ArticleHeroProps {
   slug: string
@@ -16,8 +17,9 @@ interface ArticleHeroProps {
 }
 
 export function ArticleHero({ slug, title, perex, category, date, image, imageAlt, type = "discovery" }: ArticleHeroProps) {
-  // Optimize date formatting
-  const formattedDate = new Date(date).toLocaleDateString("sk-SK")
+  // Use consistent date formatting to prevent hydration mismatches
+  const formattedDate = formatDateShort(date)
+  const dateTimeValue = formatDateForDateTime(date)
   
   // Generate correct href based on type
   const href = type === "discovery" ? `/objav-dna/${slug}` : `/clanok/${slug}`
@@ -46,7 +48,7 @@ export function ArticleHero({ slug, title, perex, category, date, image, imageAl
             <CategoryBadge category={category} />
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4" />
-              <time dateTime={date}>{formattedDate}</time>
+              <time dateTime={dateTimeValue}>{formattedDate}</time>
             </div>
           </div>
 
