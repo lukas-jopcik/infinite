@@ -26,14 +26,14 @@ export function ArticleHero({ slug, title, perex, category, date, image, imageAl
     <div className="group relative overflow-hidden rounded-3xl bg-card">
       <div className="grid gap-0 lg:grid-cols-2">
         {/* Image */}
-        <div className="relative aspect-[16/9] lg:aspect-auto">
+        <div className="relative h-full min-h-[300px]">
           <Image 
             src={image || "/placeholder.svg"} 
             alt={imageAlt} 
             fill 
             priority 
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover" 
+            className="object-cover object-center" 
             quality={80}
             placeholder="blur"
             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
@@ -41,7 +41,7 @@ export function ArticleHero({ slug, title, perex, category, date, image, imageAl
         </div>
 
         {/* Content */}
-        <div className="flex flex-col justify-center gap-6 p-8 lg:p-12">
+        <div className="flex flex-col justify-center gap-4 p-6 lg:p-8">
           <div className="flex items-center gap-3">
             <CategoryBadge category={category} />
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -50,9 +50,11 @@ export function ArticleHero({ slug, title, perex, category, date, image, imageAl
             </div>
           </div>
 
-          <h1 className="text-balance text-4xl font-bold leading-tight text-foreground lg:text-5xl">{title}</h1>
+          <h1 className="text-balance text-3xl font-bold leading-tight text-foreground lg:text-4xl">{title}</h1>
 
-          <p className="text-pretty text-lg leading-relaxed text-muted-foreground">{perex}</p>
+          <p className="text-pretty text-base leading-relaxed text-muted-foreground line-clamp-3">
+            {perex.length > 200 ? `${perex.substring(0, 200)}...` : perex}
+          </p>
 
           <div>
             <Button size="lg" asChild>
