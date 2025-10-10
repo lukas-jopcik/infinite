@@ -33,7 +33,7 @@ export function CategoryArticles({
 
   const router = useRouter()
   const searchParams = useSearchParams()
-  const initialPageFromUrl = Number(searchParams.get("page") || "1")
+  const initialPageFromUrl = Number(searchParams.get("strana") || "1")
 
   const [articles, setArticles] = useState<Article[]>(initialArticles || [])
   const [lastKey, setLastKey] = useState<string | undefined>(initialLastKey)
@@ -87,7 +87,7 @@ export function CategoryArticles({
 
   const handlePageChange = (page: number) => {
     if (page !== currentPage && !loading) {
-      const url = `/kategoria/${category}?page=${page}`
+      const url = `/kategoria/${category}?strana=${page}`
       router.push(url)
       loadPage(page)
       window.scrollTo({ top: 0, behavior: 'smooth' })
