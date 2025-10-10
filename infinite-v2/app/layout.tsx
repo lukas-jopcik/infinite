@@ -9,6 +9,7 @@ import { Footer } from "@/components/footer"
 import { PerformanceMonitor } from "@/components/performance-monitor"
 import { AnalyticsProvider } from "@/components/google-analytics"
 import { AdManager } from "@/components/ad-manager"
+import { GOOGLE_VERIFICATION_CONFIG } from "@/lib/config"
 import { Suspense } from "react"
 import { SpaceLoading } from "@/components/space-loading"
 
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
     ],
     apple: { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }
   },
+  manifest: '/manifest.json',
   openGraph: {
     title: "Infinite – Objav dňa z vesmíru",
     description: "Denné objavy, vizuálne snímky a vzdelávacie články o vesmíre a astronómii.",
@@ -43,6 +45,16 @@ export const metadata: Metadata = {
     title: "Infinite – Objav dňa z vesmíru",
     description: "Denné objavy, vizuálne snímky a vzdelávacie články o vesmíre a astronómii.",
     images: ['/opengraph-image.png'],
+  },
+  alternates: {
+    types: {
+      'application/rss+xml': [
+        { url: '/rss.xml', title: 'Infinite RSS Feed' },
+      ],
+    },
+  },
+  verification: {
+    google: GOOGLE_VERIFICATION_CONFIG.siteVerification,
   },
 }
 

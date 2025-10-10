@@ -15,7 +15,9 @@ export interface Article {
   metaTitle: string;
   metaDescription: string;
   type: string;
-  tags?: string[];
+  tags: string[];
+  source?: string;
+  sourceUrl?: string;
 }
 
 export interface ArticleDetail extends Article {
@@ -38,6 +40,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 export class ArticlesAPI {
   private static async makeRequest(endpoint: string, options: RequestInit = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
+    console.log('[API] Fetching from:', url, 'API_BASE_URL:', API_BASE_URL);
     
     const response = await fetch(url, {
       headers: {
@@ -45,9 +48,13 @@ export class ArticlesAPI {
         ...options.headers,
       },
       ...options,
+    }).catch((error) => {
+      console.error('[API] Fetch error:', error, 'URL:', url);
+      throw error;
     });
 
     if (!response.ok) {
+      console.error('[API] HTTP error:', response.status, response.statusText, 'URL:', url);
       throw new Error(`API request failed: ${response.status} ${response.statusText}`);
     }
 

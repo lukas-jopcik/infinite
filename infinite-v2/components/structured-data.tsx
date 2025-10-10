@@ -1,4 +1,4 @@
-import { ArticleData, generateArticleStructuredData, generateWebsiteStructuredData, generateOrganizationStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo"
+import { ArticleData, generateArticleStructuredData, generateWebsiteStructuredData, generateOrganizationStructuredData, generateBreadcrumbStructuredData, generateFAQStructuredData, generateImageObjectStructuredData } from "@/lib/seo"
 
 interface StructuredDataProps {
   data: object
@@ -46,5 +46,29 @@ interface BreadcrumbStructuredDataProps {
 
 export function BreadcrumbStructuredData({ items }: BreadcrumbStructuredDataProps) {
   const structuredData = generateBreadcrumbStructuredData(items)
+  return <StructuredData data={structuredData} />
+}
+
+interface FAQStructuredDataProps {
+  faqs: Array<{ question: string; answer: string }>
+}
+
+export function FAQStructuredData({ faqs }: FAQStructuredDataProps) {
+  const structuredData = generateFAQStructuredData(faqs)
+  return <StructuredData data={structuredData} />
+}
+
+interface ImageObjectStructuredDataProps {
+  image: {
+    url: string
+    alt: string
+    caption?: string
+    license?: string
+    creator?: string
+  }
+}
+
+export function ImageObjectStructuredData({ image }: ImageObjectStructuredDataProps) {
+  const structuredData = generateImageObjectStructuredData(image)
   return <StructuredData data={structuredData} />
 }

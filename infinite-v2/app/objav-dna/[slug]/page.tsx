@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import Image from "next/image"
 import { ArticlesAPI, Article, ArticleDetail } from "@/lib/api"
 import { generateArticleMetadata } from "@/lib/seo"
@@ -6,8 +6,9 @@ import { ArticleCard } from "@/components/article-card"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { NewsletterSignup } from "@/components/newsletter-signup"
 import { ScrollToTop } from "@/components/scroll-to-top"
-import { ArticleStructuredData, BreadcrumbStructuredData } from "@/components/structured-data"
+import { ArticleStructuredData, BreadcrumbStructuredData, FAQStructuredData, ImageObjectStructuredData } from "@/components/structured-data"
 import { ArticlePageWrapper, SocialSharingSection } from "@/components/article-page-wrapper"
+import { generateArticleAltText } from "@/lib/alt-text-generator"
 import { AdContainer } from "@/components/ad-manager"
 import { Calendar, ExternalLink } from "lucide-react"
 import type { Metadata } from "next"
@@ -59,20 +60,25 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
     // Get the article by slug using optimized endpoint
     article = await ArticlesAPI.getArticleBySlug(slug)
     
-    if (article) {
-      // Get related discoveries using optimized category endpoint
-      const response = await ArticlesAPI.getArticlesByCategory("objav-dna", 10)
-      relatedDiscoveries = response.articles
-        .filter(a => a.slug !== slug)
-        .slice(0, 3)
+    if (!article) {
+      notFound()
     }
+
+    // If this is not an objav-dna article, redirect to correct URL or show 404
+    if (article.category === "tyzdenny-vyber") {
+      redirect(`/tyzdenny-vyber/${slug}`)
+    } else if (article.category !== "objav-dna") {
+      notFound()
+    }
+    
+    // Get related discoveries using optimized category endpoint
+    const response = await ArticlesAPI.getArticlesByCategory("objav-dna", 10)
+    relatedDiscoveries = response.articles
+      .filter(a => a.slug !== slug)
+      .slice(0, 3)
   } catch (error) {
     console.error('Error fetching article:', error)
     // If API fails, show 404 instead of mock data
-    notFound()
-  }
-
-  if (!article || article.category !== "objav-dna") {
     notFound()
   }
 
@@ -102,6 +108,19 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
             { name: article.title, url: `/objav-dna/${article.slug}` },
           ]}
         />
+        {article.faq && article.faq.length > 0 && (
+          <FAQStructuredData faqs={article.faq} />
+        )}
+        {article.imageUrl && (
+          <ImageObjectStructuredData 
+            image={{
+              url: article.imageUrl,
+              alt: article.title,
+              caption: article.title,
+              creator: article.source === 'apod-rss' ? 'NASA APOD' : article.source === 'esa-hubble' ? 'ESA Hubble' : article.source,
+            }}
+          />
+        )}
 
       {/* Breadcrumbs */}
       <div className="relative border-b border-border/50 bg-gradient-to-r from-card/40 via-card/20 to-card/40 backdrop-blur-sm">
@@ -151,7 +170,11 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
           <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted">
             <Image
               src={article.imageUrl || "/placeholder.svg"}
-              alt={article.title}
+              alt={generateArticleAltText({
+                title: article.title,
+                category: article.category,
+                source: article.source,
+              })}
               fill
               priority
               className="object-cover"

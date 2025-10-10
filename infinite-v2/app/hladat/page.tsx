@@ -30,11 +30,32 @@ export default function SearchPage() {
         // Load a smaller set of recent articles for initial display
         const response = await ArticlesAPI.getLatestArticles(50)
         
-        setAllArticles(response)
-        setResults(response)
-        setTotalCount(response.length)
+        if (response && response.length > 0) {
+          setAllArticles(response)
+          setResults(response)
+          setTotalCount(response.length)
+        } else {
+          // Fallback: try to load from different categories
+          const [discoveryResponse, weeklyResponse] = await Promise.all([
+            ArticlesAPI.getArticlesByCategory("objav-dna", 25).catch(() => ({ articles: [] })),
+            ArticlesAPI.getArticlesByCategory("tyzdenny-vyber", 25).catch(() => ({ articles: [] })),
+          ])
+          
+          const combinedArticles = [
+            ...(discoveryResponse.articles || []),
+            ...(weeklyResponse.articles || []),
+          ]
+          
+          if (combinedArticles.length > 0) {
+            setAllArticles(combinedArticles)
+            setResults(combinedArticles)
+            setTotalCount(combinedArticles.length)
+          } else {
+            setError('API nie je dostupné. Skúste to neskôr.')
+          }
+        }
       } catch (err) {
-        setError('Nepodarilo sa načítať články')
+        setError('Nepodarilo sa načítať články. API server nie je dostupný.')
         console.error('Error loading articles:', err)
       } finally {
         setLoading(false)
@@ -48,6 +69,7 @@ export default function SearchPage() {
     setQuery(searchQuery)
     setCurrentPage(1) // Reset to first page when searching
     setLoading(true)
+    setError(null)
     
     try {
       if (searchQuery.trim() === "") {
@@ -55,26 +77,44 @@ export default function SearchPage() {
         setResults(allArticles)
         setTotalCount(allArticles.length)
       } else {
-        // Use server-side search API
-        const searchResponse = await ArticlesAPI.searchArticles(searchQuery, 100)
-        setResults(searchResponse.articles)
-        setTotalCount(searchResponse.total)
+        // Try server-side search API first
+        try {
+          const searchResponse = await ArticlesAPI.searchArticles(searchQuery, 100)
+          if (searchResponse && searchResponse.articles && searchResponse.articles.length > 0) {
+            setResults(searchResponse.articles)
+            setTotalCount(searchResponse.total)
+          } else {
+            // Fallback to client-side search if API returns empty results
+            performClientSideSearch(searchQuery)
+          }
+        } catch (apiError) {
+          console.warn('API search failed, falling back to client-side search:', apiError)
+          // Fallback to client-side search
+          performClientSideSearch(searchQuery)
+        }
       }
     } catch (err) {
-      console.error('Error searching articles:', err)
+      console.error('Error in search:', err)
       setError('Nepodarilo sa vyhľadať články')
-      // Fallback to client-side search
-      const filtered = allArticles.filter(
-        (article) =>
-          article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          article.perex.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          article.category.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-      setResults(filtered)
-      setTotalCount(filtered.length)
+      // Final fallback to client-side search
+      performClientSideSearch(searchQuery)
     } finally {
       setLoading(false)
     }
+  }
+
+  const performClientSideSearch = (searchQuery: string) => {
+    const filtered = allArticles.filter(
+      (article) =>
+        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.perex.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        article.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (article.tags && article.tags.some(tag => 
+          tag.toLowerCase().includes(searchQuery.toLowerCase())
+        ))
+    )
+    setResults(filtered)
+    setTotalCount(filtered.length)
   }
 
   // Calculate pagination
@@ -177,7 +217,8 @@ export default function SearchPage() {
                   date={article.originalDate || article.publishedAt}
                   image={article.imageUrl || "/placeholder.svg"}
                   imageAlt={article.title}
-                  type={article.type as "article" | "discovery"}
+                  type={article.category === 'objav-dna' ? 'discovery' : 'article'}
+                  source={article.source}
                 />
               ))}
             </div>
@@ -199,10 +240,26 @@ export default function SearchPage() {
         ) : (
           <div className="rounded-2xl border border-border bg-card p-12 text-center">
             <Search className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-            <h3 className="mb-2 text-xl font-semibold text-foreground">Žiadne výsledky</h3>
+            <h3 className="mb-2 text-xl font-semibold text-foreground">
+              {error ? "Chyba pri načítavaní" : "Žiadne výsledky"}
+            </h3>
             <p className="text-muted-foreground">
-              {query ? "Skús iný výraz alebo prechádzaj kategórie." : "Žiadne články na zobrazenie."}
+              {error ? (
+                "API server nie je dostupný. Skúste to neskôr alebo kontaktujte administrátora."
+              ) : query ? (
+                "Skús iný výraz alebo prechádzaj kategórie."
+              ) : (
+                "Žiadne články na zobrazenie."
+              )}
             </p>
+            {error && (
+              <button 
+                onClick={() => window.location.reload()}
+                className="mt-4 text-sm text-accent hover:underline"
+              >
+                Skúsiť znovu
+              </button>
+            )}
           </div>
         )}
       </section>

@@ -19,13 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/kategoria/vysvetlenia`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/kategoria/deti-vesmir`,
+      url: `${baseUrl}/kategoria/deti-a-vesmir`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
@@ -57,16 +51,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   try {
-    // Fetch objav-dna articles using optimized category endpoint
-    const articles = await ArticlesAPI.getArticlesByCategory("objav-dna", 100)
-    
-    // Generate sitemap entries for articles
-    const articlePages: MetadataRoute.Sitemap = articles.articles.map((article) => ({
-      url: `${baseUrl}/objav-dna/${article.slug}`,
-      lastModified: new Date(article.originalDate || article.publishedAt),
-      changeFrequency: 'monthly' as const,
-      priority: 0.8,
-    }))
+    // Fetch articles from all categories
+    const [objavDnaResponse, komunitaResponse, detiResponse, tyzdennyResponse] = await Promise.all([
+      ArticlesAPI.getArticlesByCategory("objav-dna", 100).catch(() => ({ articles: [] })),
+      ArticlesAPI.getArticlesByCategory("komunita", 50).catch(() => ({ articles: [] })),
+      ArticlesAPI.getArticlesByCategory("deti-a-vesmir", 50).catch(() => ({ articles: [] })),
+      ArticlesAPI.getArticlesByCategory("tyzdenny-vyber", 50).catch(() => ({ articles: [] })),
+    ])
+
+    // Generate sitemap entries for all articles
+    const allArticles = [
+      ...objavDnaResponse.articles,
+      ...komunitaResponse.articles,
+      ...detiResponse.articles,
+      ...tyzdennyResponse.articles,
+    ]
+
+    const articlePages: MetadataRoute.Sitemap = allArticles.map((article) => {
+      // Use correct URL structure based on category
+      const basePath = article.category === 'tyzdenny-vyber' ? 'tyzdenny-vyber' : 'objav-dna'
+      return {
+        url: `${baseUrl}/${basePath}/${article.slug}`,
+        lastModified: new Date(article.originalDate || article.publishedAt),
+        changeFrequency: 'monthly' as const,
+        priority: 0.8,
+      }
+    })
 
     return [...staticPages, ...articlePages]
   } catch (error) {

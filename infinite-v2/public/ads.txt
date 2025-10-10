@@ -1,0 +1,19 @@
+# ads.txt file for infinite.sk
+# This file helps prevent ad fraud and ensures proper ad revenue attribution
+
+# Google AdSense
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+
+# Add your actual AdSense publisher ID when available
+# Replace pub-0000000000000000 with your real AdSense publisher ID
+
+# Example format for other ad networks (uncomment and configure as needed):
+# google.com, pub-YOUR_PUBLISHER_ID, DIRECT, f08c47fec0942fa0
+# facebook.com, YOUR_FACEBOOK_PLACEMENT_ID, DIRECT, c3e20eee3f780d68
+# amazon-adsystem.com, YOUR_AMAZON_ID, DIRECT, 3ba75a6d8f18801a
+
+# Instructions:
+# 1. Replace pub-0000000000000000 with your actual Google AdSense publisher ID
+# 2. Add other ad networks as needed
+# 3. Keep this file updated when adding new ad partners
+# 4. Verify the file is accessible at https://infinite.sk/ads.txt

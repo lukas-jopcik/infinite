@@ -1,0 +1,77 @@
+{
+  "name": "Infinite - Objav dňa z vesmíru",
+  "short_name": "Infinite",
+  "description": "Denné objavy, vizuálne snímky a vzdelávacie články o vesmíre a astronómii.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#00d4ff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "sk",
+  "dir": "ltr",
+  "categories": ["education", "science", "news"],
+  "icons": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/opengraph-image.png",
+      "sizes": "1200x1200",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Infinite astronomy content platform"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Objav dňa",
+      "short_name": "Objav dňa",
+      "description": "Najnovší objav dňa z vesmíru",
+      "url": "/kategoria/objav-dna",
+      "icons": [
+        {
+          "src": "/icon.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Vyhľadávanie",
+      "short_name": "Vyhľadávanie",
+      "description": "Hľadaj články o vesmíre",
+      "url": "/hladat",
+      "icons": [
+        {
+          "src": "/icon.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}

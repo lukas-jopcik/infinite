@@ -3,6 +3,7 @@ import Image from "next/image"
 import { CategoryBadge } from "./category-badge"
 import { Calendar } from "lucide-react"
 import { formatDateShort, formatDateForDateTime } from "@/lib/date-utils"
+import { generateThumbnailAltText } from "@/lib/alt-text-generator"
 
 interface ArticleCardProps {
   slug: string
@@ -17,12 +18,30 @@ interface ArticleCardProps {
   source?: string
 }
 
-export function ArticleCard({ slug, title, perex, category, date, image, imageAlt, type }: ArticleCardProps) {
-  const href = type === "discovery" ? `/objav-dna/${slug}` : `/clanok/${slug}`
+export function ArticleCard({ slug, title, perex, category, date, image, imageAlt, type, source = "Infinite AI" }: ArticleCardProps) {
+  // Determine correct URL based on category
+  const getHref = () => {
+    if (category === 'tyzdenny-vyber') {
+      return `/tyzdenny-vyber/${slug}`
+    } else if (type === "discovery") {
+      return `/objav-dna/${slug}`
+    } else {
+      return `/clanok/${slug}`
+    }
+  }
+  
+  const href = getHref()
   
   // Use consistent date formatting to prevent hydration mismatches
   const formattedDate = formatDateShort(date)
   const dateTimeValue = formatDateForDateTime(date)
+  
+  // Generate optimized alt text
+  const optimizedAltText = generateThumbnailAltText({
+    title,
+    category,
+    source,
+  })
 
   return (
     <Link
@@ -35,7 +54,7 @@ export function ArticleCard({ slug, title, perex, category, date, image, imageAl
       <div className="relative aspect-[16/9] overflow-hidden bg-muted">
         <Image
           src={image || "/placeholder.svg"}
-          alt={imageAlt}
+          alt={optimizedAltText}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover transition-transform duration-300 group-hover:scale-105"

@@ -7,18 +7,18 @@ import { ArticleCard } from "@/components/article-card"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { NewsletterSignup } from "@/components/newsletter-signup"
 import { ScrollToTop } from "@/components/scroll-to-top"
+import { ArticleStructuredData, BreadcrumbStructuredData, FAQStructuredData, ImageObjectStructuredData } from "@/components/structured-data"
 import { ArticlePageWrapper, SocialSharingSection } from "@/components/article-page-wrapper"
+import { generateArticleAltText } from "@/lib/alt-text-generator"
 import { AdContainer } from "@/components/ad-manager"
 import { Calendar, ExternalLink } from "lucide-react"
-import { ArticleStructuredData, BreadcrumbStructuredData, FAQStructuredData, ImageObjectStructuredData } from "@/components/structured-data"
-import { generateArticleAltText } from "@/lib/alt-text-generator"
 import type { Metadata } from "next"
 
-interface ArticlePageProps {
+interface WeeklyPickPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: WeeklyPickPageProps): Promise<Metadata> {
   const { slug } = await params
   
   try {
@@ -26,8 +26,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
     if (!article) {
       return {
-        title: "Článok nenájdený | Infinite",
-        description: "Požadovaný článok nebol nájdený.",
+        title: "Týždenný výber nenájdený | Infinite",
+        description: "Požadovaný článok z týždenného výberu nebol nájdený.",
       }
     }
 
@@ -44,13 +44,13 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     })
   } catch {
     return {
-      title: "Článok nenájdený | Infinite",
-      description: "Požadovaný článok nebol nájdený.",
+      title: "Týždenný výber nenájdený | Infinite",
+      description: "Požadovaný článok z týždenného výberu nebol nájdený.",
     }
   }
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
+export default async function WeeklyPickPage({ params }: WeeklyPickPageProps) {
   const { slug } = await params
   
   let article: ArticleDetail | null = null
@@ -62,7 +62,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     
     if (article) {
       // Get related articles using optimized category endpoint
-      const response = await ArticlesAPI.getArticlesByCategory(article.category, 10)
+      const response = await ArticlesAPI.getArticlesByCategory("tyzdenny-vyber", 10)
       relatedArticles = response.articles
         .filter(a => a.slug !== slug)
         .slice(0, 3)
@@ -77,11 +77,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound()
   }
 
-  // Redirect to correct URL based on category
+  // If this is not a weekly pick, redirect to correct URL or show 404
   if (article.category === "objav-dna") {
     redirect(`/objav-dna/${slug}`)
-  } else if (article.category === "tyzdenny-vyber") {
-    redirect(`/tyzdenny-vyber/${slug}`)
+  } else if (article.category !== "tyzdenny-vyber") {
+    notFound()
   }
 
   return (
@@ -106,8 +106,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         <BreadcrumbStructuredData 
           items={[
             { name: "Domov", url: "/" },
-            { name: article.category === "tyzdenny-vyber" ? "Týždenný výber" : article.category.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" "), url: `/kategoria/${article.category}` },
-            { name: article.title, url: `/clanok/${article.slug}` },
+            { name: "Týždenný výber", url: "/kategoria/tyzdenny-vyber" },
+            { name: article.title, url: `/tyzdenny-vyber/${article.slug}` },
           ]}
         />
         {article.faq && article.faq.length > 0 && (
@@ -126,21 +126,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         {/* Breadcrumbs */}
         <div className="relative border-b border-border/50 bg-gradient-to-r from-card/40 via-card/20 to-card/40 backdrop-blur-sm">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-transparent to-purple-500/5" />
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 via-transparent to-blue-500/5" />
           <div className="relative mx-auto max-w-4xl px-4 py-5 sm:px-6 lg:px-8">
             <Breadcrumbs
               items={[
                 { label: "Domov", href: "/" },
-                {
-                  label:
-                    article.category === "tyzdenny-vyber"
-                      ? "Týždenný výber"
-                      : article.category
-                          .split("-")
-                          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                          .join(" "),
-                  href: `/kategoria/${article.category}`,
-                },
+                { label: "Týždenný výber", href: "/kategoria/tyzdenny-vyber" },
                 { label: article.title },
               ]}
             />
@@ -163,11 +154,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   })}
                 </time>
               </div>
-              <div className="inline-flex items-center gap-2 rounded-full bg-gray-100/10 px-3 py-1 text-xs font-medium text-gray-500 border border-gray-200/20">
+              <div className="inline-flex items-center gap-2 rounded-full bg-purple-100/10 px-3 py-1 text-xs font-medium text-purple-500 border border-purple-200/20">
                 <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" clipRule="evenodd" />
                 </svg>
-                AI generované
+                Týždenný výber
               </div>
             </div>
 
@@ -265,7 +256,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <div className="rounded-lg border border-border bg-card/50 p-6">
               <div className="flex items-start gap-3">
                 <svg className="mt-1 h-5 w-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" clipRule="evenodd" />
                 </svg>
                 <div>
                   <p className="mb-1 text-sm font-medium text-foreground">Obsah článku</p>
@@ -282,13 +273,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <SocialSharingSection 
             articleSlug={article.slug}
             articleTitle={article.title}
-            url={`https://infinite.sk/clanok/${article.slug}`}
+            url={`https://infinite.sk/tyzdenny-vyber/${article.slug}`}
           />
 
           {/* CTA */}
-          <div className="mt-12 rounded-2xl border border-border bg-card p-8 text-center">
-            <h3 className="mb-2 text-2xl font-bold text-foreground">Chceš viac objavov ako tento?</h3>
-            <p className="mb-6 text-muted-foreground">Prihlás sa na odber Objavu dňa.</p>
+          <div className="mt-12 rounded-2xl border border-border bg-gradient-to-br from-purple-500/5 to-blue-500/5 p-8 text-center">
+            <h3 className="mb-2 text-2xl font-bold text-foreground">Chceš viac týždenných výberov?</h3>
+            <p className="mb-6 text-muted-foreground">Prihlás sa na odber a dostávaj najlepšie články každý týždeň.</p>
             <NewsletterSignup />
           </div>
         </article>
@@ -297,7 +288,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         {relatedArticles.length > 0 && (
           <section className="border-t border-border bg-card/30 py-12">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <h2 className="mb-8 text-3xl font-bold text-foreground">Súvisiace články</h2>
+              <h2 className="mb-8 text-3xl font-bold text-foreground">Ďalšie týždenné výbery</h2>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {relatedArticles.map((relatedArticle) => (
                   <ArticleCard 

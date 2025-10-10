@@ -9,6 +9,12 @@ export const GA_CONFIG = {
   enabled: process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_GA_ID !== 'G-XXXXXXXXXX'
 }
 
+// Google Site Verification Configuration
+export const GOOGLE_VERIFICATION_CONFIG = {
+  siteVerification: process.env.GOOGLE_SITE_VERIFICATION || '',
+  enabled: process.env.NODE_ENV === 'production' && !!process.env.GOOGLE_SITE_VERIFICATION
+}
+
 // Google AdSense Configuration
 export const ADSENSE_CONFIG = {
   client: process.env.NEXT_PUBLIC_ADSENSE_CLIENT || 'ca-pub-xxxxxxxxxx',

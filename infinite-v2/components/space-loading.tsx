@@ -62,7 +62,6 @@ export function SpaceLoading() {
         <div className="w-48 h-1 bg-muted rounded-full overflow-hidden">
           <div className="h-full bg-gradient-to-r from-primary/20 via-primary to-primary/20 animate-pulse" 
                style={{ 
-                 animation: 'loading-bar 2s ease-in-out infinite',
                  background: 'linear-gradient(90deg, transparent, hsl(var(--primary)), transparent)',
                  transform: 'translateX(-100%)',
                  animation: 'loading-slide 2s ease-in-out infinite'
@@ -82,6 +81,16 @@ export function SpaceLoading() {
 }
 
 export function SpaceLoadingInline() {
+  const [dots, setDots] = useState("")
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots(prev => prev.length >= 3 ? "" : prev + ".")
+    }, 500)
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <div className="flex items-center justify-center py-12">
       <div className="flex flex-col items-center space-y-4">

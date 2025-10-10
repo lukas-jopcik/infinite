@@ -123,6 +123,9 @@ export function generateMetadata(config: SEOConfig): Metadata {
 }
 
 export function generateArticleMetadata(article: ArticleData): Metadata {
+  // Use correct URL based on category
+  const basePath = article.category === 'tyzdenny-vyber' ? 'tyzdenny-vyber' : 'objav-dna'
+  
   return generateMetadata({
     title: article.title,
     description: article.description,
@@ -133,7 +136,7 @@ export function generateArticleMetadata(article: ArticleData): Metadata {
     author: article.author || "Infinite",
     section: article.category,
     tags: article.tags,
-    url: `/objav-dna/${article.slug}`,
+    url: `/${basePath}/${article.slug}`,
   })
 }
 
@@ -190,7 +193,7 @@ export function generateArticleStructuredData(article: ArticleData): object {
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${SITE_CONFIG.url}/objav-dna/${article.slug}`,
+      "@id": `${SITE_CONFIG.url}/${article.category === 'tyzdenny-vyber' ? 'tyzdenny-vyber' : 'objav-dna'}/${article.slug}`,
     },
     articleSection: article.category,
     keywords: article.tags?.join(", "),
@@ -241,5 +244,38 @@ export function generateBreadcrumbStructuredData(items: Array<{ name: string; ur
       name: item.name,
       item: `${SITE_CONFIG.url}${item.url}`,
     })),
+  }
+}
+
+export function generateFAQStructuredData(faqs: Array<{ question: string; answer: string }>): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map(faq => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  }
+}
+
+export function generateImageObjectStructuredData(image: {
+  url: string
+  alt: string
+  caption?: string
+  license?: string
+  creator?: string
+}): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    url: image.url.startsWith('http') ? image.url : `${SITE_CONFIG.url}${image.url}`,
+    caption: image.caption || image.alt,
+    name: image.alt,
+    ...(image.license && { license: image.license }),
+    ...(image.creator && { creator: { "@type": "Person", name: image.creator } }),
   }
 }

@@ -309,7 +309,8 @@ async function getLatestArticles(headers, queryParams) {
             imageUrl: item.imageUrl || item.images?.heroImage?.url || item.images?.cardImage?.url || item.images?.ogImage?.url,
             metaTitle: item.metaTitle,
             metaDescription: item.metaDescription,
-            type: item.type
+            type: item.type,
+            tags: item.tags || []
         }));
         
         return {
@@ -399,7 +400,8 @@ async function getArticleBySlug(slug, headers) {
             keywords: item.keywords,
             type: item.type,
             source: item.source,
-            sourceUrl: item.sourceUrl
+            sourceUrl: item.sourceUrl,
+            tags: item.tags || []
         };
         
         return {
@@ -483,7 +485,8 @@ async function getArticlesByCategory(category, headers, queryParams = {}) {
             metaDescription: item.metaDescription,
             type: item.type,
             source: item.source,
-            sourceUrl: item.sourceUrl
+            sourceUrl: item.sourceUrl,
+            tags: item.tags || []
         }));
         
         return {
@@ -586,7 +589,8 @@ async function searchArticles(headers, queryParams) {
             metaDescription: item.metaDescription,
             type: item.type,
             source: item.source,
-            sourceUrl: item.sourceUrl
+            sourceUrl: item.sourceUrl,
+            tags: item.tags || [] // Pridať tags pre search
         }));
         
         // Client-side filtering for search (case-insensitive)
@@ -595,7 +599,8 @@ async function searchArticles(headers, queryParams) {
             article.title.toLowerCase().includes(searchLower) ||
             article.perex.toLowerCase().includes(searchLower) ||
             article.category.toLowerCase().includes(searchLower) ||
-            (article.metaDescription && article.metaDescription.toLowerCase().includes(searchLower))
+            (article.metaDescription && article.metaDescription.toLowerCase().includes(searchLower)) ||
+            (article.tags && article.tags.some(tag => tag.toLowerCase().includes(searchLower)))
         );
         
         // Limit results
@@ -615,10 +620,16 @@ async function searchArticles(headers, queryParams) {
         
     } catch (error) {
         console.error('Error searching articles:', error);
+        console.error('Error stack:', error.stack);
+        console.error('Query params:', queryParams);
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ error: 'Internal server error' })
+            body: JSON.stringify({ 
+                error: 'Internal server error',
+                message: error.message,
+                details: process.env.ENVIRONMENT === 'dev' ? error.stack : undefined
+            })
         };
     }
 }

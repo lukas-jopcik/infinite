@@ -94,7 +94,6 @@ async function HomePageContent() {
           date={latestArticle.originalDate || latestArticle.publishedAt}
           image={latestArticle.imageUrl || '/placeholder-astronomy.jpg'}
           imageAlt={latestArticle.title}
-          type="discovery"
         />
       </section>
 
@@ -123,7 +122,7 @@ async function HomePageContent() {
                 imageAlt={article.title}
                 author={article.author}
                 source="Infinite AI"
-                type="discovery"
+                type={article.category === 'objav-dna' ? 'discovery' : 'article'}
               />
             ))}
           </div>
@@ -146,7 +145,7 @@ async function HomePageContent() {
               imageAlt={article.title}
               author={article.author}
               source="Infinite AI"
-              type="discovery"
+              type={article.category === 'objav-dna' ? 'discovery' : 'article'}
             />
           ))}
         </div>
@@ -173,12 +172,12 @@ async function HomePageContent() {
                   title={article.title}
                   perex={article.perex}
                   category={article.category}
-                  date={new Date(article.originalDate || article.publishedAt).toLocaleDateString('sk-SK')}
+                  date={article.originalDate || article.publishedAt}
                   image={article.imageUrl || '/placeholder-astronomy.jpg'}
                   imageAlt={article.title}
                   author={article.author}
                   source="Infinite AI"
-                  type="discovery"
+                  type={article.category === 'objav-dna' ? 'discovery' : 'article'}
                 />
               ))}
             </div>
@@ -206,12 +205,12 @@ async function HomePageContent() {
                 title={article.title}
                 perex={article.perex}
                 category={article.category}
-                date={new Date(article.originalDate || article.publishedAt).toLocaleDateString('sk-SK')}
+                date={article.originalDate || article.publishedAt}
                 image={article.imageUrl || '/placeholder-astronomy.jpg'}
                 imageAlt={article.title}
                 author={article.author}
                 source="Infinite AI"
-                type="discovery"
+                type={article.category === 'objav-dna' ? 'discovery' : 'article'}
               />
             ))}
           </div>

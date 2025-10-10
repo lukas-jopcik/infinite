@@ -21,8 +21,18 @@ export function ArticleHero({ slug, title, perex, category, date, image, imageAl
   const formattedDate = formatDateShort(date)
   const dateTimeValue = formatDateForDateTime(date)
   
-  // Generate correct href based on type
-  const href = type === "discovery" ? `/objav-dna/${slug}` : `/clanok/${slug}`
+  // Generate correct href based on category
+  const getHref = () => {
+    if (category === 'tyzdenny-vyber') {
+      return `/tyzdenny-vyber/${slug}`
+    } else if (category === 'objav-dna') {
+      return `/objav-dna/${slug}`
+    } else {
+      return `/clanok/${slug}`
+    }
+  }
+  
+  const href = getHref()
   
   return (
     <div className="group relative overflow-hidden rounded-3xl bg-card">
