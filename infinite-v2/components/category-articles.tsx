@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { ArticlesAPI, Article } from "@/lib/api"
 import { ArticleCard } from "@/components/article-card"
 import { Pagination } from "@/components/pagination"
@@ -30,11 +31,22 @@ export function CategoryArticles({
     )
   }
 
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const initialPageFromUrl = Number(searchParams.get("page") || "1")
+
   const [articles, setArticles] = useState<Article[]>(initialArticles || [])
   const [lastKey, setLastKey] = useState<string | undefined>(initialLastKey)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(initialPageFromUrl)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (initialPageFromUrl > 1) {
+      loadPage(initialPageFromUrl)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const totalPages = Math.ceil((initialCount || 0) / ARTICLES_PER_PAGE)
   const hasNextPage = !!lastKey
@@ -75,7 +87,10 @@ export function CategoryArticles({
 
   const handlePageChange = (page: number) => {
     if (page !== currentPage && !loading) {
+      const url = `/kategoria/${category}?page=${page}`
+      router.push(url)
       loadPage(page)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 

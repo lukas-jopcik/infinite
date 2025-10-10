@@ -23,27 +23,22 @@ async function HomePageContent() {
   let weeklyArticles: any[] = [];
   
   try {
-    // Get latest articles from objav-dna category (most important)
-    const discoveryResponse = await ArticlesAPI.getArticlesByCategory("objav-dna", 10);
-    discoveryArticles = discoveryResponse?.articles || [];
-    
-    // Get latest article for hero section (keep Objav dňa as primary hero)
-    if (discoveryArticles.length > 0) {
-      latestArticle = discoveryArticles[0];
-    }
-
+    // Fetch per-category lists in parallel
+    const discoveryPromise = ArticlesAPI.getArticlesByCategory("objav-dna", 12).catch(() => ({ articles: [] }));
     // Get articles from other categories in parallel (including weekly picks)
     const [communityResponse, kidsResponse, weeklyResponse] = await Promise.all([
       ArticlesAPI.getArticlesByCategory("komunita", 6).catch(() => ({ articles: [] })),
       ArticlesAPI.getArticlesByCategory("deti-a-vesmir", 6).catch(() => ({ articles: [] })),
       ArticlesAPI.getArticlesByCategory("tyzdenny-vyber", 12).catch(() => ({ articles: [] })),
     ]);
-    
+    const discoveryResponse = await discoveryPromise;
+    discoveryArticles = discoveryResponse?.articles || [];
+
     communityArticles = communityResponse?.articles || [];
     kidsArticles = kidsResponse?.articles || [];
     weeklyArticles = weeklyResponse?.articles || [];
 
-    // Build combined latest across all categories (exclude hero if present)
+    // Build combined latest across all categories and pick hero globally
     const combined = [
       ...discoveryArticles,
       ...weeklyArticles,
@@ -51,6 +46,7 @@ async function HomePageContent() {
       ...kidsArticles,
     ];
     combined.sort((a, b) => new Date(b.originalDate || b.publishedAt).getTime() - new Date(a.originalDate || a.publishedAt).getTime());
+    latestArticle = combined[0] || null;
     recentArticles = combined.filter(a => !latestArticle || a.slug !== latestArticle.slug).slice(0, 9);
     
   } catch (error) {
