@@ -48,6 +48,8 @@ exports.handler = async (event) => {
         } else if (path.startsWith('/articles/category/') && httpMethod === 'GET') {
             const category = path.split('/')[3];
             return await getArticlesByCategory(category, headers, event.queryStringParameters);
+        } else if (path.startsWith('/articles/search') && httpMethod === 'GET') {
+            return await searchArticles(headers, event.queryStringParameters);
         } else if (path.startsWith('/articles/') && httpMethod === 'GET') {
             const articleId = path.split('/')[2];
             return await getArticleById(articleId, headers);
@@ -74,56 +76,95 @@ exports.handler = async (event) => {
 };
 
 /**
- * Get all articles with pagination
+ * Get all articles with pagination - optimized with GSI
  */
 async function getAllArticles(headers, queryParams) {
     const limit = parseInt(queryParams?.limit) || 20;
     const lastKey = queryParams?.lastKey ? JSON.parse(decodeURIComponent(queryParams.lastKey)) : null;
     
-    const params = {
-        TableName: ARTICLES_TABLE,
-        Limit: limit,
-        ScanIndexForward: false, // Sort by publishedAt descending
-        ...(lastKey && { ExclusiveStartKey: lastKey })
-    };
-    
-        const result = await dynamodb.send(new ScanCommand(params));
-    
-    // Transform the data for frontend
-    const articles = result.Items.map(item => ({
-        id: item.articleId,
-        title: item.title,
-        slug: item.slug,
-        perex: item.perex,
-        category: item.category || 'discovery',
-        publishedAt: item.originalDate || item.publishedAt, // Use originalDate if available, fallback to publishedAt
-        originalDate: item.originalDate,
-        author: item.author,
-        readingTime: item.estimatedReadingTime,
-        imageUrl: item.imageUrl || item.images?.heroImage?.url || item.images?.cardImage?.url || item.images?.ogImage?.url,
-        metaTitle: item.metaTitle,
-        metaDescription: item.metaDescription,
-        type: item.type,
-        source: item.source,
-        sourceUrl: item.sourceUrl
-    }))
-    // Sort by originalDate descending (latest first)
-    .sort((a, b) => {
-        const dateA = new Date(a.originalDate || a.publishedAt);
-        const dateB = new Date(b.originalDate || b.publishedAt);
-        return dateB - dateA;
-    });
-    
-    return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-            articles,
-            lastKey: result.LastEvaluatedKey ? encodeURIComponent(JSON.stringify(result.LastEvaluatedKey)) : null,
-            count: articles.length,
-            total: result.Count
-        })
-    };
+    try {
+        // Use GSI for efficient querying by type
+        const params = {
+            TableName: ARTICLES_TABLE,
+            IndexName: 'type-originalDate-index',
+            KeyConditionExpression: '#type = :type',
+            ExpressionAttributeNames: {
+                '#type': 'type'
+            },
+            ExpressionAttributeValues: {
+                ':type': 'discovery' // Default type for all articles
+            },
+            ScanIndexForward: false, // Sort by originalDate descending (newest first)
+            Limit: limit
+        };
+        
+        if (lastKey) {
+            params.ExclusiveStartKey = lastKey;
+        }
+        
+        let result;
+        try {
+            result = await dynamodb.send(new QueryCommand(params));
+        } catch (gsiError) {
+            console.log('GSI not ready, falling back to scan:', gsiError.message);
+            // Fallback to scan if GSI is not ready
+            const scanParams = {
+                TableName: ARTICLES_TABLE,
+                FilterExpression: '#type = :type',
+                ExpressionAttributeNames: {
+                    '#type': 'type'
+                },
+                ExpressionAttributeValues: {
+                    ':type': 'discovery'
+                },
+                Limit: limit
+            };
+            
+            if (lastKey) {
+                scanParams.ExclusiveStartKey = lastKey;
+            }
+            
+            result = await dynamodb.send(new ScanCommand(scanParams));
+        }
+        
+        // Transform the data for frontend
+        const articles = result.Items.map(item => ({
+            id: item.articleId,
+            title: item.title,
+            slug: item.slug,
+            perex: item.perex,
+            category: item.category || 'discovery',
+            publishedAt: item.originalDate || item.publishedAt, // Use originalDate if available, fallback to publishedAt
+            originalDate: item.originalDate,
+            author: item.author,
+            readingTime: item.estimatedReadingTime,
+            imageUrl: item.imageUrl || item.images?.heroImage?.url || item.images?.cardImage?.url || item.images?.ogImage?.url,
+            metaTitle: item.metaTitle,
+            metaDescription: item.metaDescription,
+            type: item.type,
+            source: item.source,
+            sourceUrl: item.sourceUrl
+        }));
+        
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+                articles,
+                lastKey: result.LastEvaluatedKey ? encodeURIComponent(JSON.stringify(result.LastEvaluatedKey)) : null,
+                count: articles.length,
+                total: result.Count
+            })
+        };
+        
+    } catch (error) {
+        console.error('Error getting all articles:', error);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ error: 'Internal server error' })
+        };
+    }
 }
 
 /**
@@ -180,50 +221,114 @@ async function getArticleById(articleId, headers) {
 }
 
 /**
- * Get latest articles
+ * Get latest articles - optimized with GSI
  */
 async function getLatestArticles(headers, queryParams) {
     const limit = parseInt(queryParams?.limit) || 10;
     
-    const params = {
-        TableName: ARTICLES_TABLE,
-        Limit: limit,
-        ScanIndexForward: false // Sort by publishedAt descending
-    };
-    
-        const result = await dynamodb.send(new ScanCommand(params));
-    
-    // Transform the data for frontend
-    const articles = result.Items.map(item => ({
-        id: item.articleId,
-        title: item.title,
-        slug: item.slug,
-        perex: item.perex,
-        category: item.category || 'discovery',
-        publishedAt: item.originalDate || item.publishedAt, // Use originalDate if available, fallback to publishedAt
-        originalDate: item.originalDate,
-        author: item.author,
-        readingTime: item.estimatedReadingTime,
-        imageUrl: item.imageUrl || item.images?.heroImage?.url || item.images?.cardImage?.url || item.images?.ogImage?.url,
-        metaTitle: item.metaTitle,
-        metaDescription: item.metaDescription,
-        type: item.type
-    }))
-    // Sort by originalDate descending (latest first)
-    .sort((a, b) => {
-        const dateA = new Date(a.originalDate || a.publishedAt);
-        const dateB = new Date(b.originalDate || b.publishedAt);
-        return dateB - dateA;
-    });
-    
-    return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-            articles,
-            count: articles.length
-        })
-    };
+    try {
+        // Get articles from both types (discovery and weekly-pick) using separate queries
+        const discoveryParams = {
+            TableName: ARTICLES_TABLE,
+            IndexName: 'type-originalDate-index',
+            KeyConditionExpression: '#type = :type',
+            ExpressionAttributeNames: {
+                '#type': 'type'
+            },
+            ExpressionAttributeValues: {
+                ':type': 'discovery'
+            },
+            ScanIndexForward: false, // Sort by originalDate descending (newest first)
+            Limit: limit
+        };
+        
+        const weeklyPickParams = {
+            TableName: ARTICLES_TABLE,
+            IndexName: 'type-originalDate-index',
+            KeyConditionExpression: '#type = :type',
+            ExpressionAttributeNames: {
+                '#type': 'type'
+            },
+            ExpressionAttributeValues: {
+                ':type': 'weekly-pick'
+            },
+            ScanIndexForward: false,
+            Limit: limit
+        };
+        
+        let discoveryResult, weeklyPickResult;
+        try {
+            // Execute both queries in parallel
+            [discoveryResult, weeklyPickResult] = await Promise.all([
+                dynamodb.send(new QueryCommand(discoveryParams)),
+                dynamodb.send(new QueryCommand(weeklyPickParams))
+            ]);
+        } catch (gsiError) {
+            console.log('GSI not ready, falling back to scan:', gsiError.message);
+            // Fallback to scan if GSI is not ready
+            const scanParams = {
+                TableName: ARTICLES_TABLE,
+                FilterExpression: '#type = :type1 OR #type = :type2',
+                ExpressionAttributeNames: {
+                    '#type': 'type'
+                },
+                ExpressionAttributeValues: {
+                    ':type1': 'discovery',
+                    ':type2': 'weekly-pick'
+                },
+                Limit: limit * 2 // Get more items since we're filtering
+            };
+            
+            const scanResult = await dynamodb.send(new ScanCommand(scanParams));
+            discoveryResult = { Items: scanResult.Items.filter(item => item.type === 'discovery') };
+            weeklyPickResult = { Items: scanResult.Items.filter(item => item.type === 'weekly-pick') };
+        }
+        
+        // Combine and sort results by originalDate
+        const allItems = [...(discoveryResult.Items || []), ...(weeklyPickResult.Items || [])];
+        allItems.sort((a, b) => {
+            const dateA = new Date(a.originalDate || a.publishedAt);
+            const dateB = new Date(b.originalDate || b.publishedAt);
+            return dateB.getTime() - dateA.getTime();
+        });
+        
+        // Limit to requested number
+        const result = { Items: allItems.slice(0, limit) };
+        
+        // Transform the data for frontend
+        const articles = result.Items.map(item => ({
+            id: item.articleId,
+            title: item.title,
+            slug: item.slug,
+            perex: item.perex,
+            category: item.category || 'discovery',
+            publishedAt: item.originalDate || item.publishedAt, // Use originalDate if available, fallback to publishedAt
+            originalDate: item.originalDate,
+            author: item.author,
+            readingTime: item.estimatedReadingTime,
+            imageUrl: item.imageUrl || item.images?.heroImage?.url || item.images?.cardImage?.url || item.images?.ogImage?.url,
+            metaTitle: item.metaTitle,
+            metaDescription: item.metaDescription,
+            type: item.type
+        }));
+        
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+                articles,
+                count: articles.length
+            })
+        };
+        
+    } catch (error) {
+        console.error('Error getting latest articles:', error);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ error: 'Internal server error' })
+        };
+    }
 }
 
 /**
@@ -402,6 +507,122 @@ async function getArticlesByCategory(category, headers, queryParams = {}) {
     }
 }
 
+/**
+ * Search articles with GSI optimization
+ */
+async function searchArticles(headers, queryParams) {
+    try {
+        const query = queryParams?.q || '';
+        const limit = parseInt(queryParams?.limit) || 20;
+        const lastKey = queryParams?.lastKey ? JSON.parse(decodeURIComponent(queryParams.lastKey)) : null;
+        
+        if (!query.trim()) {
+            return {
+                statusCode: 400,
+                headers,
+                body: JSON.stringify({ error: 'Search query is required' })
+            };
+        }
+        
+        console.log(`Searching for: "${query}", limit: ${limit}`);
+        
+        // Use GSI to get all articles efficiently, then filter
+        const params = {
+            TableName: ARTICLES_TABLE,
+            IndexName: 'type-originalDate-index',
+            KeyConditionExpression: '#type = :type',
+            ExpressionAttributeNames: {
+                '#type': 'type'
+            },
+            ExpressionAttributeValues: {
+                ':type': 'discovery' // Search in discovery articles
+            },
+            ScanIndexForward: false, // Sort by originalDate descending (newest first)
+            Limit: Math.min(limit * 3, 100) // Get more results to filter, but cap at 100
+        };
+        
+        if (lastKey) {
+            params.ExclusiveStartKey = lastKey;
+        }
+        
+        let result;
+        try {
+            result = await dynamodb.send(new QueryCommand(params));
+        } catch (gsiError) {
+            console.log('GSI not ready, falling back to scan:', gsiError.message);
+            // Fallback to scan if GSI is not ready
+            const scanParams = {
+                TableName: ARTICLES_TABLE,
+                FilterExpression: '#type = :type',
+                ExpressionAttributeNames: {
+                    '#type': 'type'
+                },
+                ExpressionAttributeValues: {
+                    ':type': 'discovery'
+                },
+                Limit: Math.min(limit * 3, 100)
+            };
+            
+            if (lastKey) {
+                scanParams.ExclusiveStartKey = lastKey;
+            }
+            
+            result = await dynamodb.send(new ScanCommand(scanParams));
+        }
+        
+        // Transform and filter results
+        const allArticles = result.Items.map(item => ({
+            id: item.articleId,
+            title: item.title,
+            slug: item.slug,
+            perex: item.perex,
+            category: item.category || 'discovery',
+            publishedAt: item.originalDate || item.publishedAt,
+            originalDate: item.originalDate,
+            author: item.author,
+            readingTime: item.estimatedReadingTime,
+            imageUrl: item.imageUrl || item.images?.heroImage?.url || item.images?.cardImage?.url || item.images?.ogImage?.url,
+            metaTitle: item.metaTitle,
+            metaDescription: item.metaDescription,
+            type: item.type,
+            source: item.source,
+            sourceUrl: item.sourceUrl
+        }));
+        
+        // Client-side filtering for search (case-insensitive)
+        const searchLower = query.toLowerCase();
+        const filteredArticles = allArticles.filter(article => 
+            article.title.toLowerCase().includes(searchLower) ||
+            article.perex.toLowerCase().includes(searchLower) ||
+            article.category.toLowerCase().includes(searchLower) ||
+            (article.metaDescription && article.metaDescription.toLowerCase().includes(searchLower))
+        );
+        
+        // Limit results
+        const limitedArticles = filteredArticles.slice(0, limit);
+        
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+                articles: limitedArticles,
+                lastKey: result.LastEvaluatedKey ? encodeURIComponent(JSON.stringify(result.LastEvaluatedKey)) : null,
+                count: limitedArticles.length,
+                total: filteredArticles.length,
+                query: query
+            })
+        };
+        
+    } catch (error) {
+        console.error('Error searching articles:', error);
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ error: 'Internal server error' })
+        };
+    }
+}
+
 // Export functions for testing
 module.exports = {
     handler: exports.handler,
@@ -409,5 +630,6 @@ module.exports = {
     getArticleById,
     getLatestArticles,
     getArticleBySlug,
-    getArticlesByCategory
+    getArticlesByCategory,
+    searchArticles
 };

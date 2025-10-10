@@ -20,39 +20,19 @@ export default function SearchPage() {
   const [error, setError] = useState<string | null>(null)
   const [totalCount, setTotalCount] = useState(0)
 
-  // Load all articles on component mount
+  // Load initial articles on component mount
   useEffect(() => {
-    const loadAllArticles = async () => {
+    const loadInitialArticles = async () => {
       setLoading(true)
       setError(null)
       
       try {
-        // Fetch articles from all categories
-        const [objavDnaResponse, vysvetleniaResponse, komunitaResponse, detiResponse] = await Promise.all([
-          ArticlesAPI.getArticlesByCategory("objav-dna", 100).catch(() => ({ articles: [], count: 0 })),
-          ArticlesAPI.getArticlesByCategory("vysvetlenia", 100).catch(() => ({ articles: [], count: 0 })),
-          ArticlesAPI.getArticlesByCategory("komunita", 100).catch(() => ({ articles: [], count: 0 })),
-          ArticlesAPI.getArticlesByCategory("deti-a-vesmir", 100).catch(() => ({ articles: [], count: 0 }))
-        ])
-
-        // Combine all articles
-        const combinedArticles = [
-          ...objavDnaResponse.articles,
-          ...vysvetleniaResponse.articles,
-          ...komunitaResponse.articles,
-          ...detiResponse.articles
-        ]
-
-        // Sort by date (newest first)
-        combinedArticles.sort((a, b) => {
-          const dateA = new Date(a.originalDate || a.publishedAt)
-          const dateB = new Date(b.originalDate || b.publishedAt)
-          return dateB.getTime() - dateA.getTime()
-        })
-
-        setAllArticles(combinedArticles)
-        setResults(combinedArticles)
-        setTotalCount(combinedArticles.length)
+        // Load a smaller set of recent articles for initial display
+        const response = await ArticlesAPI.getLatestArticles(50)
+        
+        setAllArticles(response)
+        setResults(response)
+        setTotalCount(response.length)
       } catch (err) {
         setError('Nepodarilo sa načítať články')
         console.error('Error loading articles:', err)
@@ -61,17 +41,29 @@ export default function SearchPage() {
       }
     }
 
-    loadAllArticles()
+    loadInitialArticles()
   }, [])
 
-  const handleSearch = (searchQuery: string) => {
+  const handleSearch = async (searchQuery: string) => {
     setQuery(searchQuery)
     setCurrentPage(1) // Reset to first page when searching
+    setLoading(true)
     
-    if (searchQuery.trim() === "") {
-      setResults(allArticles)
-      setTotalCount(allArticles.length)
-    } else {
+    try {
+      if (searchQuery.trim() === "") {
+        // Show all articles when search is empty
+        setResults(allArticles)
+        setTotalCount(allArticles.length)
+      } else {
+        // Use server-side search API
+        const searchResponse = await ArticlesAPI.searchArticles(searchQuery, 100)
+        setResults(searchResponse.articles)
+        setTotalCount(searchResponse.total)
+      }
+    } catch (err) {
+      console.error('Error searching articles:', err)
+      setError('Nepodarilo sa vyhľadať články')
+      // Fallback to client-side search
       const filtered = allArticles.filter(
         (article) =>
           article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -80,6 +72,8 @@ export default function SearchPage() {
       )
       setResults(filtered)
       setTotalCount(filtered.length)
+    } finally {
+      setLoading(false)
     }
   }
 

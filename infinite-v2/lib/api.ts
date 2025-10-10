@@ -33,7 +33,7 @@ export interface ArticleDetail extends Article {
   sourceUrl?: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://jqg44jstd1.execute-api.eu-central-1.amazonaws.com/dev';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export class ArticlesAPI {
   private static async makeRequest(endpoint: string, options: RequestInit = {}) {
@@ -138,6 +138,30 @@ export class ArticlesAPI {
       const allArticles = await this.getAllArticles(100);
       const filteredArticles = allArticles.articles.filter(article => article.category === category);
       return { articles: filteredArticles, count: filteredArticles.length };
+    }
+  }
+
+  static async searchArticles(query: string, limit: number = 20, lastKey?: string): Promise<{
+    articles: Article[];
+    lastKey?: string;
+    count: number;
+    total: number;
+    query: string;
+  }> {
+    try {
+      const params = new URLSearchParams({ 
+        q: query,
+        limit: limit.toString() 
+      });
+      if (lastKey) {
+        params.append('lastKey', lastKey);
+      }
+      
+      const response = await this.makeRequest(`/articles/search?${params.toString()}`);
+      return response;
+    } catch (error) {
+      console.error('Error searching articles:', error);
+      return { articles: [], count: 0, total: 0, query };
     }
   }
 }

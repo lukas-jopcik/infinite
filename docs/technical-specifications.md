@@ -255,40 +255,86 @@ Attributes:
 
 #### 3. Global Secondary Indexes
 ```yaml
-# RawContent GSI1: Date Index
-GSI1Name: date-index
-PartitionKey: date
-SortKey: source#timestamp
+# RawContent GSI1: Source-Date Index
+GSI1Name: source-date-index
+PartitionKey: source
+SortKey: date
 ProjectionType: ALL
 
 # RawContent GSI2: Status Index  
 GSI2Name: status-index
-PartitionKey: processing_status
-SortKey: created_at
-ProjectionType: ALL
-
-# Articles GSI1: Publication Date Index
-GSI1Name: publication-date-index
-PartitionKey: publication_date
-SortKey: category#slug
-ProjectionType: ALL
-
-# Articles GSI2: Status Index
-GSI2Name: status-index
 PartitionKey: status
-SortKey: publication_date
 ProjectionType: ALL
 
-# Articles GSI3: Source Index
-GSI3Name: source-index
-PartitionKey: source_data.source
-SortKey: publication_date
+# RawContent GSI3: GUID Index
+GSI3Name: guid-index
+PartitionKey: guid
+ProjectionType: ALL
+
+# Articles GSI1: Slug Index
+GSI1Name: slug-index
+PartitionKey: slug
+ProjectionType: ALL
+
+# Articles GSI2: Category-Date Index
+GSI2Name: category-originalDate-index
+PartitionKey: category
+SortKey: originalDate
+ProjectionType: ALL
+
+# Articles GSI3: Status-Date Index
+GSI3Name: status-originalDate-index
+PartitionKey: status
+SortKey: originalDate
+ProjectionType: ALL
+
+# Articles GSI4: Type-Date Index
+GSI4Name: type-originalDate-index
+PartitionKey: type
+SortKey: originalDate
 ProjectionType: ALL
 ```
 
 ---
 
 ## Content Pipeline Architecture
+
+### Data Sources
+
+#### 1. NASA APOD (Astronomy Picture of the Day)
+- **Source:** NASA API + RSS Feed
+- **Frequency:** Daily
+- **Content Type:** Daily astronomical discoveries
+- **Category:** `objav-dna`
+- **Processing:** Technical, detailed articles (2000+ characters)
+
+#### 2. ESA Hubble Picture of the Week
+- **Source:** RSS Feed (https://feeds.feedburner.com/esahubble/images/potw/)
+- **Frequency:** Weekly (Tuesdays at 8:00 AM CET)
+- **Content Type:** Curated weekly selections
+- **Category:** `tyzdenny-vyber`
+- **Processing:** Editorial, curated articles (1500+ characters)
+
+### Content Processing Pipeline
+
+#### Weekly Schedule
+- **Monday 6:00 AM UTC+2:** ESA Hubble publishes new Picture of the Week
+- **Tuesday 8:00 AM CET:** ESA Hubble fetcher runs (EventBridge trigger)
+- **Tuesday 9:00 AM CET:** AI content generator processes new content
+- **Tuesday 10:00 AM CET:** Content available on website
+
+#### Content Differentiation
+**Daily Discoveries (objav-dna):**
+- Tone: Technical, informative, educational
+- Structure: 5 sections (400+ chars each)
+- Length: 2000+ characters total
+- Style: Comprehensive, scientific accuracy
+
+**Weekly Picks (tyzdenny-vyber):**
+- Tone: Editorial, curated, explanatory
+- Structure: 4 sections (300+ chars each) + "Why we selected this"
+- Length: 1500+ characters total
+- Style: Friendly, accessible, story-driven
 
 ### Enhanced AI Prompts
 

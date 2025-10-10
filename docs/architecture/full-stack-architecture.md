@@ -151,22 +151,40 @@ const structuredData = {
 
 #### Content Generation Pipeline
 ```typescript
-// 1. Content Fetcher
+// 1. Daily APOD Fetcher
 export const fetchAPODContent = async (event: ScheduledEvent) => {
   const apodData = await fetchAPOD();
-  await storeRawContent(apodData, 'apod');
+  await storeRawContent(apodData, 'apod', 'objav-dna');
   await triggerContentGeneration(apodData.id);
 };
 
-// 2. Content Generator
+// 2. Weekly ESA Hubble Fetcher
+export const fetchESAHubbleContent = async (event: ScheduledEvent) => {
+  const rssFeed = await parseRSSFeed('https://feeds.feedburner.com/esahubble/images/potw/');
+  const newItems = await filterNewContent(rssFeed.items);
+  
+  for (const item of newItems) {
+    await storeRawContent(item, 'esa-hubble-potw', 'tyzdenny-vyber');
+    await triggerContentGeneration(item.id);
+  }
+};
+
+// 3. Content Generator (with conditional prompts)
 export const generateArticle = async (event: ContentGenerationEvent) => {
   const rawContent = await getRawContent(event.contentId);
-  const article = await generateSlovakArticle(rawContent);
+  
+  // Use different prompts based on category
+  const article = rawContent.category === 'tyzdenny-vyber' 
+    ? await generateWeeklyPickArticle(rawContent)
+    : await generateDailyDiscoveryArticle(rawContent);
+    
   const seoData = await generateSEO(article);
   
   await storeArticle({
     ...article,
     ...seoData,
+    category: rawContent.category,
+    type: rawContent.category === 'tyzdenny-vyber' ? 'weekly-pick' : 'discovery',
     status: 'published'
   });
   
@@ -208,15 +226,21 @@ GET /api/admin/health - System health check
 interface RawContent {
   // Primary Key
   contentId: string; // PK: "apod_20241201" | "esa_20241201"
-  source: string; // SK: "apod" | "esa_hubble"
+  source: string; // SK: "apod" | "esa-hubble-potw"
   
   // Content Data
   title: string;
   explanation: string;
+  description?: string; // For RSS content
   url: string;
   hdurl?: string;
+  imageUrl?: string; // For RSS content
   mediaType: 'image' | 'video';
   date: string; // ISO date
+  guid?: string; // For RSS deduplication
+  
+  // Category Assignment
+  category: 'objav-dna' | 'tyzdenny-vyber';
   
   // Processing Status
   status: 'pending' | 'processing' | 'completed' | 'failed';
@@ -226,11 +250,18 @@ interface RawContent {
   // Metadata
   createdAt: string;
   updatedAt: string;
+  environment: string;
   ttl?: number; // Auto-delete after 30 days
 }
 
 // GSI: source-date-index
 // PK: source, SK: date
+
+// GSI: status-index
+// PK: status
+
+// GSI: guid-index
+// PK: guid
 ```
 
 #### Articles Table
@@ -273,14 +304,17 @@ interface Article {
   monetizationEnabled: boolean;
 }
 
-// GSI: category-date-index
-// PK: category, SK: date
+// GSI: slug-index
+// PK: slug
 
-// GSI: status-date-index  
-// PK: status, SK: date
+// GSI: category-originalDate-index
+// PK: category, SK: originalDate
 
-// GSI: type-date-index
-// PK: type, SK: date
+// GSI: status-originalDate-index  
+// PK: status, SK: originalDate
+
+// GSI: type-originalDate-index
+// PK: type, SK: originalDate
 ```
 
 #### Users Table

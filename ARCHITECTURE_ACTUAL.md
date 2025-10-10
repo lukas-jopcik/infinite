@@ -393,8 +393,73 @@ Caching:
 - If-None-Match support (304 response)
 ```
 
+#### 4. esa-hubble-potw-fetcher
+```javascript
+// Location: backend/functions/scheduled/esa-hubble-potw-fetcher.js
+// Trigger: EventBridge (Tuesday 8:00 AM CET), Manual invocation
+
+Environment Variables:
+- ENVIRONMENT: dev/prod
+- AWS_REGION: us-east-1
+- RAW_CONTENT_TABLE: InfiniteRawContent-${ENVIRONMENT}
+
+RSS Feed:
+- URL: https://feeds.feedburner.com/esahubble/images/potw/
+- Frequency: Weekly (Mondays at 6:00 AM UTC+2)
+- Content: ESA Hubble Picture of the Week
+
+Processing Steps:
+1. Parse RSS feed with rss-parser
+2. Extract: title, description, pubDate, link, image URL from content:encoded
+3. Check for duplicates using guid-index GSI
+4. Store with source: "esa-hubble-potw", category: "tyzdenny-vyber"
+5. Backfill: fetch all available entries on first run
+6. Subsequent runs: fetch only new entries
+
+Data Storage:
+- Raw content: InfiniteRawContent-dev table
+- Status: "pending" for AI processing
+- Deduplication: GUID-based with title/date fallback
+- Image extraction: HTML parsing from content:encoded
+
+Schedule:
+- EventBridge rule: cron(0 6 ? * TUE *)
+- Timezone: 6:00 AM UTC = 8:00 AM CET (winter) / 7:00 AM CEST (summer)
+```
+
+#### 5. ai-content-generator
+```javascript
+// Location: backend/functions/scheduled/ai-content-generator.js
+// Trigger: EventBridge (hourly), Manual invocation
+
+Environment Variables:
+- ENVIRONMENT: dev/prod
+- OPENAI_SECRET_ARN: ARN for OpenAI API key
+- ARTICLES_TABLE: InfiniteArticles-${ENVIRONMENT}
+- RAW_CONTENT_TABLE: InfiniteRawContent-${ENVIRONMENT}
+
+Content Processing:
+- Processes raw content with status: "pending"
+- Uses conditional prompts based on category:
+  * tyzdenny-vyber: Editorial/curated tone, 4 sections, 1500+ chars
+  * objav-dna: Technical tone, 5 sections, 2000+ chars
+- Generates Slovak articles with OpenAI GPT-4o-mini
+- Creates article records with proper category/type mapping
+
+Category Mapping:
+- tyzdenny-vyber → type: "weekly-pick"
+- objav-dna → type: "discovery"
+- Other categories → type: "discovery"
+
+Output:
+- Stores processed articles in InfiniteArticles-dev table
+- Updates raw content status to "processed"
+- Generates multiple image sizes (hero, card, og)
+```
+
 ### DynamoDB Schema
 
+#### NASA APOD Content Table
 ```javascript
 // Table: infinite-nasa-apod-dev-content
 // Billing: PAY_PER_REQUEST
@@ -406,6 +471,39 @@ Primary Key:
 Global Secondary Index: gsi_latest
   Partition Key: pk (String) - Always 'LATEST'
   Sort Key: date (String) - For descending date order
+```
+
+#### Articles Table (InfiniteArticles-dev)
+```javascript
+// Table: InfiniteArticles-dev
+// Billing: PROVISIONED
+// Region: eu-central-1
+
+Primary Key:
+  articleId (String) - HASH
+  type (String) - RANGE
+
+Global Secondary Indexes:
+  - slug-index: slug (HASH) - For article lookup by slug
+  - category-originalDate-index: category (HASH), originalDate (RANGE) - For category queries
+  - status-originalDate-index: status (HASH), originalDate (RANGE) - For status filtering
+  - type-originalDate-index: type (HASH), originalDate (RANGE) - For type-based queries
+```
+
+#### RawContent Table (InfiniteRawContent-dev)
+```javascript
+// Table: InfiniteRawContent-dev
+// Billing: PROVISIONED
+// Region: eu-central-1
+
+Primary Key:
+  contentId (String) - HASH
+  source (String) - RANGE
+
+Global Secondary Indexes:
+  - source-date-index: source (HASH), date (RANGE) - For duplicate checking
+  - status-index: status (HASH) - For processing status queries
+  - guid-index: guid (HASH) - For GUID-based duplicate detection
 
 Item Structure:
 {

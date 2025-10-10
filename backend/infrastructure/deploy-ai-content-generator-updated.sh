@@ -16,7 +16,7 @@ ARTICLES_TABLE="InfiniteArticles-${ENVIRONMENT}"
 IMAGES_BUCKET="infinite-images-${ENVIRONMENT}-${ACCOUNT_ID}"
 
 # Secrets Manager ARNs
-OPENAI_SECRET_ARN="arn:aws:secretsmanager:${REGION}:${ACCOUNT_ID}:secret:infinite/openai-api-key-ABC123"
+OPENAI_SECRET_ARN="arn:aws:secretsmanager:${REGION}:${ACCOUNT_ID}:secret:infinite/openai-api-key-l4iBim"
 
 echo "🚀 Deploying updated AI Content Generator with image processing for Infinite v1.0..."
 echo "📋 Deploying in region: ${REGION}"

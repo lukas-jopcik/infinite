@@ -28,11 +28,15 @@ aws dynamodb create-table \
         AttributeName=contentId,AttributeType=S \
         AttributeName=source,AttributeType=S \
         AttributeName=date,AttributeType=S \
+        AttributeName=status,AttributeType=S \
+        AttributeName=guid,AttributeType=S \
     --key-schema \
         AttributeName=contentId,KeyType=HASH \
         AttributeName=source,KeyType=RANGE \
     --global-secondary-indexes \
         IndexName=source-date-index,KeySchema='[{AttributeName=source,KeyType=HASH},{AttributeName=date,KeyType=RANGE}]',Projection='{ProjectionType=ALL}',ProvisionedThroughput='{ReadCapacityUnits=5,WriteCapacityUnits=5}' \
+        IndexName=status-index,KeySchema='[{AttributeName=status,KeyType=HASH}]',Projection='{ProjectionType=ALL}',ProvisionedThroughput='{ReadCapacityUnits=5,WriteCapacityUnits=5}' \
+        IndexName=guid-index,KeySchema='[{AttributeName=guid,KeyType=HASH}]',Projection='{ProjectionType=ALL}',ProvisionedThroughput='{ReadCapacityUnits=5,WriteCapacityUnits=5}' \
     --billing-mode PROVISIONED \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
     --region "${REGION}" \
@@ -46,15 +50,17 @@ aws dynamodb create-table \
         AttributeName=articleId,AttributeType=S \
         AttributeName=type,AttributeType=S \
         AttributeName=category,AttributeType=S \
-        AttributeName=date,AttributeType=S \
+        AttributeName=originalDate,AttributeType=S \
         AttributeName=status,AttributeType=S \
+        AttributeName=slug,AttributeType=S \
     --key-schema \
         AttributeName=articleId,KeyType=HASH \
         AttributeName=type,KeyType=RANGE \
     --global-secondary-indexes \
-        IndexName=category-date-index,KeySchema='[{AttributeName=category,KeyType=HASH},{AttributeName=date,KeyType=RANGE}]',Projection='{ProjectionType=ALL}',ProvisionedThroughput='{ReadCapacityUnits=5,WriteCapacityUnits=5}' \
-        IndexName=status-date-index,KeySchema='[{AttributeName=status,KeyType=HASH},{AttributeName=date,KeyType=RANGE}]',Projection='{ProjectionType=ALL}',ProvisionedThroughput='{ReadCapacityUnits=5,WriteCapacityUnits=5}' \
-        IndexName=type-date-index,KeySchema='[{AttributeName=type,KeyType=HASH},{AttributeName=date,KeyType=RANGE}]',Projection='{ProjectionType=ALL}',ProvisionedThroughput='{ReadCapacityUnits=5,WriteCapacityUnits=5}' \
+        IndexName=slug-index,KeySchema='[{AttributeName=slug,KeyType=HASH}]',Projection='{ProjectionType=ALL}',ProvisionedThroughput='{ReadCapacityUnits=5,WriteCapacityUnits=5}' \
+        IndexName=category-originalDate-index,KeySchema='[{AttributeName=category,KeyType=HASH},{AttributeName=originalDate,KeyType=RANGE}]',Projection='{ProjectionType=ALL}',ProvisionedThroughput='{ReadCapacityUnits=5,WriteCapacityUnits=5}' \
+        IndexName=status-originalDate-index,KeySchema='[{AttributeName=status,KeyType=HASH},{AttributeName=originalDate,KeyType=RANGE}]',Projection='{ProjectionType=ALL}',ProvisionedThroughput='{ReadCapacityUnits=5,WriteCapacityUnits=5}' \
+        IndexName=type-originalDate-index,KeySchema='[{AttributeName=type,KeyType=HASH},{AttributeName=originalDate,KeyType=RANGE}]',Projection='{ProjectionType=ALL}',ProvisionedThroughput='{ReadCapacityUnits=5,WriteCapacityUnits=5}' \
     --billing-mode PROVISIONED \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
     --region "${REGION}" \
