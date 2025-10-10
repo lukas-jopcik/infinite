@@ -20,26 +20,38 @@ async function HomePageContent() {
   let discoveryArticles: any[] = [];
   let communityArticles: any[] = [];
   let kidsArticles: any[] = [];
+  let weeklyArticles: any[] = [];
   
   try {
     // Get latest articles from objav-dna category (most important)
     const discoveryResponse = await ArticlesAPI.getArticlesByCategory("objav-dna", 10);
     discoveryArticles = discoveryResponse?.articles || [];
     
-    // Get latest article for hero section
+    // Get latest article for hero section (keep Objav dňa as primary hero)
     if (discoveryArticles.length > 0) {
       latestArticle = discoveryArticles[0];
-      recentArticles = discoveryArticles.slice(1, 7);
     }
-    
-    // Get articles from other categories in parallel
-    const [communityResponse, kidsResponse] = await Promise.all([
-      ArticlesAPI.getArticlesByCategory("komunita", 3).catch(() => ({ articles: [] })),
-      ArticlesAPI.getArticlesByCategory("deti-a-vesmir", 3).catch(() => ({ articles: [] }))
+
+    // Get articles from other categories in parallel (including weekly picks)
+    const [communityResponse, kidsResponse, weeklyResponse] = await Promise.all([
+      ArticlesAPI.getArticlesByCategory("komunita", 6).catch(() => ({ articles: [] })),
+      ArticlesAPI.getArticlesByCategory("deti-a-vesmir", 6).catch(() => ({ articles: [] })),
+      ArticlesAPI.getArticlesByCategory("tyzdenny-vyber", 12).catch(() => ({ articles: [] })),
     ]);
     
     communityArticles = communityResponse?.articles || [];
     kidsArticles = kidsResponse?.articles || [];
+    weeklyArticles = weeklyResponse?.articles || [];
+
+    // Build combined latest across all categories (exclude hero if present)
+    const combined = [
+      ...discoveryArticles,
+      ...weeklyArticles,
+      ...communityArticles,
+      ...kidsArticles,
+    ];
+    combined.sort((a, b) => new Date(b.originalDate || b.publishedAt).getTime() - new Date(a.originalDate || a.publishedAt).getTime());
+    recentArticles = combined.filter(a => !latestArticle || a.slug !== latestArticle.slug).slice(0, 9);
     
   } catch (error) {
     console.error('Failed to fetch articles:', error);

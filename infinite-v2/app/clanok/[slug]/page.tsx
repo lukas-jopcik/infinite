@@ -88,10 +88,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               items={[
                 { label: "Domov", href: "/" },
                 {
-                  label: article.category
-                    .split("-")
-                    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                    .join(" "),
+                  label:
+                    article.category === "tyzdenny-vyber"
+                      ? "Týždenný výber"
+                      : article.category
+                          .split("-")
+                          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                          .join(" "),
                   href: `/kategoria/${article.category}`,
                 },
                 { label: article.title },
