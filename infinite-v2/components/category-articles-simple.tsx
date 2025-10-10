@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Article, ArticlesAPI } from "@/lib/api"
 import { ArticleCard } from "@/components/article-card"
 import { Pagination } from "@/components/pagination"
@@ -21,11 +22,22 @@ export function CategoryArticlesSimple({
   initialLastKey,
   initialCount 
 }: CategoryArticlesSimpleProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const initialPageFromUrl = Number(searchParams.get("page") || "1")
+
   const [articles, setArticles] = useState<Article[]>(initialArticles || [])
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(initialPageFromUrl)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [totalCount, setTotalCount] = useState(initialCount || 0)
+
+  useEffect(() => {
+    if (initialPageFromUrl > 1) {
+      loadPage(initialPageFromUrl)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Add safety checks for props
   if (!category) {
@@ -45,18 +57,14 @@ export function CategoryArticlesSimple({
     setError(null)
 
     try {
-      // Calculate how many articles to skip
       const skip = (page - 1) * ARTICLES_PER_PAGE
-      
-      // For now, we'll load all articles and slice them client-side
-      // In a real implementation, you'd want server-side pagination
       const response = await ArticlesAPI.getArticlesByCategory(category, 100)
-      
+
       if (response && response.articles) {
         const startIndex = skip
         const endIndex = skip + ARTICLES_PER_PAGE
         const pageArticles = response.articles.slice(startIndex, endIndex)
-        
+
         setArticles(pageArticles)
         setCurrentPage(page)
         setTotalCount(response.count || 0)
@@ -73,8 +81,9 @@ export function CategoryArticlesSimple({
 
   const handlePageChange = (page: number) => {
     if (page !== currentPage && !loading) {
+      const url = `/kategoria/${category}?page=${page}`
+      router.push(url)
       loadPage(page)
-      // Scroll to top when changing pages
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
